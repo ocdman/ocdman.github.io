@@ -15,7 +15,7 @@
 <meta property="og:description" content="hexo的部署也完成了，紧接着就是找一个服务器，将代码放上去。然后绑定一个域名，就可以看到自己写的博客了。
 首先，域名容易搞定。我在GoDaddy，我看网友笑称狗爹，上面花了70多元买了现在这个域名。我也找过一些优惠码，可是每次在支付宝付款的时候，都被残忍地告知，无法进行交易。一气之下，反正也没优惠多少，直接买下。
 接下来就是服务器，正好看到一篇文章讲到hexo部署到github pages上面，">
-<meta property="og:updated_time" content="2015-11-06T06:13:52.000Z">
+<meta property="og:updated_time" content="2015-11-06T08:00:31.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="github pages 域名绑定">
 <meta name="twitter:description" content="hexo的部署也完成了，紧接着就是找一个服务器，将代码放上去。然后绑定一个域名，就可以看到自己写的博客了。
@@ -103,8 +103,8 @@
 <p>再来说说域名绑定，申请域名不在话下，轻轻松松搞定。可是到了github pages重定向自己的域名的时候，无论我怎么尝试，我都没法看到效果。我捶胸顿足，想死的心都有了。不得已，还是按照官网教程一步一步来，重要的是耐心。推荐<a href="https://help.github.com/articles/adding-a-cname-file-to-your-repository/" target="_blank" rel="external">官方教程</a>，看不懂找翻译也要看，最后我竟然成功了。虽然不知道我问题究竟出在哪里，可能是CNAME小写了，可能是我没有创建新的分支，总之我尝试了很多很多种可能。后来我再一次详细地看了一下官方的教程，我才知道我买的是二级域名，什么是子域名，什么是顶级域名。也知道了什么时候要添加A纪录。官方又为什么推荐要使用子域名。所有的一切在官网上都能找到<a href="https://help.github.com/articles/about-custom-domains-for-github-pages-sites/" target="_blank" rel="external">答案</a>。</p>
 <p>以下是我理解的地方。首先什么是多级域名？简单来说，.com .org等网站前，有多少个点，就是几级域名。比方说example.com就是一级域名，也叫顶级域名。而www.example.com就是二级域名了，二级及二级以上也叫子域名。而我们一般去狗爹申请的网站，多半都是二级域名。而网上那么多教程让我们去国内的域名解析商上解析我们自己的域名时，总要让我们带上A纪录。A纪录实际上是给顶级域名使用的，而我们一般申请的网站都是www.example.com或者.org等。我们没有必要去解析A纪录，除非你是顶级域名。而我们所要做的就是增加这么一条解析纪录<br><figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">主机纪录		纪录类型		纪录值</span><br><span class="line">www	        CNAME 	    username<span class="class">.github</span><span class="class">.io</span></span><br></pre></td></tr></table></figure></p>
 <p>而官方也推荐使用二级域名，原因很简单:<br>> 可以享受分布式网络的好处<br>> 不会因为github服务器变更ip地址时受影响<br>> 加载速度会更快 </p>
-<p>需要说明一点，在创建CNAME文件后，文件名必须大写，里面的内容比方说是example.com，不是www.example.com，也不是<a href="http://example.com。" target="_blank" rel="external">http://example.com。</a><br>最后在项目页面下找到齿轮设置图标点击一下，在github pages下面，你会看到这么一句话，<br><figure class="highlight actionscript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Your site <span class="keyword">is</span> publish at http:<span class="comment">//www.example.com.</span></span><br></pre></td></tr></table></figure></p>
-<p>说明你成功地将你的github pages和你的域名绑定。而我之所以前面尝试很多次都没有成功，我分析，一来我没有将CNAME文件大写，其次我去看设置的时候，我的网站发布在了<a href="http://example.com" target="_blank" rel="external">http://example.com</a> 。我明明买的是二级域名，可是绑定却绑定在了一级域名上。这个时候你需要做的就是根据<a href="https://help.github.com/articles/adding-a-cname-file-to-your-repository/" target="_blank" rel="external">官方教程</a>来做，包括我后来新建了一个分支。相信一定能够成功。<strong><em>（本文不涉及教你在你的域名商上使用国内的域名解析服务。相信网上都能找得到，不难。）</em></strong></p>
+<p>需要说明一点，在创建CNAME文件后，文件名必须大写，里面的内容比方说是www.example.com，而不是如教程所说的example.com。这是我看下来唯一和教程不同的地方。当我设置成example.com时，每次都会报dns查找失败。<br>最后在项目页面下找到齿轮设置图标点击一下，在github pages下面，你会看到这么一句话，<br><figure class="highlight actionscript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Your site <span class="keyword">is</span> publish at http:<span class="comment">//www.example.com.</span></span><br></pre></td></tr></table></figure></p>
+<p>说明你成功地将你的github pages和你的域名绑定。<strong><em>（本文不涉及教你在你的域名商上使用国内的域名解析服务。相信网上都能找得到，不难。）</em></strong></p>
 
       
     </div>
