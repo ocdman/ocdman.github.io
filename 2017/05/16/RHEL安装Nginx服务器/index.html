@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>RHEL安装Nginx服务器 | chilihotpot</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <link rel="shortcut icon" href="/chili.ico">
+  <link rel="stylesheet" href="/css/app.css" type="text/css">
+  <!-- <link rel='stylesheet' href='http://fonts.useso.com/css?family=Source+Code+Pro'> -->
+</head>
+
+<body>
+  <nav class="app-nav">
+  
+    
+      <a href="/.">home</a>
+    
+  
+    
+      <a href="/archives">archive</a>
+    
+  
+    
+      <a href="/tags">tag</a>
+    
+  
+    
+      <a href="/categories">category</a>
+    
+  
+</nav>
+
+  <main class="post">
+  <article>
+  <h1 class="article-title">
+    <a href="/2017/05/16/RHEL安装Nginx服务器/">RHEL安装Nginx服务器</a>
+  </h1>
+
+  <section class="article-meta">
+    <p class="article-date">May 16 2017</p>
+  </section>
+
+  <section class="article-entry">
+    <p>Red Hat Enterprise Linux(RHEL) 是Linux系统里为数不多，面向企业收费的版本。想来Linux作为一款开源的操作系统，深受广大极客的喜爱。而Red Hat公司硬是把开源免费的操作系统，做成了收费的版本，可见其一定在细节上做了更深层的把控。</p>
+<p>这次我要搭建一个LNMP(Linux+Nginx+MySql+PHP)架构的系统，来体验一下Linux服务器端的编程感受。</p>
+<p>首先第一步，我在Parallels里安装了RHEL版的Linux操作系统。</p>
+<p>其次要安装Nginx服务器。我找到一个帖子<a href="https://www.digitalocean.com/community/tutorials/how-to-install-linux-nginx-mysql-php-lemp-stack-on-centos-7" target="_blank" rel="external">How To Install Linux, Nginx, MySQL, PHP (LEMP) stack On CentOS 7</a>，想参考着它做。结果在使用 <strong>yum install</strong> 时报错 <strong>There are no enabled repos</strong>，对此我找了很久的答案，我以为是subscription-manager没有注册，我还特意访问Red Hat官网去注册了两个号，结果都登不上，后来我才明白过来subscription-manager的注册号是要通过购买才有的，不是官网的注册号。</p>
+<p>其实答案就在谷歌搜索第一个<a href="https://linuxconfig.org/rhel-7-solution-to-there-are-no-enabled-repos-message" target="_blank" rel="external">RHEL 7 - Solution to “There are no enabled repos” message</a>，我却睁眼视而不见。</p>
+<p>大概的步骤就是，</p>
+<p>1.创建一个镜像目录</p>
+<figure class="highlight coffeescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo mkdir <span class="regexp">/media/rhel7-repo-iso/</span></span><br></pre></td></tr></table></figure>
+<p>2.把设备中的镜像安装进去</p>
+<figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo mount <span class="regexp">/media/</span>psf<span class="regexp">/SHARED/</span>rhel-server-<span class="number">7.3</span>-x86_64-dvd.iso <span class="regexp">/media/</span>rhel7-repo-iso<span class="regexp">/</span></span><br></pre></td></tr></table></figure>
+<p>3.创建一个yum repo文件</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vim /etc/yum<span class="class">.repos</span><span class="class">.d</span>/RHEL_7_Disc.repo</span><br></pre></td></tr></table></figure>
+<p>内容如下:</p>
+<blockquote>
+<p>[RHEL_7_Disc]<br>name=RHEL_7_x86_64_Disc<br>baseurl=”file:///media/rhel7-repo-iso/“<br>gpgcheck=0</p>
+</blockquote>
+<p>4.最后启用新建的repo</p>
+<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="title">yum</span> repolist</span><br></pre></td></tr></table></figure>
+<p>于是乎就可以在未注册的RHEL里使用yum命令安装新的软件了，但是有个缺点就是每次使用<strong>yum</strong>命令，都会提示你注册</p>
+<blockquote>
+<p>This system is not registered to Red Hat Subscription Management. You can use subscription-manager to register.</p>
+</blockquote>
+<p>当我觉得可以使用命令<br><figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo yum <span class="keyword">install</span> nginx</span><br></pre></td></tr></table></figure></p>
+<p>来安装nginx时，结果又报错<strong>没有可用的软件包 NGINX</strong>，我搜了一下，网上说</p>
+<blockquote>
+<p>很多软件包在yum里面没有的，解决的方法，就是使用epel源,也就是安装epel-release软件包。EPEL (Extra Packages for Enterprise Linux)是基于Fedora的一个项目，为“红帽系”的操作系统提供额外的软件包，适用于RHEL、CentOS等系统。</p>
+</blockquote>
+<p>我想，嗯，应该先执行命令<br><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo yum <span class="operator"><span class="keyword">install</span> epel-<span class="keyword">release</span></span></span><br></pre></td></tr></table></figure></p>
+<p>，哪知道还是报错<strong>没有可用的软件包 epel-release</strong>，我估计我这个版本的RHEL里yum找不到软件包里有epel源，后来我找到了另外的方法安装epel源<br><figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">wget http:<span class="comment">//dl.fedoraproject.org/pub/epel/7/x86_64/e/epel-release-7-9.noarch.rpm</span></span><br><span class="line"></span><br><span class="line">rpm -ivh epel-release-<span class="number">7</span>-<span class="number">9</span><span class="class">.noarch</span><span class="class">.rpm</span></span><br></pre></td></tr></table></figure></p>
+<p>虽然这个命令我不太熟悉，但是我还是安装成功了。</p>
+<p>然后就是执行<br><figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum <span class="keyword">install</span> nginx</span><br></pre></td></tr></table></figure></p>
+<p>，安装成功。</p>
+<p>总结一下，yum命令是RHEL里的常用命令。但是yum并没有这么简单就能用，首先它得有一个repo，其次yum里的软件包有限，Fedora为其提供了epel源来扩展其软件包，像nginx，yum里本来没有，但是经过安装epel源扩展之后，就能通过yum来安装了。</p>
+
+  </section>
+</article>
+
+  <div class="sharing grid">
+  <section class="profile grid-item grid">
+    <img class="avatar" src="/images/chili.png" alt="avatar" />
+    <div class="grid-item">
+      <p class="title"> chilihotpot </p>
+      <p class="subtitle"> You Are The JavaScript In My HTML </p>
+    <div>
+  </section>
+
+  <section class="share-btns">
+    <!-- <p> share it if you like it~ </p> -->
+    <a
+  class="twitter-share-button"
+  data-size="large"
+  data-via="DrakeLeung"
+  href="https://twitter.com/intent/tweet?text=Red Hat Enterprise L"
+>
+  Tweet
+</a>
+
+<script>
+  window.twttr = (function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0],
+    t = window.twttr || {};
+  if (d.getElementById(id)) return t;
+  js = d.createElement(s);
+  js.id = id;
+  js.src = "https://platform.twitter.com/widgets.js";
+  js.async = true;
+  fjs.parentNode.insertBefore(js, fjs);
+
+  t._e = [];
+  t.ready = function(f) {
+    t._e.push(f);
+  };
+
+  return t;
+}(document, "script", "twitter-wjs"));
+</script>
+
+  </section>
+</div>
+
+
+  
+</main>
+
+</body>
+</html>

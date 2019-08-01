@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>树莓派Zero W启动报错Kernel panic-not syncing: VFS: unable to mount root fs on unknown- block(179,2) | chilihotpot</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <link rel="shortcut icon" href="/chili.ico">
+  <link rel="stylesheet" href="/css/app.css" type="text/css">
+  <!-- <link rel='stylesheet' href='http://fonts.useso.com/css?family=Source+Code+Pro'> -->
+</head>
+
+<body>
+  <nav class="app-nav">
+  
+    
+      <a href="/.">home</a>
+    
+  
+    
+      <a href="/archives">archive</a>
+    
+  
+    
+      <a href="/tags">tag</a>
+    
+  
+    
+      <a href="/categories">category</a>
+    
+  
+</nav>
+
+  <main class="post">
+  <article>
+  <h1 class="article-title">
+    <a href="/2018/08/10/树莓派Zero-W启动报错Kernel-panic-not-syncing-VFS-unable-to-mount-root-fs-on-unknown-block-179-2/">树莓派Zero W启动报错Kernel panic-not syncing: VFS: unable to mount root fs on unknown- block(179,2)</a>
+  </h1>
+
+  <section class="article-meta">
+    <p class="article-date">August 10 2018</p>
+  </section>
+
+  <section class="article-entry">
+    <p>树莓派Zero W一次不小心触碰松了电源USB口，导致意外断电，重启后无法正常启动。接上屏幕后发现，报错</p>
+<blockquote>
+<p>Kernel panic-not syncing: VFS: unable to mount root fs on unknown- block(179,2)</p>
+</blockquote>
+<p>这个错误信息似曾相识，就是我在第一次上手树莓派时，启动后报的错。后来我是格式化SD卡解决的，具体可以参考<a href="http://ocdman.github.io/2018/08/03/%E6%A0%91%E8%8E%93%E6%B4%BEZero%20W%E5%88%9D%E4%B8%8A%E6%89%8B/" target="_blank" rel="external">这篇文章</a>。但问题是，那是我第一次上手树莓派，里面什么程序都还没安装，格式化也就算了。现在SD卡里已经安装了很多程序，如果让我重新格式化SD卡，我肯定不干。那么有没有其它的解决办法呢？</p>
+<p>网上的绝大部分帖子都是针对NOOBS系统，即傻瓜系统来进行展开的，而我当时并没有烧录NOOBS系统，只是纯粹地烧了一个Raspbian Lite。好在让我找到了一篇<a href="https://raspberrypi.stackexchange.com/questions/81516/kernel-panic-not-syncing-vfs-unable-to-mount-root-fs-on-unknown-block179-6" target="_blank" rel="external">帖子</a>，描述的情况和我的差不多。他的解决办法分为三步，</p>
+<ol>
+<li>找一台Linux系统的电脑，将SD卡插进读卡器，插到Linux的主机上</li>
+<li>查看自己SD卡的装载目录</li>
+<li>执行fsck命令来进行磁盘修复</li>
+</ol>
+<p>因为我的主机是Mac系统，不兼容EXT3、EXT4格式的盘符，我又不想安装一个Linux虚拟机。好在我之前还有一台安装了OpenSUSE的笔记本电脑，在家吃灰了很久，可以拿来一用。</p>
+<p>打开电脑，进入Linux系统，在终端中输入命令</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">fdisk <span class="operator">-l</span></span><br></pre></td></tr></table></figure>
+<p>查看SD卡的分区。一般情况下，引导盘都是位于<code>/dev/sdb1</code>，而树莓派系统位于<code>/dev/sdb2</code>，这是我个人的情况，不代表所有。执行命令</p>
+<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="title">df</span> -hT</span><br></pre></td></tr></table></figure>
+<p>看看系统是否自动装载了<code>/dev/sdb2</code>，如果装载了把它卸载了，卸载命令</p>
+<figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">umount <span class="regexp">/dev/</span>sdb2</span><br></pre></td></tr></table></figure>
+<p>接下来就是修复磁盘了，上面的<code>df -hT</code>命令可以查看磁盘格式，我的树莓派磁盘<code>/dev/sdb2</code>格式是EXT4，执行<code>fsck.ext4</code>命令修复</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">fsck<span class="class">.ext4</span> -y /dev/sdb2 	<span class="comment">//修复ext4格式的磁盘</span></span><br><span class="line">fsck -y /dev/sdb2		<span class="comment">//修复ext格式的磁盘</span></span><br><span class="line">fsck<span class="class">.ext2</span> -y /dev/sdb2	<span class="comment">//修复ext2格式的磁盘</span></span><br><span class="line">fsck<span class="class">.ext3</span> -y /dev/sdb2 	<span class="comment">//修复ext3格式的磁盘</span></span><br></pre></td></tr></table></figure>
+<p>将修复好的SD卡重新插上树莓派，连上电源，接上显示器发现系统虽然启动了，但是很多之前引起启动错误的inode都被删除了，最后进入系统后，pi用户的目录<code>/home/pi</code>被删除了，也就是我之前存放了很多个脚本都没了。</p>
+<p>虽然解决了报错问题，不至于完全格式化SD卡，但是就启动后的结果而言，我感觉和格式化也没差了，我写了好多个脚本都没了。看样子以后要经常备份重要的脚本，以防那天树莓派再次断电，又复现这个问题。</p>
+
+  </section>
+</article>
+
+  <div class="sharing grid">
+  <section class="profile grid-item grid">
+    <img class="avatar" src="/images/chili.png" alt="avatar" />
+    <div class="grid-item">
+      <p class="title"> chilihotpot </p>
+      <p class="subtitle"> You Are The JavaScript In My HTML </p>
+    <div>
+  </section>
+
+  <section class="share-btns">
+    <!-- <p> share it if you like it~ </p> -->
+    <a
+  class="twitter-share-button"
+  data-size="large"
+  data-via="DrakeLeung"
+  href="https://twitter.com/intent/tweet?text=树莓派Zero W一次不小心触碰松了电源"
+>
+  Tweet
+</a>
+
+<script>
+  window.twttr = (function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0],
+    t = window.twttr || {};
+  if (d.getElementById(id)) return t;
+  js = d.createElement(s);
+  js.id = id;
+  js.src = "https://platform.twitter.com/widgets.js";
+  js.async = true;
+  fjs.parentNode.insertBefore(js, fjs);
+
+  t._e = [];
+  t.ready = function(f) {
+    t._e.push(f);
+  };
+
+  return t;
+}(document, "script", "twitter-wjs"));
+</script>
+
+  </section>
+</div>
+
+
+  
+</main>
+
+</body>
+</html>

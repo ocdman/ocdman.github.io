@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>理解http协议中的无状态和Connection:keep-alive之间的区别 | chilihotpot</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <link rel="shortcut icon" href="/chili.ico">
+  <link rel="stylesheet" href="/css/app.css" type="text/css">
+  <!-- <link rel='stylesheet' href='http://fonts.useso.com/css?family=Source+Code+Pro'> -->
+</head>
+
+<body>
+  <nav class="app-nav">
+  
+    
+      <a href="/.">home</a>
+    
+  
+    
+      <a href="/archives">archive</a>
+    
+  
+    
+      <a href="/tags">tag</a>
+    
+  
+    
+      <a href="/categories">category</a>
+    
+  
+</nav>
+
+  <main class="post">
+  <article>
+  <h1 class="article-title">
+    <a href="/2018/07/08/理解http协议中的无状态和Connection-keep-alive之间的区别/">理解http协议中的无状态和Connection:keep-alive之间的区别</a>
+  </h1>
+
+  <section class="article-meta">
+    <p class="article-date">July 08 2018</p>
+  </section>
+
+  <section class="article-entry">
+    <p>http协议中的无状态指的是，同一个客户端的这次请求和上次请求是没有对应关系的，对http服务器来说，它并不知道这两个请求是否来自同一个客户端。所以，为了解决http协议无状态的问题，后来web程序才引入了cookie机制来维护连接的可持续状态，换句话讲就是http服务器通过cookie可以区分不同客户端的请求了。</p>
+<p>从http/1.1起，默认都开启了keep-alive来保持连接特性。也就是说，当一个网页打开完成后，客户端和服务器端之间用于传输http数据的tcp连接不会关闭，如果客户端再次访问这个服务器上的网页，会继续使用这条已经建立的tcp连接。需要注意的是，keep-alive不会永久保持连接，它有一个连接时间，不同服务器都可以对这个时间进行设置。</p>
+<p>所以http协议的无状态和Connection:keep-alive之间的区别在于，http是一个无状态的面向连接的协议，但这并不代表http不能保持tcp连接，更不能代表http使用的是udp协议。</p>
+
+  </section>
+</article>
+
+  <div class="sharing grid">
+  <section class="profile grid-item grid">
+    <img class="avatar" src="/images/chili.png" alt="avatar" />
+    <div class="grid-item">
+      <p class="title"> chilihotpot </p>
+      <p class="subtitle"> You Are The JavaScript In My HTML </p>
+    <div>
+  </section>
+
+  <section class="share-btns">
+    <!-- <p> share it if you like it~ </p> -->
+    <a
+  class="twitter-share-button"
+  data-size="large"
+  data-via="DrakeLeung"
+  href="https://twitter.com/intent/tweet?text=http协议中的无状态指的是，同一个客户"
+>
+  Tweet
+</a>
+
+<script>
+  window.twttr = (function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0],
+    t = window.twttr || {};
+  if (d.getElementById(id)) return t;
+  js = d.createElement(s);
+  js.id = id;
+  js.src = "https://platform.twitter.com/widgets.js";
+  js.async = true;
+  fjs.parentNode.insertBefore(js, fjs);
+
+  t._e = [];
+  t.ready = function(f) {
+    t._e.push(f);
+  };
+
+  return t;
+}(document, "script", "twitter-wjs"));
+</script>
+
+  </section>
+</div>
+
+
+  
+</main>
+
+</body>
+</html>

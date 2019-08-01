@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Mac如何从VPS快速下载大型文件到本地 | chilihotpot</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <link rel="shortcut icon" href="/chili.ico">
+  <link rel="stylesheet" href="/css/app.css" type="text/css">
+  <!-- <link rel='stylesheet' href='http://fonts.useso.com/css?family=Source+Code+Pro'> -->
+</head>
+
+<body>
+  <nav class="app-nav">
+  
+    
+      <a href="/.">home</a>
+    
+  
+    
+      <a href="/archives">archive</a>
+    
+  
+    
+      <a href="/tags">tag</a>
+    
+  
+    
+      <a href="/categories">category</a>
+    
+  
+</nav>
+
+  <main class="post">
+  <article>
+  <h1 class="article-title">
+    <a href="/2018/04/14/Mac如何从VPS快速下载大型文件到本地/">Mac如何从VPS快速下载大型文件到本地</a>
+  </h1>
+
+  <section class="article-meta">
+    <p class="article-date">April 14 2018</p>
+  </section>
+
+  <section class="article-entry">
+    <p>通过VPS可以很快下载到一些国内网速极慢的资源，比方说利用aria2这个下载工具，这里就不详述了，之前的篇章过有提过。今天主要来讲讲，当下载到了这个宝贵的资源以后，如何将它从VPS上下载下来。</p>
+<h3 id="1-_走http协议">1. 走http协议</h3><p>如果VPS上安装了nginx服务，可以直接利用nginx的目录功能来下载文件。这种方法适合下载体积较小的文件，如果你的资源动辄几个GB的话，光靠你和VPS间的网速，也要很久才能下载完成。</p>
+<h3 id="2-_走scp协议">2. 走scp协议</h3><p>scp是security copy的意思，是专门用来远程文件拷贝的。数据传输使用ssh，并且使用ssh相同的认证方式，提供安全保证。scp在需要检验时，会要求输入密码和口令。SCP命令是Linux自带的命令，Mac上也有。通过SCP命令，我们可以快速下载一个大型的资源到本地，命令非常简单</p>
+<figure class="highlight crystal"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">scp -<span class="constant">P</span> port username<span class="variable">@ip</span><span class="symbol">:vpsSourceDirectory</span> localDirectory</span><br></pre></td></tr></table></figure>
+<p>其中port是端口号，username是用户名，ip是vps的地址或者域名，vpsSourceDirectory是你要下载的文件位于的VPS上的目录，localDirectory是你要下载的资源到本地的地址。千万不要漏了ip后面的冒号，以及vpsSourceDirectory和localDirectory直接存在空格。</p>
+<p>期间会提示让你输入密码，实测下来SCP下载文件网速可以达到3MB/s，十分得快。</p>
+<p>同样，如果我们要从本地上传资源到VPS的话，只要对上面的命令稍作修改</p>
+<figure class="highlight crystal"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">scp -<span class="constant">P</span> port localDirectory username<span class="variable">@ip</span><span class="symbol">:vpsTargetDirectory</span></span><br></pre></td></tr></table></figure>
+  </section>
+</article>
+
+  <div class="sharing grid">
+  <section class="profile grid-item grid">
+    <img class="avatar" src="/images/chili.png" alt="avatar" />
+    <div class="grid-item">
+      <p class="title"> chilihotpot </p>
+      <p class="subtitle"> You Are The JavaScript In My HTML </p>
+    <div>
+  </section>
+
+  <section class="share-btns">
+    <!-- <p> share it if you like it~ </p> -->
+    <a
+  class="twitter-share-button"
+  data-size="large"
+  data-via="DrakeLeung"
+  href="https://twitter.com/intent/tweet?text=通过VPS可以很快下载到一些国内网速极慢"
+>
+  Tweet
+</a>
+
+<script>
+  window.twttr = (function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0],
+    t = window.twttr || {};
+  if (d.getElementById(id)) return t;
+  js = d.createElement(s);
+  js.id = id;
+  js.src = "https://platform.twitter.com/widgets.js";
+  js.async = true;
+  fjs.parentNode.insertBefore(js, fjs);
+
+  t._e = [];
+  t.ready = function(f) {
+    t._e.push(f);
+  };
+
+  return t;
+}(document, "script", "twitter-wjs"));
+</script>
+
+  </section>
+</div>
+
+
+  
+</main>
+
+</body>
+</html>

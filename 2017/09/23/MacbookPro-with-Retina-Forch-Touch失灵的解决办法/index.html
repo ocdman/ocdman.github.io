@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>MacbookPro with Retina Forch Touch失灵的解决办法 | chilihotpot</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <link rel="shortcut icon" href="/chili.ico">
+  <link rel="stylesheet" href="/css/app.css" type="text/css">
+  <!-- <link rel='stylesheet' href='http://fonts.useso.com/css?family=Source+Code+Pro'> -->
+</head>
+
+<body>
+  <nav class="app-nav">
+  
+    
+      <a href="/.">home</a>
+    
+  
+    
+      <a href="/archives">archive</a>
+    
+  
+    
+      <a href="/tags">tag</a>
+    
+  
+    
+      <a href="/categories">category</a>
+    
+  
+</nav>
+
+  <main class="post">
+  <article>
+  <h1 class="article-title">
+    <a href="/2017/09/23/MacbookPro-with-Retina-Forch-Touch失灵的解决办法/">MacbookPro with Retina Forch Touch失灵的解决办法</a>
+  </h1>
+
+  <section class="article-meta">
+    <p class="article-date">September 23 2017</p>
+  </section>
+
+  <section class="article-entry">
+    <p>我的MacbookPro with Retina，简称rmbp，型号是Early 2015，每隔一年，触控板就会出现一次问题。上回是2016年，送苹果旗舰店后，直接换了一个触控板，但历经的过程很烦。这一次，电脑莫名卡死后重启，触控板再次失灵。我头痛的是我又要跑一次旗舰店，等上几天时间，费时费神，想想都烦。</p>
+<p>无意间，看到一篇叫做<a href="http://appleuser.com/2015/07/30/forcetouchsolutionway/" target="_blank" rel="external">Force Touch 觸控式軌跡版竟然失效無法按壓！？先用這兩招自救吧！</a>的文章。抱着侥幸的心态，我想试试看，万一恢复正常了呢。</p>
+<p>我先是试了第一种方法，清PRAM，没有成功。抱着最后一丝希望，我又尝试了第二种方法，<strong>重置SMC</strong>，没想到竟然成功了！</p>
+<p>简单介绍一下，为什么会出现Forch Touch失灵的情况？原因是因为<strong>Forch Touch触控式轨迹版如果在没有过电的状态下是无法使用的，像我遇到的状况就是不知道为什么机器死机重启后Forch Touch触控式轨迹版却没有正常过电导致无法使用两段式按压</strong>。</p>
+<p>重置SMC的步骤如下：</p>
+<ul>
+<li>将电脑开机</li>
+<li>将MagSafe或USB-C电源转换器插入电源与电脑</li>
+<li>在内建键盘上同时按下（左侧）Shift-Control-Option键以及电源按钮</li>
+<li>同时放开所有按键和电源按钮</li>
+<li>按下电源按钮以重启电脑</li>
+</ul>
+<p>我的rmbp就是通过重置SMC解决了Forch Touch失灵的问题。还好运气好，只是因为没有正常过电引起的，如果以上两种方法都没用的话，那只能送维修了。</p>
+
+  </section>
+</article>
+
+  <div class="sharing grid">
+  <section class="profile grid-item grid">
+    <img class="avatar" src="/images/chili.png" alt="avatar" />
+    <div class="grid-item">
+      <p class="title"> chilihotpot </p>
+      <p class="subtitle"> You Are The JavaScript In My HTML </p>
+    <div>
+  </section>
+
+  <section class="share-btns">
+    <!-- <p> share it if you like it~ </p> -->
+    <a
+  class="twitter-share-button"
+  data-size="large"
+  data-via="DrakeLeung"
+  href="https://twitter.com/intent/tweet?text=我的MacbookPro with Re"
+>
+  Tweet
+</a>
+
+<script>
+  window.twttr = (function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0],
+    t = window.twttr || {};
+  if (d.getElementById(id)) return t;
+  js = d.createElement(s);
+  js.id = id;
+  js.src = "https://platform.twitter.com/widgets.js";
+  js.async = true;
+  fjs.parentNode.insertBefore(js, fjs);
+
+  t._e = [];
+  t.ready = function(f) {
+    t._e.push(f);
+  };
+
+  return t;
+}(document, "script", "twitter-wjs"));
+</script>
+
+  </section>
+</div>
+
+
+  
+</main>
+
+</body>
+</html>

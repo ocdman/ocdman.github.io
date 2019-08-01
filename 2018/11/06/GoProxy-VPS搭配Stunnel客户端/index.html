@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>GoProxy-VPS搭配Stunnel客户端 | chilihotpot</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <link rel="shortcut icon" href="/chili.ico">
+  <link rel="stylesheet" href="/css/app.css" type="text/css">
+  <!-- <link rel='stylesheet' href='http://fonts.useso.com/css?family=Source+Code+Pro'> -->
+</head>
+
+<body>
+  <nav class="app-nav">
+  
+    
+      <a href="/.">home</a>
+    
+  
+    
+      <a href="/archives">archive</a>
+    
+  
+    
+      <a href="/tags">tag</a>
+    
+  
+    
+      <a href="/categories">category</a>
+    
+  
+</nav>
+
+  <main class="post">
+  <article>
+  <h1 class="article-title">
+    <a href="/2018/11/06/GoProxy-VPS搭配Stunnel客户端/">GoProxy-VPS搭配Stunnel客户端</a>
+  </h1>
+
+  <section class="article-meta">
+    <p class="article-date">November 06 2018</p>
+  </section>
+
+  <section class="article-entry">
+    <p>之前在使用GoProxy-VPS作为服务端的时候，我一直有个疑问，客户端为什么只能使用Chrome+SwitchyOmega，为什么不能使用系统自带的全局代理？</p>
+<p>因为作为浏览器客户端的Chrome+SwitchyOmega在握手期间使用的是TLS协议，而系统自带的全局代理在握手期间使用的则是HTTP协议。由于GoProxy-VPS服务运行的是TLS协议，如果协议不匹配，就会导致握手失败，从而无法实现代理。具体内容可以参考<a href="https://ocdman.github.io/2018/11/02/%E8%AF%A6%E8%A7%A3TCP%E4%B8%89%E6%AC%A1%E6%8F%A1%E6%89%8B%E4%BB%A5%E5%8F%8ATLS-SSL%E6%8F%A1%E6%89%8B/" target="_blank" rel="external">详解TCP三次握手以及TLS/SSL握手</a>这篇文章。</p>
+<p>那有没有办法解决非Chrome客户端的系统全局代理呢？答案是可以的。可以使用Stunnel这款软件作为全局代理的客户端。</p>
+<blockquote>
+<p>Stunnel是一个自由的跨平台软件，用于提供全局的TLS/SSL服务。</p>
+<p>针对本身无法进行TLS或SSL通信的客户端及服务器，Stunnel可提供安全的加密连接。</p>
+</blockquote>
+<p>Stunnel这款软件可分为客户端和服务端，我只需要其作为客户端。实现思路，Stunnel客户端同时运行HTTP协议以及TLS协议。HTTP协议用来和系统自带的全局代理进行HTTP握手，TLS协议和GoProxy-VPS服务进行TLS握手，从而实现代理。</p>
+<p>其实GoProxy-VPS服务支持HTTP协议，系统自带的全局代理设置一下就能握手了，为什么我还要经过一个Stunnel客户端来进行中转，而且还不建议GoProxy-VPS打开HTTP协议呢？原因在于HTTP协议是透明的，在HTTP握手的时候，很容易被中间人也就是我们的运营商抓到你要访问的敏感域名，如果一旦引起GFW的注意的话，你的VPS也就不保了。</p>
+<p>但是使用Stunnel作为客户端的话就不会有问题，理由如下</p>
+<p>第一，HTTP握手阶段是在局域网内实现的，中间人抓不到你的敏感域名</p>
+<p>第二，敏感域名在TLS握手的时候已经被加密了，中间人只能看到被加密的内容</p>
+<p>所以说，使用Stunnel作为客户端可以保护消息的安全性，不被中间人窃听。效果相当于Chrome+SwitchyOmega直接使用TLS协议。只不过Stunnel把HTTP协议部分和TLS协议部分很好地衔接在了一起，看上去好像只使用了TLS协议一样。</p>
+<p>不过我在研究GoProxy-VPS源码的时候发现，直接使用Chrome+SwitchyOmega，ClientHello握手消息里的ServerName为空，而使用Stunnel客户端，ClientHello握手消息里的ServerName是服务器的域名。这点需要注意。</p>
+<h3 id="总结">总结</h3><p>其实不光可以使用Stunnel作为系统全局代理的客户端，GoProxy本身也可以，只是我还没研究VPS的配置。任何一个只要能够实现Stunnel思路的软件都能充当系统全局代理客户端。</p>
+
+  </section>
+</article>
+
+  <div class="sharing grid">
+  <section class="profile grid-item grid">
+    <img class="avatar" src="/images/chili.png" alt="avatar" />
+    <div class="grid-item">
+      <p class="title"> chilihotpot </p>
+      <p class="subtitle"> You Are The JavaScript In My HTML </p>
+    <div>
+  </section>
+
+  <section class="share-btns">
+    <!-- <p> share it if you like it~ </p> -->
+    <a
+  class="twitter-share-button"
+  data-size="large"
+  data-via="DrakeLeung"
+  href="https://twitter.com/intent/tweet?text=之前在使用GoProxy-VPS作为服务"
+>
+  Tweet
+</a>
+
+<script>
+  window.twttr = (function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0],
+    t = window.twttr || {};
+  if (d.getElementById(id)) return t;
+  js = d.createElement(s);
+  js.id = id;
+  js.src = "https://platform.twitter.com/widgets.js";
+  js.async = true;
+  fjs.parentNode.insertBefore(js, fjs);
+
+  t._e = [];
+  t.ready = function(f) {
+    t._e.push(f);
+  };
+
+  return t;
+}(document, "script", "twitter-wjs"));
+</script>
+
+  </section>
+</div>
+
+
+  
+</main>
+
+</body>
+</html>

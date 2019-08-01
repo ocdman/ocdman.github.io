@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>借助frp实现ftp服务内网穿透 | chilihotpot</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <link rel="shortcut icon" href="/chili.ico">
+  <link rel="stylesheet" href="/css/app.css" type="text/css">
+  <!-- <link rel='stylesheet' href='http://fonts.useso.com/css?family=Source+Code+Pro'> -->
+</head>
+
+<body>
+  <nav class="app-nav">
+  
+    
+      <a href="/.">home</a>
+    
+  
+    
+      <a href="/archives">archive</a>
+    
+  
+    
+      <a href="/tags">tag</a>
+    
+  
+    
+      <a href="/categories">category</a>
+    
+  
+</nav>
+
+  <main class="post">
+  <article>
+  <h1 class="article-title">
+    <a href="/2018/07/17/借助frp实现ftp服务内网穿透/">借助frp实现ftp服务内网穿透</a>
+  </h1>
+
+  <section class="article-meta">
+    <p class="article-date">July 17 2018</p>
+  </section>
+
+  <section class="article-entry">
+    <p>之前我在<a href="http://ocdman.github.io/2018/06/21/%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8frp%E5%AE%9E%E7%8E%B0%E8%BF%9C%E7%A8%8B%E6%A1%8C%E9%9D%A2/" target="_blank" rel="external">如何使用Frp实现远程桌面</a>一文里介绍过，通过frp穿透内网实现远程桌面。今天要在这里介绍一下如何通过frp穿透内网实现ftp文件传输。</p>
+<p>先来说说，我们为什么需要文件传输软件。很多时候，我们仅仅只是想传一个文件到服务器。方式有很多种，可以通过远程桌面，复制剪贴板的形式。那如果远程桌面不能复制文件，只能复制剪贴板呢？我就遇到了这种情况，我的Microsoft Remote Desktop软件就无法复制文件。这个时候就需要一个ftp文件传输工具派用场了。</p>
+<p>我要特别介绍一下<a href="https://filezilla-project.org/" target="_blank" rel="external">FileZilla</a>这款软件，这是一款基于ftp协议的免费开源的文件传输软件。文件传输软件这么多，为什么选择它？首先第一点，因为它开源，我爱开源软件。第二，它体积小巧，没有花里胡哨的功能。第三，配置灵活，功能强大。</p>
+<p>既然介绍了这款软件的优点，那么也说一下它的缺点。唯一的缺点就是，这款软件的服务器端只能运行在Windows系统上，不能跨平台。不过，好在我平时的工作环境也就是在Windows上。如果想传文件到Linux服务器的话，我更倾向于使用scp命令，详见我<a href="http://ocdman.github.io/2018/04/14/Mac%E5%A6%82%E4%BD%95%E4%BB%8EVPS%E5%BF%AB%E9%80%9F%E4%B8%8B%E8%BD%BD%E5%A4%A7%E5%9E%8B%E6%96%87%E4%BB%B6%E5%88%B0%E6%9C%AC%E5%9C%B0/" target="_blank" rel="external">另一篇文章</a>。</p>
+<h3 id="安装FileZilla_Server端">安装FileZilla Server端</h3><p>FileZilla这款软件分为Server端和Client端，可以去到它的<a href="https://filezilla-project.org/" target="_blank" rel="external">官网</a>去下载。我们首先下载Server版。Server版就很简单，只有Windows一个版本。下载完成之后，一路默认安装到底。由于我的工作机是Windows系统，所以我把Server版FileZilla安装在我的工作机上。</p>
+<h3 id="配置FileZilla_Server端">配置FileZilla Server端</h3><p>Server端安装完成之后，主界面有红字提示，不要和错误搞混了，这只是警告。</p>
+<p><img src="/img/2018071707.png" width="630px"></p>
+<blockquote>
+<p>You appear to be behind a NAT router. Please configure the passive mode settings and forward a range of ports in your router.<br>Warning: FTP over TLS is not enabled, users cannot securely log in.</p>
+</blockquote>
+<p>主要说明了两方面的内容：1、软件识别到当前环境是部署在路由器NAT之后的，所以需要使用被动模式(passive mode)运行并在路由器上设置端口转发；2、FTP服务没有启用TLS模式，所以用户登录信息是不安全的。</p>
+<p>Server端默认监听21端口</p>
+<p><img src="/img/2018071701.png" width="630px"></p>
+<p>然后在Edit-&gt;Settings中找到<code>FTP over TLS settings</code>配置，点击<code>Generate new certifacate</code>按钮生成证书，用于安全连接使用。</p>
+<p><img src="/img/2018071702.png" width="630px"></p>
+<p>之后在Edit-&gt;Users中，添加用户，并设置好密码。</p>
+<p><img src="/img/2018071704.png" width="630px"></p>
+<p>并给用户设置访问的目录权限</p>
+<p><img src="/img/2018071705.png" width="630px"></p>
+<p>至此，FileZilla服务器端的配置就算是完成了。接下来安装FileZilla客户端。</p>
+<h3 id="安装FileZilla_Client端">安装FileZilla Client端</h3><p>FileZilla的Client端支持Mac、Linux以及Windows三个版本。我的个人机是Mac系统，所以需要下载Mac版的Client端。下载过程之后，安装过程也没什么好赘述的。</p>
+<h3 id="内网测试">内网测试</h3><p>安装好了之后进行一下内网测试吧。</p>
+<p>主机填写FileZilla Server的内网IP地址，用户名和密码填刚才添加的用户及密码，端口号默认为21。点击快速连接，测测看是不是连接成功了呢。</p>
+<p><img src="/img/2018071706.png" width="630px"></p>
+<h3 id="frp客户端配置">frp客户端配置</h3><p>如果要实现ftp协议内网穿透的话，需要借助frp服务。因为ftp只使用了tcp协议，frp完全可以支持。frp同样分为Server端（frps）以及Client端（frpc）。frp的Server端运行在VPS上，而frp的Client端和FileZilla Server端都运行在我的Windows工作机上。frp的使用详见<a href="http://ocdman.github.io/2018/06/21/%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8frp%E5%AE%9E%E7%8E%B0%E8%BF%9C%E7%A8%8B%E6%A1%8C%E9%9D%A2/" target="_blank" rel="external">这篇文章</a>。</p>
+<p>打开frp客户端的配置文件，即frpc.ini文件。添加以下内容</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[range:ftp]</span><br><span class="line">type = tcp</span><br><span class="line">local_ip = <span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span></span><br><span class="line">local_port = <span class="number">21</span>,<span class="number">50000</span>-<span class="number">50002</span></span><br><span class="line">remote_port = <span class="number">2121</span>,<span class="number">50000</span>-<span class="number">50002</span></span><br></pre></td></tr></table></figure>
+<p>这里设置了frpc监听FileZilla Server的21端口，远程端口为2121，另外本地端口以及远程端口都设置了端口范围从50000-50002。这个端口范围在下面会用到。远程端口以及被动模式端口范围都可以自定义，可以不用和我一样。</p>
+<h3 id="主动模式和被动模式">主动模式和被动模式</h3><p>这里先普及一下ftp服务器的主动模式和被动模式。ftp主动模式下，服务器去连客户端很可能被客户端的防火墙阻挡。而加入了公网路由器对内网服务器的映射后，就更不可能去连客户端的ip了。因为客户端很多情况下没有公网ip。</p>
+<p>被动模式（PASV）下，有数据要传输时，服务器会打开一个数据端口（并处于监听状态），然后告知客户端，客户端连接这个数据端口发送数据。但是数据端口是随机的，那么服务器该如何将这些随机数据端口映射到公网的路由器上呢？总不能让内部网的一台机器完全暴露到公网上吧，虽然确实有这样的方案（称之为DMZ主机），但这绝对是最愚蠢的选择。也就是服务器随机打开数据端口（比如50000），发送到公网路由器，让客户端来连，客户端需要连接公网路由器的50000，公网路由器的50000需要映射到服务器的50000就行了。如果没有公网路由器，服务器就是在公网上，那么客户端就会直接去连服务器ip:50000端口。而加上了公网路由器，就需要把公网路由器的端口50000映射到内网服务器的端口50000。</p>
+<h3 id="FileZilla_Server端被动模式端口设置">FileZilla Server端被动模式端口设置</h3><p>FileZilla Server端需要设置成被动模式，主动模式下的ftp服务器需要穿透出本地内网，再穿透入客户端内网，成功率很低。被动模式下的ftp服务器，至少需要两个端口</p>
+<blockquote>
+<p>FTP客户端 打开两个非特权端口A和B<br>FTP服务端打开21端口和一个非特权端口C<br>客户端端口A连接服务器的21端口。<br>客户端的端口B，连接服务端的端口C</p>
+<p>这个流程中，非特权端口 C 很关键。FTP 服务端会打开一个特权端口 C 并将这个端口告知 FTP 客户端，FTP 客户端需要连接服务端的端口 C。上面我在修改 frpc.ini 配置文件时，填写的端口范围50000-50002就是非特权端口C。端口 C 是随机的， 但是可以指定被动模式使用的端口 C 的范围，比如 50000-50002，然后在 frps 和 FTP 服务端将这几个端口之间一一对应起来。</p>
+</blockquote>
+<p>下面是被动模式端口设置，和 frpc.ini 里设置的端口范围一致</p>
+<p><img src="/img/2018071703.png" width="630px"></p>
+<p>自此，通过FileZilla Client端就可以实现ftp服务内网穿透了。主机填写VPS的IP地址，用户名和密码是你的VPS账号密码，端口号是上面设置的2121，点击快速连接试试吧。</p>
+<h3 id="可能遇到的错误">可能遇到的错误</h3><p>如果没有设置非特权端口C，即没有指定被动模式端口范围的话，只是将frp客户端配置文件设置为</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[ftp]</span><br><span class="line">type = tcp</span><br><span class="line">local_ip = <span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span></span><br><span class="line">local_port = <span class="number">21</span></span><br><span class="line">remote_port = <span class="number">2121</span></span><br></pre></td></tr></table></figure>
+<p>那么，虽然通过FileZilla客户端可以在外网连接上内网，但是无法得到数据。FileZilla客户端报错</p>
+<blockquote>
+<p>错误:     无法建立数据连接: ECONNREFUSED - 连接被服务器拒绝</p>
+<p>响应:     425 Can’t open data connection for transfer of “/“</p>
+<p>错误:     读取目录列表失败</p>
+</blockquote>
+<h3 id="总结">总结</h3><p>FileZilla是一款不错的基于ftp协议，传输文件的工具，同样的，我们可以利用frp服务，实现FileZilla在没有NAT端口映射的情况下，穿透内网，传输文件的功能。</p>
+<h3 id="补充">补充</h3><p>FileZilla服务器端重启之后，再次通过FileZilla客户端去访问服务器端的21端口，竟然被拒绝。可以使用命令来检查服务器端的21端口是否允许访问</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">telnet</span> 192<span class="class">.168</span><span class="class">.X</span><span class="class">.X</span> 21</span><br></pre></td></tr></table></figure>
+<p>后来检查自己的防火墙后发现，自己虽然把专用网络的防火墙给关了，但是公用网络的防火墙还开着，而我的FileZilla服务器又处于公用网络。所以就能解释为啥不能访问服务器端的21端口了。解决的办法很简单，要么关闭公用网络的防火墙，要么在防火墙里的入站规则里添加一条，设置允许的协议和端口号为<code>TCP</code>以及<code>21</code>端口，操作设置为<code>允许连接</code>而不是只允许安全连接。<br>上面添加入站规则有个问题，虽然telnet可以检查到21端口通了，但是FileZilla客户端读取目录失败，可能还要添加一条出站规则，暂时不清楚怎么设置，先暂时关闭公用网络的防火墙吧，这么做FileZilla客户端就能正常工作了。</p>
+
+  </section>
+</article>
+
+  <div class="sharing grid">
+  <section class="profile grid-item grid">
+    <img class="avatar" src="/images/chili.png" alt="avatar" />
+    <div class="grid-item">
+      <p class="title"> chilihotpot </p>
+      <p class="subtitle"> You Are The JavaScript In My HTML </p>
+    <div>
+  </section>
+
+  <section class="share-btns">
+    <!-- <p> share it if you like it~ </p> -->
+    <a
+  class="twitter-share-button"
+  data-size="large"
+  data-via="DrakeLeung"
+  href="https://twitter.com/intent/tweet?text=之前我在<a href="http://"
+>
+  Tweet
+</a>
+
+<script>
+  window.twttr = (function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0],
+    t = window.twttr || {};
+  if (d.getElementById(id)) return t;
+  js = d.createElement(s);
+  js.id = id;
+  js.src = "https://platform.twitter.com/widgets.js";
+  js.async = true;
+  fjs.parentNode.insertBefore(js, fjs);
+
+  t._e = [];
+  t.ready = function(f) {
+    t._e.push(f);
+  };
+
+  return t;
+}(document, "script", "twitter-wjs"));
+</script>
+
+  </section>
+</div>
+
+
+  
+</main>
+
+</body>
+</html>

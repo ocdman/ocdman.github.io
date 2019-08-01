@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>二阶魔方层先法讲解 | chilihotpot</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <link rel="shortcut icon" href="/chili.ico">
+  <link rel="stylesheet" href="/css/app.css" type="text/css">
+  <!-- <link rel='stylesheet' href='http://fonts.useso.com/css?family=Source+Code+Pro'> -->
+</head>
+
+<body>
+  <nav class="app-nav">
+  
+    
+      <a href="/.">home</a>
+    
+  
+    
+      <a href="/archives">archive</a>
+    
+  
+    
+      <a href="/tags">tag</a>
+    
+  
+    
+      <a href="/categories">category</a>
+    
+  
+</nav>
+
+  <main class="post">
+  <article>
+  <h1 class="article-title">
+    <a href="/2018/07/06/二阶魔方层先法讲解/">二阶魔方层先法讲解</a>
+  </h1>
+
+  <section class="article-meta">
+    <p class="article-date">July 06 2018</p>
+  </section>
+
+  <section class="article-entry">
+    <p>距离上一次讲解二阶魔方面先法（即高级玩法），已经过去很久了。这一次要讲解的是，二阶魔方层先法（即基础玩法）。</p>
+<p>二阶魔方层先法的基本思路很简单，分为三个步骤，我们还是按照上黄下白前蓝后绿左橙右红的顺序来讲解</p>
+<h3 id="一、复原白色底面">一、复原白色底面</h3><p>这一步不做详细展开，勤加练习后，会抓摸到一些规律，难度不大。</p>
+<h3 id="二、复原黄色顶面">二、复原黄色顶面</h3><p>第一步完成之后，会产生以下7种情况</p>
+<table>
+<thead>
+<tr>
+<th>图1</th>
+<th>图2</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><img src="/img/2018070601.gif"></td>
+<td><img src="/img/2018070602.gif"></td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th>图3</th>
+<th>图4</th>
+<th>图5</th>
+<th>图6</th>
+<th>图7</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><img src="/img/2018070603.gif"></td>
+<td><img src="/img/2018070604.gif"></td>
+<td><img src="/img/2018070605.gif"></td>
+<td><img src="/img/2018070606.gif"></td>
+<td><img src="/img/2018070607.gif"></td>
+</tr>
+</tbody>
+</table>
+<p>这7种情况都只需要用一个公式，<strong>R U R’ U R U2 R’</strong>。唯一的区别在于，图1和图2顶层只有一个黄色块，而图3、4、5、6、7的顶层要么没有黄色块，要么有两个黄色块。图3、4、5、6、7需要确保<strong>左前位置</strong>有一个黄色块，然后只要按照公式执行一次或多次，就会成为图1、2的情况。<strong>确保每次转换时，黄色块的位置都位于左前，这点很重要</strong>。</p>
+<p>确保顶层只有一个黄色块后，需要将这唯一的顶层黄色块置于<strong>左前上位置</strong>，然后在按照公式来。图1只需要执行一遍公式，而图2需要执行两遍公式。<strong>确保每次转换时，黄色块的位置都位于左前上，这点很重要</strong>。</p>
+<p>这一步完成之后，黄色顶面也就复原完毕了。</p>
+<h3 id="三、复原上层角块">三、复原上层角块</h3><p>完成上一步后，确保上层，注意是上层相邻角块之间的颜色是否为同色。这一步，同样只需要一个公式， <strong>(R’ F R F’) R U2’ R’ U (R U2’ R’)</strong>。你问我什么是相邻角块？用一张图来说明什么是相邻角块。</p>
+<p><img src="/img/2018070608.gif"></p>
+<p>如果上层四个面的相邻角块之间都不同色，先执行一遍公式后，一定会有一个面的相邻角块颜色相同。此时，将这面同色的角块转到<strong>左侧</strong>，<strong>切记转到左侧后</strong>，再执行一遍公式，上层四个面的相邻角块都变成同色了。</p>
+<p>同样的道理，如果底层相邻角块不同色的话，首先将魔方倒置，变成白顶黄底，此时原来底层的角块就变成了上层的角块。之后的步骤和黄顶白底复原上层角块是一样的，公式用的也一样。</p>
+<p>好了，这一步结束之后，整个魔方也就复原完毕了。</p>
+<h3 id="总结">总结</h3><p>整个过程中，特别要注意的是主要是两点。一、第二步需要注意黄色块的位置，根据情况不同，每次转换时黄色块的位置也不同。二、第三步同色邻角需要置于左侧。所谓的层先法，就是确定底面以及顶面后，一层一层来。</p>
+
+  </section>
+</article>
+
+  <div class="sharing grid">
+  <section class="profile grid-item grid">
+    <img class="avatar" src="/images/chili.png" alt="avatar" />
+    <div class="grid-item">
+      <p class="title"> chilihotpot </p>
+      <p class="subtitle"> You Are The JavaScript In My HTML </p>
+    <div>
+  </section>
+
+  <section class="share-btns">
+    <!-- <p> share it if you like it~ </p> -->
+    <a
+  class="twitter-share-button"
+  data-size="large"
+  data-via="DrakeLeung"
+  href="https://twitter.com/intent/tweet?text=距离上一次讲解二阶魔方面先法（即高级玩法"
+>
+  Tweet
+</a>
+
+<script>
+  window.twttr = (function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0],
+    t = window.twttr || {};
+  if (d.getElementById(id)) return t;
+  js = d.createElement(s);
+  js.id = id;
+  js.src = "https://platform.twitter.com/widgets.js";
+  js.async = true;
+  fjs.parentNode.insertBefore(js, fjs);
+
+  t._e = [];
+  t.ready = function(f) {
+    t._e.push(f);
+  };
+
+  return t;
+}(document, "script", "twitter-wjs"));
+</script>
+
+  </section>
+</div>
+
+
+  
+</main>
+
+</body>
+</html>

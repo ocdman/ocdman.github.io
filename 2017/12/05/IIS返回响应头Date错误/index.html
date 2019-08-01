@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>IIS返回响应头Date错误 | chilihotpot</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <link rel="shortcut icon" href="/chili.ico">
+  <link rel="stylesheet" href="/css/app.css" type="text/css">
+  <!-- <link rel='stylesheet' href='http://fonts.useso.com/css?family=Source+Code+Pro'> -->
+</head>
+
+<body>
+  <nav class="app-nav">
+  
+    
+      <a href="/.">home</a>
+    
+  
+    
+      <a href="/archives">archive</a>
+    
+  
+    
+      <a href="/tags">tag</a>
+    
+  
+    
+      <a href="/categories">category</a>
+    
+  
+</nav>
+
+  <main class="post">
+  <article>
+  <h1 class="article-title">
+    <a href="/2017/12/05/IIS返回响应头Date错误/">IIS返回响应头Date错误</a>
+  </h1>
+
+  <section class="article-meta">
+    <p class="article-date">December 05 2017</p>
+  </section>
+
+  <section class="article-entry">
+    <p>公司网站测试环境下，用户状态栏登录后无效，我使用日志排查后发现跟Cookie有关，虽然设置了半小时过期，但是服务器返回的响应头里的Date时间不对，导致每次设置的Cookie都过期了。</p>
+<p>进一步研究这个问题后发现，每次修改本机时间，都会造成IIS返回的Http Response Header里的Date不再变化，只停留在修改时间的那一刻。这是一个很严重的问题，我以前从来没发现，原来服务器的响应头的时间还有不会变化的情况啊。这应该是IIS的问题，别的服务器我没发现过这种情况。</p>
+<p>网上搜索了这种情况的各种描述，终于被我定位到<a href="https://serverfault.com/questions/217343/date-header-returned-by-iis7-is-wrong" target="_blank" rel="external">Date header returned by IIS7 is wrong</a>这篇帖子。</p>
+<p>原来这是IIS上一个很著名的问题，我个人测试下来，不光是虚拟机上的时间同步，哪怕是本机上调整个时间，都会造成HTTP响应头Date不再变更的错误情况。<strong>解决办法是，必须重启HTTP服务</strong>。使用管理员身份打开CMD或者PowerShell，执行以下命令即可</p>
+<figure class="highlight livecodeserver"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">net <span class="built_in">stop</span> <span class="keyword">http</span></span><br><span class="line">net <span class="built_in">start</span> <span class="keyword">http</span></span><br><span class="line">iisreset</span><br></pre></td></tr></table></figure>
+<p>貌似执行一句<code>net stop http</code>很容易，但是我却费了很大周折。首先第一个错误</p>
+<blockquote>
+<p>发生系统错误 1051。</p>
+<p>停止控制被发送到其他正在运行的服务所依赖的服务。</p>
+</blockquote>
+<p>发生这种情况是因为多个服务依赖于http服务，所以必须把这些依赖服务先停止了。如果出现了我上面的错误，可以在<code>运行</code>里执行<code>services.msc</code>进入<code>服务</code>。把和http相关的服务逐个停止。如果你能顺利执行<code>net stop http</code>，那么恭喜你，如果还是报错，那么请接着往下看，第二个错误</p>
+<blockquote>
+<p>服务正在启动或停止中，请稍后片刻后再试一次。</p>
+</blockquote>
+<p>这个错误真的是把我难倒了，尝试了各种方法后依然无果，本以为进行不下去了，在同事的提点下发现，SQL SERVER服务也会占用http服务的，虽然给出的提示里没有，仍旧在<code>服务</code>里把SQL SERVER相关的服务停止一下，看看行不行。有些人可能到这里已经成功了，但是在我的环境下还是不行。</p>
+<p>不过在我的坚持不懈下，还是找到了占用http服务的进程，原来我开着Visual Studio在调试网站，虽然我把IIS Express的服务和程序都给关了，但是如果不把Visual Studio整个程序给关闭的话，http服务是无法关闭的，就会出现上面的报错。</p>
+<p>关闭了Visual Studio之后，再执行<code>net stop http</code>，整个世界清净了。接下来就是启动http服务以及iis服务了，这里一遍过。最大的难点就是如何关闭http服务。</p>
+<p>回想一下，如果不是调整了服务器时间造成Cookie过期，我也不会发现IIS响应头时间的问题。调整时间，对于IIS来说，需要重新启动http服务，否则将造成http响应时间不对的问题。</p>
+
+  </section>
+</article>
+
+  <div class="sharing grid">
+  <section class="profile grid-item grid">
+    <img class="avatar" src="/images/chili.png" alt="avatar" />
+    <div class="grid-item">
+      <p class="title"> chilihotpot </p>
+      <p class="subtitle"> You Are The JavaScript In My HTML </p>
+    <div>
+  </section>
+
+  <section class="share-btns">
+    <!-- <p> share it if you like it~ </p> -->
+    <a
+  class="twitter-share-button"
+  data-size="large"
+  data-via="DrakeLeung"
+  href="https://twitter.com/intent/tweet?text=公司网站测试环境下，用户状态栏登录后无效"
+>
+  Tweet
+</a>
+
+<script>
+  window.twttr = (function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0],
+    t = window.twttr || {};
+  if (d.getElementById(id)) return t;
+  js = d.createElement(s);
+  js.id = id;
+  js.src = "https://platform.twitter.com/widgets.js";
+  js.async = true;
+  fjs.parentNode.insertBefore(js, fjs);
+
+  t._e = [];
+  t.ready = function(f) {
+    t._e.push(f);
+  };
+
+  return t;
+}(document, "script", "twitter-wjs"));
+</script>
+
+  </section>
+</div>
+
+
+  
+</main>
+
+</body>
+</html>

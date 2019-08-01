@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>简议前端为什么要有MVVM模式 | chilihotpot</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <link rel="shortcut icon" href="/chili.ico">
+  <link rel="stylesheet" href="/css/app.css" type="text/css">
+  <!-- <link rel='stylesheet' href='http://fonts.useso.com/css?family=Source+Code+Pro'> -->
+</head>
+
+<body>
+  <nav class="app-nav">
+  
+    
+      <a href="/.">home</a>
+    
+  
+    
+      <a href="/archives">archive</a>
+    
+  
+    
+      <a href="/tags">tag</a>
+    
+  
+    
+      <a href="/categories">category</a>
+    
+  
+</nav>
+
+  <main class="post">
+  <article>
+  <h1 class="article-title">
+    <a href="/2017/12/27/简议前端为什么要有MVVM模式/">简议前端为什么要有MVVM模式</a>
+  </h1>
+
+  <section class="article-meta">
+    <p class="article-date">December 27 2017</p>
+  </section>
+
+  <section class="article-entry">
+    <p>在做微信小程序开发的时候，看到一句话，对我有所启示。</p>
+<p>大概的意思是，为什么微信的HTML语法，即WXML里充斥着很多wx:if这样的属性以及两对花括号这样的表达式。启示不光是微信开发，很多JS框架，早期的像KnockoutJS，包括现在的VueJS都有很多类似的写法，在HTML里有很多特有的属性和语法。这么做是为什么呢？</p>
+<p>最早我们开发网站时，会选择jQuery来操作DOM，以引起界面的变化响应用户的行为。当项目越来越大的时候，代码里充斥着非常多的界面交互逻辑和程序的各种状态变量，项目变得越来越难以维护。有时候，比方说给表格加个列，会引起一大片的修改，因为列号是写死的，牵一发而动全身。</p>
+<p>这显然不是一个很好的开发模式，因此才会衍生出MVVM开发模式。MVVM模式的核心思想是把渲染和逻辑分离开来。简单来说就是不再让JS直接操控DOM，JS只需要管理状态即可，然后再通过模板语法来描述状态和界面结构的关系。这样就可以实现界面和逻辑的分离了。职责变得更明确了，这就是MVVM的好处。</p>
+
+  </section>
+</article>
+
+  <div class="sharing grid">
+  <section class="profile grid-item grid">
+    <img class="avatar" src="/images/chili.png" alt="avatar" />
+    <div class="grid-item">
+      <p class="title"> chilihotpot </p>
+      <p class="subtitle"> You Are The JavaScript In My HTML </p>
+    <div>
+  </section>
+
+  <section class="share-btns">
+    <!-- <p> share it if you like it~ </p> -->
+    <a
+  class="twitter-share-button"
+  data-size="large"
+  data-via="DrakeLeung"
+  href="https://twitter.com/intent/tweet?text=在做微信小程序开发的时候，看到一句话，对"
+>
+  Tweet
+</a>
+
+<script>
+  window.twttr = (function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0],
+    t = window.twttr || {};
+  if (d.getElementById(id)) return t;
+  js = d.createElement(s);
+  js.id = id;
+  js.src = "https://platform.twitter.com/widgets.js";
+  js.async = true;
+  fjs.parentNode.insertBefore(js, fjs);
+
+  t._e = [];
+  t.ready = function(f) {
+    t._e.push(f);
+  };
+
+  return t;
+}(document, "script", "twitter-wjs"));
+</script>
+
+  </section>
+</div>
+
+
+  
+</main>
+
+</body>
+</html>

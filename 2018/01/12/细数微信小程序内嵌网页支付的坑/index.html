@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>细数微信小程序内嵌网页支付的坑 | chilihotpot</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <link rel="shortcut icon" href="/chili.ico">
+  <link rel="stylesheet" href="/css/app.css" type="text/css">
+  <!-- <link rel='stylesheet' href='http://fonts.useso.com/css?family=Source+Code+Pro'> -->
+</head>
+
+<body>
+  <nav class="app-nav">
+  
+    
+      <a href="/.">home</a>
+    
+  
+    
+      <a href="/archives">archive</a>
+    
+  
+    
+      <a href="/tags">tag</a>
+    
+  
+    
+      <a href="/categories">category</a>
+    
+  
+</nav>
+
+  <main class="post">
+  <article>
+  <h1 class="article-title">
+    <a href="/2018/01/12/细数微信小程序内嵌网页支付的坑/">细数微信小程序内嵌网页支付的坑</a>
+  </h1>
+
+  <section class="article-meta">
+    <p class="article-date">January 12 2018</p>
+  </section>
+
+  <section class="article-entry">
+    <p>随着小程序的普及，公司要求开发我们自己的小程序。对于开发来讲，怎么简单怎么来，正好我们有m端的h5页面，索性最简单的办法，把h5页面嵌到小程序中。</p>
+<h3 id="不支持打开非业务域名">不支持打开非业务域名</h3><p>在研究了一下微信小程序过后，我发现web-view这个控件，正好可以满足我们的要求。在一顿操作之后，小程序可以访问我们的m端了。但是微信限制了小程序直接打开外部域名的网站，自己的服务器以外的网站都不允许访问，除非你能说服你打开的第三方网站的管理人员把微信的验证文件放到他们网站的根目录下。很显然，对方也不会同意。所以，针对这种情况，我们只能将m端程序复制一份出来，将这份复制的程序阉割掉部分功能，然后给它再分配一个域名。小程序访问的就是这个复制阉割后的网站。</p>
+<p>这种做法的弊端就是，以后m端的改动，将带动小程序网站的改动。要维护两套程序业务功能相同，还得保证不出错。</p>
+<h3 id="Redirect-uri域名与后台配置不一致">Redirect-uri域名与后台配置不一致</h3><p>刚开始的时候我以为小程序只要一个web-view，就完事了，简直不能更轻松。谁知道在使用微信支付的时候，报错</p>
+<blockquote>
+<p>redirect-uri域名与后台配置不一致</p>
+</blockquote>
+<p>网上搜了一下，说是回调授权目录不一致导致的。我看了一下，确实是。公众号里配置的是m端的地址，跟小程序所使用的域名，确实不是同一个。而且最坑爹的是，微信一个公众号只允许设置一个回调授权目录。这可把我弄懵了，该怎么解决这个问题。好在牛人还是很多的，我在网上搜了一下，如何解决微信OAuth2.0网页授权只能设置一个回调域名的问题，一会儿就找到了答案，我采用的是<a href="https://github.com/HADB/GetWeixinCode" target="_blank" rel="external">这个办法</a>。</p>
+<p>###fail_no permission to execute</p>
+<p>解决了授权目录的问题之后，我一心想着，这下应该成功了吧，结果在微信支付的时候，报错</p>
+<blockquote>
+<p>fail_no permission to execute</p>
+</blockquote>
+<p>什么情况？网上说是没有配置支付目录，可我在微信支付平台上对小程序支付目录的路径已经配置过了啊，还有的说法是网页没有引用jweixin脚本，我都试了，网上其它的说法，包括应该配置的配置，我都核对过了没有任何问题。更奇葩的是，用微信浏览器直接打开小程序所引用的网站，微信支付成功。有没有搞错，不带这么不明确的提示啊。</p>
+<p>实在搞不懂状况的我，开始怀疑小程序使用web-view内嵌网页微信支付这条路不可取，开始网上搜索各种资料，得到的答案是棱模两可的。他们只是说web-view无法直接调起小程序支付，但也没完全否定通过公众号发起h5调用支付这条路不可取。我在这个问题上被困了很多天，尝试过各种方法，最终我选择放弃。</p>
+<p>因为我可以很负责任的告诉你，<strong>小程序内嵌网页通过公众号发起h5调用微信支付这条路不可取</strong>。</p>
+<p>为什么？我总结了一下原因，大致是因为微信有很多的支付方式，比方说，刷卡、公众号、扫码、APP以及小程序。每一种支付方式都有一套支付的逻辑，<a href="https://pay.weixin.qq.com/wiki/doc/api/index.html" target="_blank" rel="external">开发文档</a>上面写得清清楚楚，只要涉及到支付就要开通对应的支付功能，而开通支付是需要额外付费的，一次300。微信美其名曰，是第三方验证机构收取的验证费用，但是打死我也不相信微信不会从中分一杯羹。回到小程序，如果想通过小程序的渠道来支付，那么就应该开通小程序的支付功能，而不是走公众号的支付。我想微信不会傻到允许小程序有这种漏洞，大家都走公众号好了，内嵌个网页使用h5支付，避开小程序的支付，微信允许放着钱不赚这么傻的事吗？既然开通了小程序，又在小程序的环境里开发，那么对不起，请接受规则先。</p>
+<h3 id="开通微信支付">开通微信支付</h3><p>开通微信支付是一件很麻烦的事情。不光要提供营业执照等各种开户资料，还要填写认证公函，并且盖公司的公章。这还没完，还要提供商标注册证正反面，我是特别讨厌这些流程的，但没办法，谁让我要用他家的东西呢。付款完了之后，还要等第三方审核机构打电话过来和你确认。等这一切审核完了之后，我心想这应该差不多了吧，谁知道微信支付开通，还要绑定商户号。对于小程序来讲有两种选择，一种是创建一个新的商户号，另一种是绑定已有的商户号。我一开始没注意，我关心的是马上开通，创建一个新的商户号要提供各种商户资料，还要审核，相当于又走了一遍审核流程，时间上比较久。绑定已有商户号，只需要提供满足条件的商户号和密码就行了。但是我漏看了一行字，此过程不可逆。也就是说，为了贪图快捷，一旦你绑了一个不满足条件的商户号，或者你绑错了一个商户号，那么支付的这笔费用也就打水漂了，谁让人家是霸王条款呢。</p>
+<p>我们公司的公众号已经开通了商户号，所以可以直接拿来用。目前只有小程序支持绑定已有商户号的功能，当我绑定成功后，在微信支付里找了半天也没找到关于绑定的小程序的AppID。吓得我一度以为，300块钱打水漂了，后悔一开始就不该绑定已有商户号，应该再开一个新的才是，都是为了节约时间惹的祸。后来无意间在<strong>微信支付-&gt;营销中心-&gt;支付后配置</strong>里找到了，很不起眼的一个位置，也让我松了口气。</p>
+<h3 id="小程序获取openid">小程序获取openid</h3><p>既然确保了一个商户号同时绑定了公众号以及小程序两个AppID，那么是不是意味着只要以小程序的AppID和AppSecret来获取openid就可以实现web-view里的h5支付了呢？并不是，依然报错</p>
+<blockquote>
+<p>redirect-uri域名与后台配置不一致</p>
+</blockquote>
+<p>为什么呢？为什么会这样？我的回调授权目录从头至尾没有改动过啊。后来我仔细想了一下，因为我之前一直走的是公众号支付的流程，使用公众号的AppID和AppSecret来获取的openid，这没问题，可是一旦我改为小程序的AppID和AppSecret但是依然走公众号支付的接口来获取openid的话，的确是有问题的。</p>
+<p>这里要解释一下什么是openid，<strong>每一个微信用户在不同的平台上面都有一个唯一的openid</strong>。比方说，微信网页授权、小程序、APP的openid都不同，但是它们不会改变。那有没有一个每个平台都共用的id呢？答案是有的，微信提供unionid来打通个个平台上的连接。但问题是支付不认unionid，只认openid作为参数。所以我用公众平台的openid去进行小程序支付的时候，的确是不兼容的。所以，这也就很好解释之前报错<code>fail_no permission to execute</code>的原因了，但是这个报错也太不人性化了，一点儿都不具体。</p>
+<p>微信公众平台获取openid采用<a href="https://mp.weixin.qq.com/wiki?t=resource/res_main&amp;id=mp1421140842" target="_blank" rel="external">微信网页授权</a>的方式。它的步骤分为两步</p>
+<ol>
+<li>将微信公众平台的AppID作为参数进行URL跳转并获取Code</li>
+<li>利用Code去获取openid和access_token</li>
+</ol>
+<p>那小程序如何获取openid呢？它并不支持微信网页授权这一套。小程序官方给出的方案可以用一张图来概括</p>
+<p><img src="/img/2018011201.png" width="670px"></p>
+<h3 id="小程序中通过web-view发起支付">小程序中通过web-view发起支付</h3><p>小程序通过web-view发起支付的主要步骤分为，</p>
+<ol>
+<li>首先在小程序里执行wx.login()获取Code</li>
+<li>小程序里执行wx.request()发送code到你的服务器。微信不支持直接将Code发送到它自己的服务器来获取openid，但是允许将Code发送到第三方服务器（也就是你的服务器），再由你的服务器发送请求到微信服务器来获取openid。</li>
+<li>将获取到的openid保存到你的服务器上，生成你自己的3rd_session_key，值是openid。微信官方不建议直接将openid发送到客户端（也就是小程序里），因为openid是不变的，一旦泄露容易被人利用，所以保存在你的服务器上才是明智的举动。</li>
+<li>将第2步中wx.request()成功后返回的3rd_session_key存入小程序的storage中。</li>
+<li>进入web-view界面后，当后续用户在web-view中发起支付请求，将参数（其中包括订单号、支付成功后的返回路径等）返回给小程序，整个控制权切换到小程序中，然后在小程序中调用wx.checksession()检测登录态，如失效则重新发起登录流程。</li>
+<li>如果有效的话，从storage读取3rd_session_key，将其发送到你的服务器，来读取openid，从而调起数据签名，获取支付需要的签名参数：appId,nonceStr,package,signType,timeStamp。</li>
+<li>将获取到的签名参数，执行wx.requestPayment()，发起小程序中的支付。不管支付成功与否，再将控制权切换回web-view。</li>
+</ol>
+<p>整个过程看似很复杂，但梳理下来其实是有条有理的，如有不明白的地方可以参考小程序的<a href="https://pay.weixin.qq.com/wiki/doc/api/wxa/wxa_api.php?chapter=7_3&amp;index=4" target="_blank" rel="external">开发步骤</a>。</p>
+<p>因为web-view没办法直接唤起小程序的支付功能，但是它可以支持使用wx.miniProgram.navigateTo方法切换到小程序中，再由小程序完成支付。最后小程序通过wx.navigateBack()方法再切换到web-view里，是这么一个步骤。更多web-view信息可以参考<a href="https://mp.weixin.qq.com/debug/wxadoc/dev/component/web-view.html" target="_blank" rel="external">web-view组件说明</a>。</p>
+<h3 id="总结">总结</h3><p>小程序的开发诠释了什么叫做复杂。小程序社区的活跃度远远不及其它开发语言。真心找个回答问题的地都没地儿找，使用人数少，提问率低是目前对于微信开发者来讲最大的不适应的地方。</p>
+
+  </section>
+</article>
+
+  <div class="sharing grid">
+  <section class="profile grid-item grid">
+    <img class="avatar" src="/images/chili.png" alt="avatar" />
+    <div class="grid-item">
+      <p class="title"> chilihotpot </p>
+      <p class="subtitle"> You Are The JavaScript In My HTML </p>
+    <div>
+  </section>
+
+  <section class="share-btns">
+    <!-- <p> share it if you like it~ </p> -->
+    <a
+  class="twitter-share-button"
+  data-size="large"
+  data-via="DrakeLeung"
+  href="https://twitter.com/intent/tweet?text=随着小程序的普及，公司要求开发我们自己的"
+>
+  Tweet
+</a>
+
+<script>
+  window.twttr = (function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0],
+    t = window.twttr || {};
+  if (d.getElementById(id)) return t;
+  js = d.createElement(s);
+  js.id = id;
+  js.src = "https://platform.twitter.com/widgets.js";
+  js.async = true;
+  fjs.parentNode.insertBefore(js, fjs);
+
+  t._e = [];
+  t.ready = function(f) {
+    t._e.push(f);
+  };
+
+  return t;
+}(document, "script", "twitter-wjs"));
+</script>
+
+  </section>
+</div>
+
+
+  
+</main>
+
+</body>
+</html>

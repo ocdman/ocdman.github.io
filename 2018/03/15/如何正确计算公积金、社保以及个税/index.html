@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>如何正确计算公积金、社保以及个税 | chilihotpot</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <link rel="shortcut icon" href="/chili.ico">
+  <link rel="stylesheet" href="/css/app.css" type="text/css">
+  <!-- <link rel='stylesheet' href='http://fonts.useso.com/css?family=Source+Code+Pro'> -->
+</head>
+
+<body>
+  <nav class="app-nav">
+  
+    
+      <a href="/.">home</a>
+    
+  
+    
+      <a href="/archives">archive</a>
+    
+  
+    
+      <a href="/tags">tag</a>
+    
+  
+    
+      <a href="/categories">category</a>
+    
+  
+</nav>
+
+  <main class="post">
+  <article>
+  <h1 class="article-title">
+    <a href="/2018/03/15/如何正确计算公积金、社保以及个税/">如何正确计算公积金、社保以及个税</a>
+  </h1>
+
+  <section class="article-meta">
+    <p class="article-date">March 15 2018</p>
+  </section>
+
+  <section class="article-entry">
+    <p>每当发工资的时候，一旦数目和上个月的对不上，就会问财务要个工资条，然后自己再算一遍，生怕财务给算错了。</p>
+<p>也正是因为几个月才算一次，每次计算工资的时候，都想不起来是一个什么样的公式。趁着现在记忆还余热，赶紧记下来。</p>
+<h3 id="社保">社保</h3><p>不同地区每年的社保比例可能都会有相应的调整。以上海来讲，2017年-2018年社保缴费比例，养老保险个人缴8%，医疗保险个人缴2%，失业保险个人缴0.5%，其余的生育保险以及工伤保险个人都不缴。</p>
+<p>每个公司的社保缴费都有一个基数，以我们公司为例，我们的社保缴费基数是4300。那么个人承担的社保费用就是</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">4300</span> * (<span class="number">8</span>% + <span class="number">2</span>% + <span class="number">0.5</span>%) = <span class="number">451.5</span></span><br></pre></td></tr></table></figure>
+<h3 id="公积金">公积金</h3><p>公积金和社保一样，也都是每年在调，目前2018年上海个人承担公积金为7%，我们公司的公积金缴费基数是2828。那么个人承担的公积金费用就是</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">2828</span> * <span class="number">7</span>% = <span class="number">198</span></span><br></pre></td></tr></table></figure>
+<h3 id="个税">个税</h3><p>假设我的税前工资是10000，那么我的<strong>应纳税所得额 ＝ 税前工资 － 社保 － 公积金 － 起征点</strong>。目前的起征点为3500，未来可能会上调为5000。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">应纳税所得额 ＝ <span class="number">10000</span> - <span class="number">451.5</span> - <span class="number">198</span> - <span class="number">3500</span> = <span class="number">5850.5</span></span><br></pre></td></tr></table></figure>
+<p>目前2018年个税税率表为</p>
+<table>
+<thead>
+<tr>
+<th>级别</th>
+<th>应纳税所得额</th>
+<th>税率</th>
+<th>速算扣除数</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>不超过1500元的部分</td>
+<td>3%</td>
+<td>0</td>
+</tr>
+<tr>
+<td>2</td>
+<td>超过1500元至4500元的部分</td>
+<td>10%</td>
+<td>105</td>
+</tr>
+<tr>
+<td>3</td>
+<td>超过4500元至9000元的部分</td>
+<td>20%</td>
+<td>555</td>
+</tr>
+<tr>
+<td>4</td>
+<td>超过9000元至35000元的部分</td>
+<td>25%</td>
+<td>1005</td>
+</tr>
+<tr>
+<td>5</td>
+<td>超过35000元至55000元的部分</td>
+<td>30%</td>
+<td>2775</td>
+</tr>
+<tr>
+<td>6</td>
+<td>超过55000元至80000元的部分</td>
+<td>35%</td>
+<td>5505</td>
+</tr>
+<tr>
+<td>7</td>
+<td>超过80000元的部分</td>
+<td>45%</td>
+<td>13505</td>
+</tr>
+</tbody>
+</table>
+<p>上表看到应纳税所得额5850.5属于第3级别，<strong>应纳税额 ＝ 应纳税所得额 ＊ 税率 － 速算扣除数</strong></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">应纳税额 ＝ <span class="number">5850.5</span> ＊ <span class="number">20</span>% － <span class="number">555</span> ＝ <span class="number">615.1</span></span><br></pre></td></tr></table></figure>
+<p>最后，个税 ＝ 615.1</p>
+<h3 id="税后工资">税后工资</h3><p>税后工资也就是实发工资，<strong>税后工资＝ 税前工资 － 社保 － 公积金 － 个税</strong></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">税后工资 ＝ <span class="number">10000</span> － <span class="number">451.5</span> － <span class="number">198</span> － <span class="number">615.1</span> ＝ <span class="number">8735.4</span></span><br></pre></td></tr></table></figure>
+<h3 id="总结">总结</h3><p>公式就这些，其实并不复杂，主要是一些基数以及税率一直在调整，其它的也没什么。</p>
+
+  </section>
+</article>
+
+  <div class="sharing grid">
+  <section class="profile grid-item grid">
+    <img class="avatar" src="/images/chili.png" alt="avatar" />
+    <div class="grid-item">
+      <p class="title"> chilihotpot </p>
+      <p class="subtitle"> You Are The JavaScript In My HTML </p>
+    <div>
+  </section>
+
+  <section class="share-btns">
+    <!-- <p> share it if you like it~ </p> -->
+    <a
+  class="twitter-share-button"
+  data-size="large"
+  data-via="DrakeLeung"
+  href="https://twitter.com/intent/tweet?text=每当发工资的时候，一旦数目和上个月的对不"
+>
+  Tweet
+</a>
+
+<script>
+  window.twttr = (function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0],
+    t = window.twttr || {};
+  if (d.getElementById(id)) return t;
+  js = d.createElement(s);
+  js.id = id;
+  js.src = "https://platform.twitter.com/widgets.js";
+  js.async = true;
+  fjs.parentNode.insertBefore(js, fjs);
+
+  t._e = [];
+  t.ready = function(f) {
+    t._e.push(f);
+  };
+
+  return t;
+}(document, "script", "twitter-wjs"));
+</script>
+
+  </section>
+</div>
+
+
+  
+</main>
+
+</body>
+</html>

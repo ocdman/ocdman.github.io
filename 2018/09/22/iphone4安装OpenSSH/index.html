@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>iphone4安装OpenSSH | chilihotpot</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <link rel="shortcut icon" href="/chili.ico">
+  <link rel="stylesheet" href="/css/app.css" type="text/css">
+  <!-- <link rel='stylesheet' href='http://fonts.useso.com/css?family=Source+Code+Pro'> -->
+</head>
+
+<body>
+  <nav class="app-nav">
+  
+    
+      <a href="/.">home</a>
+    
+  
+    
+      <a href="/archives">archive</a>
+    
+  
+    
+      <a href="/tags">tag</a>
+    
+  
+    
+      <a href="/categories">category</a>
+    
+  
+</nav>
+
+  <main class="post">
+  <article>
+  <h1 class="article-title">
+    <a href="/2018/09/22/iphone4安装OpenSSH/">iphone4安装OpenSSH</a>
+  </h1>
+
+  <section class="article-meta">
+    <p class="article-date">September 22 2018</p>
+  </section>
+
+  <section class="article-entry">
+    <p>之前看到一篇文章说，可以利用家里废旧的手机做服务器，一下子被点燃了兴趣。我这人没什么兴趣爱好，就喜欢玩一些情怀。</p>
+<p>那篇文章介绍的是利用安卓手机来实现服务器，问题是我比较心仪的一台Nexus4的安卓机已经没了屏幕，光剩一个主板了。比较喜欢的又比较老的机器，就剩一台iPhone4了，但是它是iOS系统。好在也有办法，通过借助OpenSSH工具，可以实现远程访问iPhone。而要在iPhone上安装OpenSSH，首先得越狱。</p>
+<p>我这台iPhone4都已经是6年前的机子了，虽然时隔了很久，但是外形依然是历代iPhone中最漂亮得。如果能够重新把它利用起来，我将会很开心。机子的系统还是上古时代的iOS6.0版本，首先得找一个针对iOS6.0版本的越狱工具才行，而且必须得是完美越狱。</p>
+<p>网上搜了一圈后发现，貌似只有evasi0n 1.5.2版本是可针对iOS6的所有版本进行越狱的。但是这个版本的资源很多都失效了，好在我找到了一个<a href="https://pan.baidu.com/share/link?uk=3858887529&amp;shareid=364263" target="_blank" rel="external">evasi0n-mac-1.5.2.dmg</a>的MAC版本。因为1.5.2这个版本支持中文，所以只需要跟着提示来就好了。</p>
+<p>第一次越狱的时候，重启后提示说连接不上iPhone，好在还没真正开始越狱，只需要把手机上安装的越狱工具删除即可。第二次越狱一遍过，没有遇到任何坎坷，跟着提示做就对了，耐心点。期间手机会重启好几次。</p>
+<p>等越狱完成之后，系统就会给你安装Cydia，等Cydia自动配置完成后，通过Cydia，就可以找到OpenSSH，点击安装即可。然后到Wi-fi网络中，找到自己正在使用的无线网络，查看自己的IP地址。根据IP地址就能SSH连接上iPhone了</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh root@<span class="number">192.168</span><span class="number">.1</span>.X</span><br></pre></td></tr></table></figure>
+<p>iPhone的默认登录密码是<code>alpine</code>，是不是可以远程操作自己的手机了呢。</p>
+<p>别高兴的太早，iPhone默认没有安装编辑类软件，比如VI或者Nano，那怎么办呢？</p>
+<p>同样的方式，从Cydia中安装Vi IMproved，就可以在ssh远程登录后，使用VIM编辑器了。</p>
+<p>但这也不是最方便的方式，iPhone支持<code>apt-get</code>命令来安装软件包，但问题是我iPhone命令行中没有<code>apt-get</code>命令。几番查找后发现，原来<code>apt-get</code>命令依赖于Cydia中的包</p>
+<figure class="highlight crystal"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="constant">APT</span> <span class="number">0.7</span> <span class="constant">Strict</span></span><br><span class="line"><span class="constant">APT</span> <span class="number">0.7</span> <span class="constant">Strict</span>(<span class="class"><span class="keyword">lib</span>)</span></span><br><span class="line"><span class="constant">APT</span> <span class="number">0.7</span> (apt-key)</span><br></pre></td></tr></table></figure>
+<p>把这三个包安装完后，iPhone的命令行中就能看到<code>apt-get</code>命令了，之后所有的安装都有通过<code>apt-get</code>来进行了。</p>
+
+  </section>
+</article>
+
+  <div class="sharing grid">
+  <section class="profile grid-item grid">
+    <img class="avatar" src="/images/chili.png" alt="avatar" />
+    <div class="grid-item">
+      <p class="title"> chilihotpot </p>
+      <p class="subtitle"> You Are The JavaScript In My HTML </p>
+    <div>
+  </section>
+
+  <section class="share-btns">
+    <!-- <p> share it if you like it~ </p> -->
+    <a
+  class="twitter-share-button"
+  data-size="large"
+  data-via="DrakeLeung"
+  href="https://twitter.com/intent/tweet?text=之前看到一篇文章说，可以利用家里废旧的手"
+>
+  Tweet
+</a>
+
+<script>
+  window.twttr = (function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0],
+    t = window.twttr || {};
+  if (d.getElementById(id)) return t;
+  js = d.createElement(s);
+  js.id = id;
+  js.src = "https://platform.twitter.com/widgets.js";
+  js.async = true;
+  fjs.parentNode.insertBefore(js, fjs);
+
+  t._e = [];
+  t.ready = function(f) {
+    t._e.push(f);
+  };
+
+  return t;
+}(document, "script", "twitter-wjs"));
+</script>
+
+  </section>
+</div>
+
+
+  
+</main>
+
+</body>
+</html>

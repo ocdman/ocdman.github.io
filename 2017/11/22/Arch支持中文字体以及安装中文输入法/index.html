@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Arch支持中文字体以及安装中文输入法 | chilihotpot</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <link rel="shortcut icon" href="/chili.ico">
+  <link rel="stylesheet" href="/css/app.css" type="text/css">
+  <!-- <link rel='stylesheet' href='http://fonts.useso.com/css?family=Source+Code+Pro'> -->
+</head>
+
+<body>
+  <nav class="app-nav">
+  
+    
+      <a href="/.">home</a>
+    
+  
+    
+      <a href="/archives">archive</a>
+    
+  
+    
+      <a href="/tags">tag</a>
+    
+  
+    
+      <a href="/categories">category</a>
+    
+  
+</nav>
+
+  <main class="post">
+  <article>
+  <h1 class="article-title">
+    <a href="/2017/11/22/Arch支持中文字体以及安装中文输入法/">Arch支持中文字体以及安装中文输入法</a>
+  </h1>
+
+  <section class="article-meta">
+    <p class="article-date">November 22 2017</p>
+  </section>
+
+  <section class="article-entry">
+    <p>接着arch的教程，<a href="http://ocdman.github.io/2017/11/20/i3%E5%AE%9E%E7%8E%B0%E9%80%8F%E6%98%8E%E8%83%8C%E6%99%AF/" target="_blank" rel="external">上一篇</a>讲到了i3实现透明背景，这一节来讲讲arch如何支持中文字体以及安装中文输入法。</p>
+<h3 id="安装中文Locale">安装中文Locale</h3><p>首先设置中文locale，推荐参考官方Wiki:<a href="https://wiki.archlinux.org/index.php/Arch_Linux_Localization" target="_blank" rel="external">Arch Linux Localization</a>。</p>
+<p>修改<code>/etc/locale.gen</code>文件，取消对应项之前的注释符<code>#</code>即可。我个人的locale文件设置为</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">en_US<span class="class">.UTF-8</span> UTF-<span class="number">8</span></span><br><span class="line">zh_CN<span class="class">.UTF-8</span> UTF-<span class="number">8</span></span><br><span class="line">zh_CN<span class="class">.GB2312</span></span><br><span class="line">zh_CN<span class="class">.GBK</span> GBK</span><br><span class="line">zh_CN<span class="class">.GB18030</span> GB18030</span><br><span class="line">zh_TW BIG-<span class="number">5</span> </span><br><span class="line">zh_TW<span class="class">.UTF-8</span> UTF-<span class="number">8</span></span><br></pre></td></tr></table></figure>
+<p>修改完成之后，执行命令</p>
+<figure class="highlight gcode"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">locale-<span class="keyword">ge</span><span class="label">n</span></span><br></pre></td></tr></table></figure>
+<p>中文locale就安装完成了。</p>
+<h3 id="启用中文locale">启用中文locale</h3><p>打开文件<code>/etc/locale.conf</code>，设置全局有效的locale为</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">LANG=en_US.UTF-<span class="number">8</span></span><br></pre></td></tr></table></figure>
+<p><strong>官方wiki不推荐在此设置中文的locale，怕tty会出现乱码</strong>。</p>
+<p>因为我的图形界面是i3-wm，为了能在图形界面单独启用中文locale，需要在<code>~/.xinitrc</code>中设置中文locale。在<code>exec</code>之前加上三行代码</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> LANG=zh_CN.UTF-<span class="number">8</span></span><br><span class="line"><span class="keyword">export</span> LANGUAGE=zh_CN:en_US</span><br><span class="line"><span class="keyword">export</span> LC_CTYPE=en_US.UTF-<span class="number">8</span></span><br></pre></td></tr></table></figure>
+<p>这个时候，执行<code>startx</code>，在终端里随便输错一个命令，看看是不是提示中文了呢。</p>
+<p><strong>我个人并没有启用中文locale，因为终端的英文提示比起中文提示来，查找问题更方便</strong>。这个取决于个人喜好了。其实就算不启用中文locale，一样能在终端里看中文字体，影响不大，只不过提示不是中文而已。</p>
+<h3 id="安装中文字体">安装中文字体</h3><p>除了设置好中文locale之外，还需要安装中文字体。比如使用chromium浏览器时，如果没有安装中文字体的话，中文就显示成方格了。我个人安装了<code>wqy-zenhei</code>字体，我个人在使用过程中只有这一个<code>wqy-</code>开头的字体在chromium里起作用。执行命令</p>
+<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="title">pacman</span> -S wqy-zenhei</span><br></pre></td></tr></table></figure>
+<p>，现在如果打开chromium浏览中文网站时，字体显示就正常了。唯一的遗憾是i3的titlebar中文会显示成方格，暂时没有找到解决方法，影响也不大。</p>
+<p><img src="/img/2017112201.png" width="670px"></p>
+<h3 id="安装中文输入法">安装中文输入法</h3><p>中文字体也支持了，现在就缺一个中文输入法了。arch可以安装的中文输入法平台有<code>IBus</code>、<code>fcitx</code>和<code>scim</code>。我个人选择<code>fcitx</code>。详见wiki:<a href="https://wiki.archlinux.org/index.php/Fcitx" target="_blank" rel="external">Fcitx</a>。</p>
+<p>首先安装fcitx输入法，执行命令</p>
+<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="title">pacman</span> -S fcitx</span><br></pre></td></tr></table></figure>
+<p>其次，安装输入法模块。我并不知道哪些输入法模块支持<code>fcitx</code>，<code>fcitx-im</code>包含了全部模块，索性全部安装，执行命令</p>
+<figure class="highlight julia"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pacman -S fcitx-<span class="literal">im</span></span><br></pre></td></tr></table></figure>
+<p>因为我的图形界面是i3，属于非桌面环境，打开<code>~/.xinitrc</code>文件，在<code>exec</code>之前加上三行代码</p>
+<figure class="highlight d"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> GTK_IM_MODULE=fcitx</span><br><span class="line"><span class="keyword">export</span> QT_IM_MODULE=fcitx</span><br><span class="line"><span class="keyword">export</span> XMODIFIERS=<span class="keyword">@im</span>=fcitx</span><br></pre></td></tr></table></figure>
+<p>，用以注册输入法模块。接下来需要安装<code>fcitx</code>图形界面配置程序，执行命令</p>
+<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="title">pacman</span> -S fcitx-configtool</span><br></pre></td></tr></table></figure>
+<p>安装完成之后，打开i3的配置文件<code>~/.config/i3/config</code>，在里面加上一行代码</p>
+<figure class="highlight perl"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">exec</span> --<span class="keyword">no</span>-startup-id fcitx-autostart</span><br></pre></td></tr></table></figure>
+<p><code>fcitx-autostart</code>是自动启动<code>fcitx</code>输入法的命令，让它随开机自启动。<strong>接下来需要重新登录让环境变量生效。</strong></p>
+<p>重启后，进入图形界面，执行命令<code>fcitx-configtool</code>来打开输入法配置工具。</p>
+<p>可以看到<code>Input Method</code>选项里有语言可以选择了。<code>Global Config</code>里可以设置切换中英文的热键。接下来喜欢哪种语言作为默认语言，喜欢哪个键来切换中英文全凭个人喜好啦。设置完毕之后，打开Chromium浏览器，或者直接在终端里切换中英文试试呗。此外，还可以下载更多的第三方中文输入法，总有一款适合你。<strong>注意，一定要执行了<code>fcitx-autostart</code>命令后，才会在<code>fcitx-configtool</code>的<code>Input Method</code>里看见语言选项</strong>。由于我已经设置成了开机自启动，所以不需要执行<code>fcitx-autostart</code>命令了。</p>
+<p><img src="/img/2017112202.png" width="670px"><br><img src="/img/2017112203.png" width="670px"></p>
+<p>最后，如果还是有问题的话，记得执行一下命令<code>fcitx-diagnose</code>来进行诊断。</p>
+
+  </section>
+</article>
+
+  <div class="sharing grid">
+  <section class="profile grid-item grid">
+    <img class="avatar" src="/images/chili.png" alt="avatar" />
+    <div class="grid-item">
+      <p class="title"> chilihotpot </p>
+      <p class="subtitle"> You Are The JavaScript In My HTML </p>
+    <div>
+  </section>
+
+  <section class="share-btns">
+    <!-- <p> share it if you like it~ </p> -->
+    <a
+  class="twitter-share-button"
+  data-size="large"
+  data-via="DrakeLeung"
+  href="https://twitter.com/intent/tweet?text=接着arch的教程，<a href="h"
+>
+  Tweet
+</a>
+
+<script>
+  window.twttr = (function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0],
+    t = window.twttr || {};
+  if (d.getElementById(id)) return t;
+  js = d.createElement(s);
+  js.id = id;
+  js.src = "https://platform.twitter.com/widgets.js";
+  js.async = true;
+  fjs.parentNode.insertBefore(js, fjs);
+
+  t._e = [];
+  t.ready = function(f) {
+    t._e.push(f);
+  };
+
+  return t;
+}(document, "script", "twitter-wjs"));
+</script>
+
+  </section>
+</div>
+
+
+  
+</main>
+
+</body>
+</html>

@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Linux如何扩展根目录 | chilihotpot</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <link rel="shortcut icon" href="/chili.ico">
+  <link rel="stylesheet" href="/css/app.css" type="text/css">
+  <!-- <link rel='stylesheet' href='http://fonts.useso.com/css?family=Source+Code+Pro'> -->
+</head>
+
+<body>
+  <nav class="app-nav">
+  
+    
+      <a href="/.">home</a>
+    
+  
+    
+      <a href="/archives">archive</a>
+    
+  
+    
+      <a href="/tags">tag</a>
+    
+  
+    
+      <a href="/categories">category</a>
+    
+  
+</nav>
+
+  <main class="post">
+  <article>
+  <h1 class="article-title">
+    <a href="/2017/11/25/Linux如何扩展根目录/">Linux如何扩展根目录</a>
+  </h1>
+
+  <section class="article-meta">
+    <p class="article-date">November 25 2017</p>
+  </section>
+
+  <section class="article-entry">
+    <p>自己的Redhat 7的根目录分区有点吃紧，想来可以通过图形化界面来扩展根目录。谁知图形化界面貌似只能创建分区，并不能在原来的目录上扩展容量。搜索了一下，找到了<a href="http://blog.51cto.com/qiangsh/1559713" target="_blank" rel="external">这篇文章</a>，通过命令行的方式来解决了我的问题。</p>
+<p>首先Redhat 7运行在Parallels里，通过Parallels Desktop工具，编辑磁盘，扩大了了磁盘容量。因为我的根目录是基于LVM来操作的，所以我得要创建一个基于LVM的分区。这一部分我没有通过命令行，直接使用了GNOME下的Disk Utility。之前扩大了磁盘容量，可以在Disk Utility里发现多出来一个未分配的分区，编辑该分区，创建一个基于LVM，格式为<code>Ex4</code>的分区<code>/dev/sda3</code>，并且进行格式化。使用<code>fdisk -l</code>命令可以查看刚创建的分区的容量以及格式。</p>
+<p>接下来就要扩展根目录分区了，执行命令</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">lvs</span><br></pre></td></tr></table></figure>
+<p>来查看<code>lvm</code>组信息，其中的根目录分区信息在后面的命令中将会被用到。将刚才创建的<code>/dev/sda3</code>分区添加到<code>lvm</code>的组里。执行命令</p>
+<figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">pvcreate <span class="regexp">/dev/</span>sda3</span><br><span class="line">vgextend VolGroup <span class="regexp">/dev/</span>sda3</span><br></pre></td></tr></table></figure>
+<p>上面命令中的<code>VolGroup</code>是根目录分区的前缀。这样<code>/dev/sda3</code>就被添加到了<code>lvm</code>组，可以通过命令来查看更详细的信息</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vgdisplay</span><br></pre></td></tr></table></figure>
+<p>。最后给根分区分配扩展的空间，执行命令</p>
+<figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">lvextend -L +<span class="number">63.99</span>G <span class="regexp">/dev/</span>VolGroup<span class="regexp">/root /</span>dev<span class="regexp">/sda3</span></span><br></pre></td></tr></table></figure>
+<p>。这里的63.99G是我要分配给根目录的空间，<code>/dev/VolGroup/root</code>是根目录，分配完成之后要告诉系统，根目录分区的大小有调整，执行命令</p>
+<figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">resize2fs <span class="regexp">/dev/</span>VolGroup<span class="regexp">/root</span></span><br></pre></td></tr></table></figure>
+<p>至此，所有的步骤都已完成，根分区扩展成功。</p>
+
+  </section>
+</article>
+
+  <div class="sharing grid">
+  <section class="profile grid-item grid">
+    <img class="avatar" src="/images/chili.png" alt="avatar" />
+    <div class="grid-item">
+      <p class="title"> chilihotpot </p>
+      <p class="subtitle"> You Are The JavaScript In My HTML </p>
+    <div>
+  </section>
+
+  <section class="share-btns">
+    <!-- <p> share it if you like it~ </p> -->
+    <a
+  class="twitter-share-button"
+  data-size="large"
+  data-via="DrakeLeung"
+  href="https://twitter.com/intent/tweet?text=自己的Redhat 7的根目录分区有点吃"
+>
+  Tweet
+</a>
+
+<script>
+  window.twttr = (function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0],
+    t = window.twttr || {};
+  if (d.getElementById(id)) return t;
+  js = d.createElement(s);
+  js.id = id;
+  js.src = "https://platform.twitter.com/widgets.js";
+  js.async = true;
+  fjs.parentNode.insertBefore(js, fjs);
+
+  t._e = [];
+  t.ready = function(f) {
+    t._e.push(f);
+  };
+
+  return t;
+}(document, "script", "twitter-wjs"));
+</script>
+
+  </section>
+</div>
+
+
+  
+</main>
+
+</body>
+</html>

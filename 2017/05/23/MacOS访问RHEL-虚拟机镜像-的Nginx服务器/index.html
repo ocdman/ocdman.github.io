@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>MacOS访问RHEL(虚拟机镜像)的Nginx服务器 | chilihotpot</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <link rel="shortcut icon" href="/chili.ico">
+  <link rel="stylesheet" href="/css/app.css" type="text/css">
+  <!-- <link rel='stylesheet' href='http://fonts.useso.com/css?family=Source+Code+Pro'> -->
+</head>
+
+<body>
+  <nav class="app-nav">
+  
+    
+      <a href="/.">home</a>
+    
+  
+    
+      <a href="/archives">archive</a>
+    
+  
+    
+      <a href="/tags">tag</a>
+    
+  
+    
+      <a href="/categories">category</a>
+    
+  
+</nav>
+
+  <main class="post">
+  <article>
+  <h1 class="article-title">
+    <a href="/2017/05/23/MacOS访问RHEL-虚拟机镜像-的Nginx服务器/">MacOS访问RHEL(虚拟机镜像)的Nginx服务器</a>
+  </h1>
+
+  <section class="article-meta">
+    <p class="article-date">May 23 2017</p>
+  </section>
+
+  <section class="article-entry">
+    <p>上一章讲了在RHEL（虚拟机镜像）里搭建完成LNMP框架后，用Firefox打开</p>
+<blockquote>
+<p><a href="http://server_IP/info.php" target="_blank" rel="external">http://server_IP/info.php</a></p>
+</blockquote>
+<p>，验证php安装成功。但是同样的网址用MacOS里的浏览器打开，却看不到任何结果。</p>
+<p><strong>解决方案</strong><br>（1）明确自己的虚拟机使用的网络连接方式，桥接网络还是共享网络，我使用的是<strong><em>共享网络</em></strong>。<br>（2）确保防火墙是否关闭。在RHEL里查看防火墙状态的代码</p>
+<blockquote>
+<p>systemctl status firewalld</p>
+</blockquote>
+<p>如果状态为active，则需要关闭防火墙。执行</p>
+<blockquote>
+<p>systemctl stop firewalld</p>
+</blockquote>
+<p>。不过，这只是临时的方法，等电脑重启后，防火墙又自动开启了。所以，有必要永久关闭防火墙。执行</p>
+<blockquote>
+<p>systemctl disable firewalld</p>
+</blockquote>
+<p>。如果哪天想要开启防火墙了，执行</p>
+<blockquote>
+<p>systemctl enable firewalld</p>
+</blockquote>
+<p>。在关闭了防火墙之后，我在MacOS里的浏览器能够访问RHEL（虚拟机镜像）里的Nginx服务器了。</p>
+<p><strong>参考文章</strong><br><a href="https://stackoverflow.com/questions/33525492/access-centos-apache-server-hosted-in-parallels-10-from-mac-osx" target="_blank" rel="external">Access Centos Apache Server (Hosted in Parallels 10) From Mac OSX</a></p>
+
+  </section>
+</article>
+
+  <div class="sharing grid">
+  <section class="profile grid-item grid">
+    <img class="avatar" src="/images/chili.png" alt="avatar" />
+    <div class="grid-item">
+      <p class="title"> chilihotpot </p>
+      <p class="subtitle"> You Are The JavaScript In My HTML </p>
+    <div>
+  </section>
+
+  <section class="share-btns">
+    <!-- <p> share it if you like it~ </p> -->
+    <a
+  class="twitter-share-button"
+  data-size="large"
+  data-via="DrakeLeung"
+  href="https://twitter.com/intent/tweet?text=上一章讲了在RHEL（虚拟机镜像）里搭建"
+>
+  Tweet
+</a>
+
+<script>
+  window.twttr = (function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0],
+    t = window.twttr || {};
+  if (d.getElementById(id)) return t;
+  js = d.createElement(s);
+  js.id = id;
+  js.src = "https://platform.twitter.com/widgets.js";
+  js.async = true;
+  fjs.parentNode.insertBefore(js, fjs);
+
+  t._e = [];
+  t.ready = function(f) {
+    t._e.push(f);
+  };
+
+  return t;
+}(document, "script", "twitter-wjs"));
+</script>
+
+  </section>
+</div>
+
+
+  
+</main>
+
+</body>
+</html>

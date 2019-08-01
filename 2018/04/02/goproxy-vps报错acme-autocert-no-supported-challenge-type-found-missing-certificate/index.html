@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>goproxy-vps报错acme/autocert: no supported challenge type found &amp; missing certificate | chilihotpot</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <link rel="shortcut icon" href="/chili.ico">
+  <link rel="stylesheet" href="/css/app.css" type="text/css">
+  <!-- <link rel='stylesheet' href='http://fonts.useso.com/css?family=Source+Code+Pro'> -->
+</head>
+
+<body>
+  <nav class="app-nav">
+  
+    
+      <a href="/.">home</a>
+    
+  
+    
+      <a href="/archives">archive</a>
+    
+  
+    
+      <a href="/tags">tag</a>
+    
+  
+    
+      <a href="/categories">category</a>
+    
+  
+</nav>
+
+  <main class="post">
+  <article>
+  <h1 class="article-title">
+    <a href="/2018/04/02/goproxy-vps报错acme-autocert-no-supported-challenge-type-found-missing-certificate/">goproxy-vps报错acme/autocert: no supported challenge type found & missing certificate</a>
+  </h1>
+
+  <section class="article-meta">
+    <p class="article-date">April 02 2018</p>
+  </section>
+
+  <section class="article-entry">
+    <p>这两天我的主力翻墙工具goproxy-vps突然无法连上谷歌，一开始我以为是vps的问题，但查下来不是。莫非被GFW识别到了ip导致被墙了？但是以http协议访问我的域名网址却表现正常。不过让我无法理解的是，以https协议访问我的域名网址时却被告知无法连接。之前两个协议都能正常访问我的域名网址，但现在却出现了这种情况，这让我郁闷的同时又非常得不解。</p>
+<p>不知道从什么时候起，我得了一种不翻墙就会死的病。不能上谷歌真的能要了我的命。一想到我的主力翻墙工具都挂了，手里只剩下一个goproxy-php留作备用，心里非常地不安。得马上做点什么才是，之前搬瓦工上有一个一键安装shadowsocks我一直没用过，如果goproxy-vps真的不能用了，至少我还能使用ss来翻墙。最后我在vps上安装了shadowsocksR，它是ss的另一个版本，使用更加安全的算法。测试下来windows客户端ok，但是mac客户端没有成功，可能跟版本有关，不强求，好歹我有了条退路。</p>
+<p>goproxy-php的缺点是不稳定，有时候长达很久都连接不上谷歌，它依赖于第三方公司的服务器，容易被墙波及，延迟时间长，没有vps稳，好在这段时间还可以用。goproxy还有个gae的版本，需要经常扫描googleip，因为GFW每天都在封锁新的googleip，导致存活的优质的googleip少之又少，所以这个版本我基本已经不用了。</p>
+<p>回到正题，我必须得查出来goproxy-vps无法正常使用的原因，查看了goproxy-vps的日志后发现，原来一直在报错</p>
+<blockquote>
+<p>2018/01/10 19:56:14 http: TLS handshake error from xxxxxx:41426: acme/autocert: no supported challenge type found<br>2018/01/10 19:56:14 http: TLS handshake error from xxxxxx:41428: acme/autocert: missing certificate</p>
+</blockquote>
+<p>看文字应该是缺少证书的原因导致的，但问题是以前我也这么做，从来没有碰到过缺少证书的问题，而且我压根不知道有证书这么一茬。这究竟是为什么呢？在网上找到一个说法</p>
+<blockquote>
+<p>官方的库 golang.org/x/crypto/acme/autocert 自动配置有点不稳定，会出现下面错误，前段时间还可以，用Caddy 或其它做反向代理。</p>
+</blockquote>
+<p>goproxy-vps是用go语言重写的，它使用到了一些go语言官方的库，其中就包括了<code>acme/autocert</code>库，专门用来自动生成网站证书用的。如果说它不稳定，我可以理解，但为什么过了这么久才不稳定了，之前都挺稳定的。</p>
+<p>我突然想起社长在发布goproxy-vps时，有提到过使用自己证书的场景。详见<a href="https://goproxy0.github.io/discuss_history/goproxy/1470.html" target="_blank" rel="external">1470的帖子</a></p>
+<blockquote>
+<p>goproxy-vps 会实时地用 letsencrypt 的 API Server 签出合法证书</p>
+<p>autocert 自动使用 letsencrypt 的 tls-sni 协议签发证书，这样就可以无痛部署了</p>
+</blockquote>
+<p>Let’s Encrypt是一个免费、自动化以及开源的证书授权机构。我们知道https协议需要建立在服务器证书基础之上，只有正规的证书授权机构才能够颁发服务器证书，然后才会有客户端验证证书是否有效。如果用chrome浏览器打开具有SSL证书的网址，会看到URL栏最左边有一个绿色的锁的图案以及<strong>安全</strong>两个字，表明该网址的SSL证书是有效的。如果服务器压根没有提供证书或者证书已过期，那么chrome就会用红字来提示<strong>不安全</strong>，还会询问你是否继续访问。</p>
+<p>以前服务器证书都是花钱买的，需要在特定的机构网址去生成证书相关信息。免费开源的Let’s Encrypt的出现普及了https协议。</p>
+<p>goproxy-vps正是使用了Let’s Encrypt来配置SSL证书，而且是自动签发。所以以前我每次使用goproxy-vps时都毫无察觉，原因就在于此，我不用关心服务器证书的问题，goproxy-vps已经自动帮我创建了证书。那为什么还会报错缺少证书呢？问题出在前面那句话<code>acme/autocert: no supported challenge type found</code>。经查原来是因为</p>
+<blockquote>
+<p>这是使用 golang.org/x/crypto/acme/autocert 引发的错误，<br>背后的原因是 tls-sni-01由于可信的漏洞报告而被禁用。</p>
+</blockquote>
+<p>因为goproxy-vps使用了golang的<code>acme/autocert</code>库来自动签发证书，而<code>acme/autocert</code>库又依赖于tls-sni协议，letsentrypt禁用了tls-sni协议，所以才会出现上述的情况。<strong>所以，归根结底就是因为Let’s Encrypt禁用了tls-sni协议，导致了goproxy-vps无法自动创建证书了。没有证书就导致了客户端无法访问我的域名的443端口，从而连不上谷歌</strong>。</p>
+<p>找到问题就要对症下药，下一步就要为我的网站配置证书了。下一篇，我会讲述如何使用Let’s Encrypt提供的工具来配置自己的SSL证书。</p>
+
+  </section>
+</article>
+
+  <div class="sharing grid">
+  <section class="profile grid-item grid">
+    <img class="avatar" src="/images/chili.png" alt="avatar" />
+    <div class="grid-item">
+      <p class="title"> chilihotpot </p>
+      <p class="subtitle"> You Are The JavaScript In My HTML </p>
+    <div>
+  </section>
+
+  <section class="share-btns">
+    <!-- <p> share it if you like it~ </p> -->
+    <a
+  class="twitter-share-button"
+  data-size="large"
+  data-via="DrakeLeung"
+  href="https://twitter.com/intent/tweet?text=这两天我的主力翻墙工具goproxy-v"
+>
+  Tweet
+</a>
+
+<script>
+  window.twttr = (function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0],
+    t = window.twttr || {};
+  if (d.getElementById(id)) return t;
+  js = d.createElement(s);
+  js.id = id;
+  js.src = "https://platform.twitter.com/widgets.js";
+  js.async = true;
+  fjs.parentNode.insertBefore(js, fjs);
+
+  t._e = [];
+  t.ready = function(f) {
+    t._e.push(f);
+  };
+
+  return t;
+}(document, "script", "twitter-wjs"));
+</script>
+
+  </section>
+</div>
+
+
+  
+</main>
+
+</body>
+</html>

@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>MySQL-单表查询练习题 | chilihotpot</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <link rel="shortcut icon" href="/chili.ico">
+  <link rel="stylesheet" href="/css/app.css" type="text/css">
+  <!-- <link rel='stylesheet' href='http://fonts.useso.com/css?family=Source+Code+Pro'> -->
+</head>
+
+<body>
+  <nav class="app-nav">
+  
+    
+      <a href="/.">home</a>
+    
+  
+    
+      <a href="/archives">archive</a>
+    
+  
+    
+      <a href="/tags">tag</a>
+    
+  
+    
+      <a href="/categories">category</a>
+    
+  
+</nav>
+
+  <main class="post">
+  <article>
+  <h1 class="article-title">
+    <a href="/2017/07/22/MySQL-单表查询练习题/">MySQL-单表查询练习题</a>
+  </h1>
+
+  <section class="article-meta">
+    <p class="article-date">July 22 2017</p>
+  </section>
+
+  <section class="article-entry">
+    <h3 id="1-返回2007年6月生成的订单。涉及的表：Orders表">1.返回2007年6月生成的订单。涉及的表：Orders表</h3><p><img src="/img/2-1.jpg" alt="期望输出"></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="operator"><span class="keyword">select</span> orderid, orderdate, custid, empid</span><br><span class="line"><span class="keyword">from</span> orders</span><br><span class="line"><span class="keyword">where</span> <span class="keyword">date_format</span>(orderdate, <span class="string">'%Y%m'</span>) = <span class="string">'200706'</span></span><br><span class="line">;</span></span><br></pre></td></tr></table></figure>
+<h3 id="2-返回每月的最后一天生成的订单。涉及的表：Orders表">2.返回每月的最后一天生成的订单。涉及的表：Orders表</h3><p><img src="/img/2-2.jpg" alt="期望输出"></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="operator"><span class="keyword">select</span> orderid, orderdate, custid, empid</span><br><span class="line"><span class="keyword">from</span> orders</span><br><span class="line"><span class="keyword">where</span> orderdate = <span class="keyword">last_day</span>(orderdate)</span><br><span class="line">;</span></span><br></pre></td></tr></table></figure>
+<h3 id="3-返回姓氏（lastname）中包含字母‘a’两次或更多次的雇员。涉及的表：Employees表">3.返回姓氏（lastname）中包含字母‘a’两次或更多次的雇员。涉及的表：Employees表</h3><p><img src="/img/2-3.jpg" alt="期望输出"></p>
+<figure class="highlight vbnet"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> empid, firstname, lastname</span><br><span class="line"><span class="keyword">from</span> employees</span><br><span class="line"><span class="keyword">where</span> lastname <span class="keyword">like</span> <span class="comment">'%a%a%'</span></span><br><span class="line">;</span><br></pre></td></tr></table></figure>
+<h3 id="4-返回总价格（数量*单价）大于10000的所有订单，并按总价格排序。涉及的表：OrderDetails表">4.返回总价格（数量*单价）大于10000的所有订单，并按总价格排序。涉及的表：OrderDetails表</h3><p><img src="/img/2-4.jpg" alt="期望输出"></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="operator"><span class="keyword">select</span> orderid, <span class="keyword">sum</span>(qty * unitprice) totalvalue</span><br><span class="line"><span class="keyword">from</span> orderdetails</span><br><span class="line"><span class="keyword">group</span> <span class="keyword">by</span> orderid</span><br><span class="line"><span class="keyword">having</span> <span class="keyword">sum</span>(qty * unitprice) &gt; <span class="number">10000</span></span><br><span class="line"><span class="keyword">order</span> <span class="keyword">by</span> totalvalue <span class="keyword">desc</span></span><br><span class="line">;</span></span><br></pre></td></tr></table></figure>
+<h3 id="5-返回2007年平均运费最高的三个国家。涉及的表：Orders表">5.返回2007年平均运费最高的三个国家。涉及的表：Orders表</h3><p><img src="/img/2-5.jpg" alt="期望输出"></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="operator"><span class="keyword">select</span> shipcountry, <span class="keyword">avg</span>(freight) avgfreight</span><br><span class="line"><span class="keyword">from</span> orders</span><br><span class="line"><span class="keyword">where</span> <span class="keyword">year</span>(shippeddate) = <span class="number">2007</span></span><br><span class="line"><span class="keyword">group</span> <span class="keyword">by</span> shipcountry</span><br><span class="line"><span class="keyword">order</span> <span class="keyword">by</span> avgfreight <span class="keyword">desc</span></span><br><span class="line"><span class="keyword">limit</span> <span class="number">3</span>;</span></span><br></pre></td></tr></table></figure>
+<h3 id="6-为每个顾客单独根据订单日期的顺序（用orderID作为附加属性）来计算其订单的行号。涉及的表：Orders表">6.为每个顾客单独根据订单日期的顺序（用orderID作为附加属性）来计算其订单的行号。涉及的表：Orders表</h3><p><img src="/img/2-6.jpg" alt="期望输出"></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="operator"><span class="keyword">select</span> custid, orderdate, orderid, <span class="keyword">rownum</span></span><br><span class="line"><span class="keyword">from</span> (</span><br><span class="line">	<span class="keyword">select</span> <span class="keyword">t</span>.custid, <span class="keyword">t</span>.orderdate, <span class="keyword">t</span>.orderid, @<span class="keyword">rownum</span>:=@<span class="keyword">rownum</span>+<span class="number">1</span>,</span><br><span class="line">	<span class="keyword">if</span>(@pcust=<span class="keyword">t</span>.custid, @<span class="keyword">rank</span>:=@<span class="keyword">rank</span>+<span class="number">1</span>, @<span class="keyword">rank</span>:=<span class="number">1</span>) <span class="keyword">rownum</span>,</span><br><span class="line">	@pcust:=<span class="keyword">t</span>.custid</span><br><span class="line">	<span class="keyword">from</span> (</span><br><span class="line">		<span class="keyword">select</span> custid, orderdate, orderid</span><br><span class="line">		<span class="keyword">from</span> orders</span><br><span class="line">		<span class="keyword">order</span> <span class="keyword">by</span> custid, orderdate</span><br><span class="line">	) <span class="keyword">t</span>, (<span class="keyword">select</span> @<span class="keyword">rownum</span>:=<span class="number">0</span>, @pcust:=<span class="literal">null</span>, @<span class="keyword">rank</span>:=<span class="number">0</span>) a</span><br><span class="line">) <span class="keyword">result</span></span><br><span class="line">;</span></span><br></pre></td></tr></table></figure>
+<h3 id="7-构造一个SELECT语句，让它根据每个雇员的友好称谓，而返回其性别。对于‘Ms-’和‘Mrs-’，则返回‘Female’；对于‘Mr-’，则返回‘Female’；对于‘Mr；对于其他情况（例如：‘Dr-’），则返回‘Uknown’。涉及的表：Employees表">7.构造一个SELECT语句，让它根据每个雇员的友好称谓，而返回其性别。对于‘Ms.’和‘Mrs.’，则返回‘Female’；对于‘Mr.’，则返回‘Female’；对于‘Mr；对于其他情况（例如：‘Dr.’），则返回‘Uknown’。涉及的表：Employees表</h3><p><img src="/img/2-7.jpg" alt="期望输出"></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="operator"><span class="keyword">select</span> empid, firstname, lastname, titleofcourtesy, </span><br><span class="line"><span class="keyword">case</span> titleofcourtesy</span><br><span class="line">	<span class="keyword">when</span> <span class="string">'Ms.'</span> <span class="keyword">then</span> <span class="string">'Female'</span></span><br><span class="line">	<span class="keyword">when</span> <span class="string">'Mrs.'</span> <span class="keyword">then</span> <span class="string">'Female'</span></span><br><span class="line">	<span class="keyword">when</span> <span class="string">'Mr.'</span> <span class="keyword">then</span> <span class="string">'Male'</span></span><br><span class="line">	<span class="keyword">else</span> <span class="string">'Unknown'</span></span><br><span class="line"><span class="keyword">end</span> gender</span><br><span class="line"><span class="keyword">from</span> employees</span><br><span class="line">;</span></span><br></pre></td></tr></table></figure>
+<h3 id="8-返回每个客户的客户ID和所在区域。对输出中的行按区域排序，NULL值排在最后（在所有非NULL值之后）。涉及的表：Customers表">8.返回每个客户的客户ID和所在区域。对输出中的行按区域排序，NULL值排在最后（在所有非NULL值之后）。涉及的表：Customers表</h3><p><img src="/img/2-8.jpg" alt="期望输出"></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="operator"><span class="keyword">select</span> custid, region </span><br><span class="line"><span class="keyword">from</span> customers</span><br><span class="line"><span class="keyword">order</span> <span class="keyword">by</span> <span class="keyword">isnull</span>(region), region, custid</span><br><span class="line">;</span></span><br><span class="line">或</span><br><span class="line"><span class="operator"><span class="keyword">select</span> custid, region </span><br><span class="line"><span class="keyword">from</span> customers</span><br><span class="line"><span class="keyword">order</span> <span class="keyword">by</span> <span class="keyword">case</span> <span class="keyword">when</span> region <span class="keyword">is</span> <span class="literal">null</span> <span class="keyword">then</span> <span class="number">1</span> <span class="keyword">else</span> <span class="number">0</span> <span class="keyword">end</span>, region, custid</span><br><span class="line">;</span></span><br></pre></td></tr></table></figure>
+
+  </section>
+</article>
+
+  <div class="sharing grid">
+  <section class="profile grid-item grid">
+    <img class="avatar" src="/images/chili.png" alt="avatar" />
+    <div class="grid-item">
+      <p class="title"> chilihotpot </p>
+      <p class="subtitle"> You Are The JavaScript In My HTML </p>
+    <div>
+  </section>
+
+  <section class="share-btns">
+    <!-- <p> share it if you like it~ </p> -->
+    <a
+  class="twitter-share-button"
+  data-size="large"
+  data-via="DrakeLeung"
+  href="https://twitter.com/intent/tweet?text= id="1-返回2007年6月生成的订"
+>
+  Tweet
+</a>
+
+<script>
+  window.twttr = (function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0],
+    t = window.twttr || {};
+  if (d.getElementById(id)) return t;
+  js = d.createElement(s);
+  js.id = id;
+  js.src = "https://platform.twitter.com/widgets.js";
+  js.async = true;
+  fjs.parentNode.insertBefore(js, fjs);
+
+  t._e = [];
+  t.ready = function(f) {
+    t._e.push(f);
+  };
+
+  return t;
+}(document, "script", "twitter-wjs"));
+</script>
+
+  </section>
+</div>
+
+
+  
+</main>
+
+</body>
+</html>

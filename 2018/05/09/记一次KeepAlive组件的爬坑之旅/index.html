@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>记一次KeepAlive组件的爬坑之旅 | chilihotpot</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <link rel="shortcut icon" href="/chili.ico">
+  <link rel="stylesheet" href="/css/app.css" type="text/css">
+  <!-- <link rel='stylesheet' href='http://fonts.useso.com/css?family=Source+Code+Pro'> -->
+</head>
+
+<body>
+  <nav class="app-nav">
+  
+    
+      <a href="/.">home</a>
+    
+  
+    
+      <a href="/archives">archive</a>
+    
+  
+    
+      <a href="/tags">tag</a>
+    
+  
+    
+      <a href="/categories">category</a>
+    
+  
+</nav>
+
+  <main class="post">
+  <article>
+  <h1 class="article-title">
+    <a href="/2018/05/09/记一次KeepAlive组件的爬坑之旅/">记一次KeepAlive组件的爬坑之旅</a>
+  </h1>
+
+  <section class="article-meta">
+    <p class="article-date">May 09 2018</p>
+  </section>
+
+  <section class="article-entry">
+    <p>这一次的项目中需要缓存标签页，Vue-Router的缓存组件KeepAlive，让我重重地摔了一次坑，也让我记录下这段爬坑的心路历程。</p>
+<p>首先介绍一下，项目前端架构</p>
+<figure class="highlight brainfuck"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">App</span><span class="string">.</span><span class="comment">vue				</span><span class="literal">-</span><span class="literal">-</span><span class="comment">启动页</span></span><br><span class="line"><span class="comment">|</span><span class="literal">-</span><span class="literal">-</span> <span class="comment">Home</span><span class="string">.</span><span class="comment">vue		</span><span class="literal">-</span><span class="literal">-</span><span class="comment">首页</span></span><br><span class="line"><span class="comment">|</span><span class="literal">-</span><span class="literal">-</span> <span class="comment">Abstract</span><span class="string">.</span><span class="comment">vue	</span><span class="literal">-</span><span class="literal">-</span><span class="comment">抽象组件，针对二级路由</span></span><br><span class="line"><span class="comment">|</span><span class="literal">-</span><span class="literal">-</span> <span class="comment">Form</span><span class="string">.</span><span class="comment">vue		</span><span class="literal">-</span><span class="literal">-</span><span class="comment">示例组件</span></span><br><span class="line"><span class="comment">|</span><span class="literal">-</span><span class="literal">-</span> <span class="string">.</span><span class="string">.</span><span class="string">.</span><span class="comment">				</span><span class="literal">-</span><span class="literal">-</span><span class="comment">其它组件</span></span><br></pre></td></tr></table></figure>
+<p>我的路由配置文件router.js如下</p>
+<figure class="highlight xquery"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  path: <span class="string">'/'</span></span><br><span class="line">  name: <span class="string">'首页'</span>,</span><br><span class="line">  component: Home,</span><br><span class="line">  children: [&#123;</span><br><span class="line">   	path: <span class="string">'/example'</span>,</span><br><span class="line">   	name: <span class="string">'示例'</span>,</span><br><span class="line">   	component: Abstract,</span><br><span class="line">   	children: [&#123;</span><br><span class="line">      path: <span class="string">'/form'</span>,</span><br><span class="line">      name: <span class="string">'表单'</span>,</span><br><span class="line">      component: Form</span><br><span class="line">   	&#125;]</span><br><span class="line">  &#125;]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>App.vue的内容如下</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="title">div</span> <span class="attribute">id</span>=<span class="value">"app"</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="title">router-view</span>&gt;</span><span class="tag">&lt;/<span class="title">router-view</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="title">div</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>Home.vue的内容如下</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="title">aside</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="title">el-menu</span>&gt;</span></span><br><span class="line">      ...</span><br><span class="line">    <span class="tag">&lt;/<span class="title">el-menu</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="title">aside</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="title">section</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="title">el-tabs</span>&gt;</span></span><br><span class="line">    	...</span><br><span class="line">    <span class="tag">&lt;<span class="title">el-tabs</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="title">router-view</span>&gt;</span><span class="tag">&lt;/<span class="title">router-view</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="title">section</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>Abstract.vue的内容如下</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;div&gt;</span></span><br><span class="line">	<span class="tag">&lt;router-view&gt;</span><span class="tag">&lt;/router-view&gt;</span></span><br><span class="line"><span class="tag">&lt;/div&gt;</span></span><br></pre></td></tr></table></figure>
+<p>以上三个vue组件都用到了vue-router，vue-router的router-view标签，可以根据路由的变化，自动渲染路由对应的组件到router-view标签里。</p>
+<p>由于Vue是单页面应用，只要路由发生变动，router-view对应的组件就会重新渲染，那么问题来了，随着路由的更改，如何缓存下每一个路由发生变化前的页面呢？答案是使用keep-alive标签。</p>
+<p>Vue-Router的官方文档说只要将router-view嵌在keep-alive标签内，就能实现页面缓存。就像这样</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;keep-alive&gt;</span></span><br><span class="line">	<span class="tag">&lt;router-view&gt;</span><span class="tag">&lt;/router-view&gt;</span></span><br><span class="line"><span class="tag">&lt;/keep-alive&gt;</span></span><br></pre></td></tr></table></figure>
+<p>我照着葫芦画瓢，给Home.vue文件修改了一下，然而，并没有缓存效果。经过几次尝试后发现，由于我使用了嵌套路由，也就是说Home.vue组件里的router-view标签嵌套了Abstract.vue组件里的router-view标签，所以光给Home.vue文件里加一个keep-alive还不够，还得给Abstract.vue文件里加一个。OK，缓存起效果了。</p>
+<p>第二个问题，如何清空标签页缓存，或者叫做如何清空组件缓存。</p>
+<p>我使用了Vuex来记录打开过的路由，从而可以实现标签页的功能。在标签页来回切换的时候，缓存的功能看上去很美妙，但是关闭标签页后，需要清空该标签页对应路由组件的缓存，这段用代码该怎么实现呢。</p>
+<p>Vue-Router的官方文档资料提到的不多，我是参考了网上给出的建议，给keep-alive加上include特性。如果要实现一个打开标签页a，再关闭标签页a，清空标签页a的缓存的逻辑，代码上需要这么做。</p>
+<p>首先是abstract.vue文件，在路由发生变化的时候，往其属性cached数组里添加组件的名称，组件名和二级路由名一致。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">&lt;keep-alive :include=<span class="string">"cached"</span>&gt;</span><br><span class="line">	<span class="xml"><span class="tag">&lt;<span class="title">router-view</span>&gt;</span><span class="tag">&lt;/<span class="title">router-view</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="title">keep-alive</span>&gt;</span></span><br><span class="line"></span><br><span class="line">export default &#123;</span><br><span class="line">  	data() &#123;</span><br><span class="line">      	return &#123;</span><br><span class="line">          	cached: []</span><br><span class="line">      	&#125;</span><br><span class="line">  	&#125;,</span><br><span class="line">    beforeRouteEnter: function(to, from, next) &#123;</span><br><span class="line">      	next(vm =&gt; &#123;</span><br><span class="line">      		...</span><br><span class="line">      		// 允许标签页缓存</span><br><span class="line">          	var name = to.path.split('/')[2];</span><br><span class="line">          	var index = vm.cached.indexOf(name);</span><br><span class="line">          	if(index === -1)&#123;</span><br><span class="line">              	cached.push(name);</span><br><span class="line">          	&#125;</span><br><span class="line">      	&#125;);</span><br><span class="line">  	&#125;</span><br><span class="line">  	watch: &#123;</span><br><span class="line">      	'$route'(to) &#123;</span><br><span class="line">      		...</span><br><span class="line">      		// 允许标签页缓存</span><br><span class="line">          	var name = to.path.split('/')[2];</span><br><span class="line">          	var index = this.cached.indexOf(name);</span><br><span class="line">          	if(index === -1)&#123;</span><br><span class="line">              	this.cached.push(name);</span><br><span class="line">          	&#125;</span><br><span class="line">      	&#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span></span><br></pre></td></tr></table></figure>
+<p>然后是Home.vue文件，在删除tab页时，从abstract组件里属性cached数组移除要清空缓存的组件名。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">&lt;keep-alive&gt;</span><br><span class="line">	<span class="xml"><span class="tag">&lt;<span class="title">router-view</span>&gt;</span><span class="tag">&lt;/<span class="title">router-view</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="title">keep-alive</span>&gt;</span></span><br><span class="line"></span><br><span class="line">export default &#123;</span><br><span class="line">	name: 'home',</span><br><span class="line">    methods: &#123;</span><br><span class="line">        tabRemove(target)&#123;</span><br><span class="line">          	...</span><br><span class="line">          	// 清空标签页缓存</span><br><span class="line">          	// 找到Abstract组件</span><br><span class="line">          	var abstract = this.$children[...].$children.find(function(children)&#123;</span><br><span class="line">            return children.$data.hasOwnProperty('cached');  </span><br><span class="line">          	&#125;);</span><br><span class="line">			if(abstract)&#123;</span><br><span class="line">				var cached = abstracct.$data.cached;</span><br><span class="line">                var name = target.split('/')[2];</span><br><span class="line">                var index = cached.indexOf(name);</span><br><span class="line">                if(index &gt; -1)&#123;</span><br><span class="line">                    cached.splice(index, 1);  </span><br><span class="line">                &#125;</span><br><span class="line">			&#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span></span><br></pre></td></tr></table></figure>
+<p>以上这段代码，cached是一个数组，根据组件的name属性，动态添加和删除组件。include特性的功能主要有，如果想要缓存的话，只要将组件名添加到cached数组里，如果想要清空组件缓存的话，只要将组件名从cached数组里移除。</p>
+<p>问题是我照着网上的方法修改了之后，提示错误信息</p>
+<blockquote>
+<p>include只接受字符串和正则表达式，不接受数组。</p>
+</blockquote>
+<p>我在网上找的一个demo，加上了include特性之后，发现可以清空组件缓存。我就纳闷了，后来经过对比发现，demo用的vue以及vue-router版本要高于我项目中用到的版本，果断修改了package.json文件里的vue以及vue-router版本，执行<code>npm install</code>升级。</p>
+<p>终于不再报错，虽然可以清空标签页的缓存了，但是有个bug，最后一个关闭的标签页缓存仍然存在，用户只要关闭标签页后再次点击该标签页对应的菜单，会发现标签页的内容没有刷新，影响用户体验。</p>
+<p>最后我想到了一个方法，给Home.vue同样增加一个cached数组，并且在Home.vue文件里的keep-alive标签增加include特性，在新增标签页的时候，往Home组件里的cached数组，动态添加abstract组件的组件名，然后在关闭最后一个标签页的时候，清空cached数组。这样就可以达到完美的效果。</p>
+<p>Home.vue文件的修改</p>
+<figure class="highlight xquery"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line">&lt;keep-alive :include=<span class="string">"cached"</span>&gt;</span><br><span class="line">	&lt;router-view&gt;&lt;/router-view&gt;</span><br><span class="line">&lt;/keep-alive&gt;</span><br><span class="line"></span><br><span class="line">export <span class="keyword">default</span> &#123;</span><br><span class="line">	name: <span class="string">'home'</span>,</span><br><span class="line">	data()&#123;</span><br><span class="line">      	return &#123;</span><br><span class="line">          	cached: []</span><br><span class="line">      	&#125;</span><br><span class="line">	&#125;</span><br><span class="line">    methods: &#123;</span><br><span class="line">        tabRemove(target)&#123;</span><br><span class="line">          	...</span><br><span class="line">          	// 清空标签页缓存</span><br><span class="line">          	// 找到Abstract组件</span><br><span class="line">          	var abstract = this.<span class="variable">$children</span>[...].<span class="variable">$children</span>.find(function(children)&#123;</span><br><span class="line">            return children.<span class="variable">$data</span>.hasOwnProperty(<span class="string">'cached'</span>);  </span><br><span class="line">          	&#125;);</span><br><span class="line">			if(abstract)&#123;</span><br><span class="line">				var cached = abstracct.<span class="variable">$data</span>.cached;</span><br><span class="line">                var name = target.split(<span class="string">'/'</span>)[<span class="number">2</span>];</span><br><span class="line">                var index = cached.indexOf(name);</span><br><span class="line">                if(index &gt; -<span class="number">1</span>)&#123;</span><br><span class="line">                    cached.splice(index, <span class="number">1</span>);  </span><br><span class="line">                &#125;</span><br><span class="line">                if(cached.length === <span class="number">0</span>) &#123;</span><br><span class="line">                	//动态删除abstract组件名</span><br><span class="line">                  	this.cached.pop();</span><br><span class="line">                &#125;</span><br><span class="line">			&#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    watch: &#123;</span><br><span class="line">      	<span class="string">'$route'</span>(to) &#123;</span><br><span class="line">      		...</span><br><span class="line">      		//动态添加abstract组件名</span><br><span class="line">          	if(this.cached.indexOf(<span class="string">'abstract'</span>) === -<span class="number">1</span>)&#123;</span><br><span class="line">              	this.cached.push(<span class="string">'abstract'</span>);</span><br><span class="line">          	&#125;</span><br><span class="line">      	&#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>Abstract.vue文件添加组件名<br><figure class="highlight less"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">export</span> <span class="tag">default</span> &#123;</span><br><span class="line">  	<span class="attribute">name</span>: <span class="string">'abstract'</span></span><br><span class="line">  	...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>满心欢喜的我兴冲冲地以为标签页缓存的功能已经完成了，但是随着发布到生产环境以后发现，某些不该缓存的页面出现了缓存，最后一个标签页关闭，再次打开仍然有缓存。这到底是怎么回事？</p>
+<p>一脸懵逼的我，又一次陷入了绝望中。本来开发环境下还能用Vue.js devtools工具来查看Vue生成的结构，但是生产环境不允许，好在网上找到了方案。修改main.js配置文件，加入一行</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">...</span><br><span class="line">Vue<span class="class">.config</span><span class="class">.devtools</span> = true</span><br></pre></td></tr></table></figure>
+<p>这样就能够在生产环境下也能查看Vue的结构了。</p>
+<p>经过查看发现，原来生产环境下的嵌套路由，即Abstract组件，它只要一级路由发生变动，就会生成一个新的Abstract组件。而开发环境下没有这个问题，无论一级路由怎么变，都只会共用一个Abstract组件。出现这种状况我都不知道该怎么提问了。原来可以通过给Home组件的cached数组属性，动态添加abstract组件名来清空最后一个关闭的标签页的缓存，现在也不能用了。最差的体验就是每一个最后关闭的一级路由下的二级路由缓存都无法清除。难道真的一点办法都没有了吗？</p>
+<p>最后我不得不采用的方案就是，去除嵌套路由，不再使用Abstract组件，只用Home组件里的router-view标签。而我所要做的就是对路由配置文件router.js，修改结构。</p>
+<figure class="highlight xquery"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  path: <span class="string">'/'</span></span><br><span class="line">  name: <span class="string">'首页'</span>,</span><br><span class="line">  component: Home,</span><br><span class="line">  children: [&#123;</span><br><span class="line">   	path: <span class="string">'/example/form'</span>,</span><br><span class="line">   	name: <span class="string">'示例'</span>,</span><br><span class="line">   	component: Form,</span><br><span class="line">   	meta: &#123;</span><br><span class="line">      name: <span class="string">'表单'</span></span><br><span class="line">   	&#125;,</span><br><span class="line">   	...</span><br><span class="line">  &#125;]</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>Home.vue文件的修改如下</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line">&lt;keep-alive :include=<span class="string">"cached"</span>&gt;</span><br><span class="line">	<span class="xml"><span class="tag">&lt;<span class="title">router-view</span>&gt;</span><span class="tag">&lt;/<span class="title">router-view</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="title">keep-alive</span>&gt;</span></span><br><span class="line"></span><br><span class="line">export default &#123;</span><br><span class="line">  	name: 'home',</span><br><span class="line">	data() &#123;</span><br><span class="line">      	return &#123;</span><br><span class="line">          	cached: []</span><br><span class="line">      	&#125;</span><br><span class="line">	&#125;,</span><br><span class="line">    methods: &#123;</span><br><span class="line">        tabRemove(target)&#123;</span><br><span class="line">          	...</span><br><span class="line">          	// 清空标签页缓存</span><br><span class="line">			var name = target.split('/')[2];</span><br><span class="line">			var index = this.cached.indexOf(name);</span><br><span class="line">			if(index &gt; -1)&#123;</span><br><span class="line">            	this.cached.splice(index, 1);  </span><br><span class="line">			&#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    watch: &#123;</span><br><span class="line">      	'$route'(to) &#123;</span><br><span class="line">      		...</span><br><span class="line">      		// 允许标签页缓存</span><br><span class="line">          	var name = to.path.split('/')[2];</span><br><span class="line">          	var index = this.cached.indexOf(name);</span><br><span class="line">          	if(index === -1)&#123;</span><br><span class="line">              	this.cached.push(name);</span><br><span class="line">          	&#125;</span><br><span class="line">      	&#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span></span><br></pre></td></tr></table></figure>
+<p>没想到这种方法，对清空标签页缓存竟然很友好。我也从没想到使用了嵌套路由后，生产环境的Vue组件结构竟然会和开发环境不一样。当然我想这肯定有其它的解决办法，只是我不知道怎么整理语言来提出这个问题。我选择的是改变路由结构，只用一级路由的办法，绕开了这个不知道怎么解决的问题。</p>
+<p>虽然踩过了很多坑，失败了无数次，但是最后完美解决标签页缓存的时候，还是很有成就感的，我想这就是选择作为一名开发的乐趣之一吧。</p>
+<h3 id="补充">补充</h3><p>Keep-Alive缓存标签页后在IE11下发现了一个BUG，如果帐户由一个账户切换另一个账户，上一个账户缓存的页面数据，在切换后的账户中没有得到刷新。目测是IE11在创建页面的时候没有去请求，而是从本地浏览器的缓存里去取了。解决办法是给请求加一个时间戳。即给created或者mount钩子函数里的请求加上一个时间戳。</p>
+
+  </section>
+</article>
+
+  <div class="sharing grid">
+  <section class="profile grid-item grid">
+    <img class="avatar" src="/images/chili.png" alt="avatar" />
+    <div class="grid-item">
+      <p class="title"> chilihotpot </p>
+      <p class="subtitle"> You Are The JavaScript In My HTML </p>
+    <div>
+  </section>
+
+  <section class="share-btns">
+    <!-- <p> share it if you like it~ </p> -->
+    <a
+  class="twitter-share-button"
+  data-size="large"
+  data-via="DrakeLeung"
+  href="https://twitter.com/intent/tweet?text=这一次的项目中需要缓存标签页，Vue-R"
+>
+  Tweet
+</a>
+
+<script>
+  window.twttr = (function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0],
+    t = window.twttr || {};
+  if (d.getElementById(id)) return t;
+  js = d.createElement(s);
+  js.id = id;
+  js.src = "https://platform.twitter.com/widgets.js";
+  js.async = true;
+  fjs.parentNode.insertBefore(js, fjs);
+
+  t._e = [];
+  t.ready = function(f) {
+    t._e.push(f);
+  };
+
+  return t;
+}(document, "script", "twitter-wjs"));
+</script>
+
+  </section>
+</div>
+
+
+  
+</main>
+
+</body>
+</html>

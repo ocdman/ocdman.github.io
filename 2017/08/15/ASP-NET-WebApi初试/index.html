@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>ASP.NET WebApi初试 | chilihotpot</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <link rel="shortcut icon" href="/chili.ico">
+  <link rel="stylesheet" href="/css/app.css" type="text/css">
+  <!-- <link rel='stylesheet' href='http://fonts.useso.com/css?family=Source+Code+Pro'> -->
+</head>
+
+<body>
+  <nav class="app-nav">
+  
+    
+      <a href="/.">home</a>
+    
+  
+    
+      <a href="/archives">archive</a>
+    
+  
+    
+      <a href="/tags">tag</a>
+    
+  
+    
+      <a href="/categories">category</a>
+    
+  
+</nav>
+
+  <main class="post">
+  <article>
+  <h1 class="article-title">
+    <a href="/2017/08/15/ASP-NET-WebApi初试/">ASP.NET WebApi初试</a>
+  </h1>
+
+  <section class="article-meta">
+    <p class="article-date">August 15 2017</p>
+  </section>
+
+  <section class="article-entry">
+    <p>WebApi在我印象中是一个RESTful风格的接口，要理解REST需要另开一篇，这里要强调的是，它只是一种风格，并不是标准。</p>
+<p>先来说说WebApi和MVC的区别。做了这么多MVC的项目，最直观的感受就是，分工明晰，各取所长。MVC是建站的一种框架，倾向于返回用户的页面请求。MVC提供了后端的HTML构造，方便页面的开发。而WebApi则更倾向于返回用户的数据请求，不注重页面的生成。</p>
+<p>WebApi可以返回的数据格式有JSON和XML。目前主流的趋势是使用JSON。要想获取JSON格式的返回值，只需要在请求头里，将Accept字段置为application/json。WebApi提供了GET、POST、DELETE、PUT等方便，对应了数据库里的增删改查。个人觉得是一个很灵活、方便的接口。</p>
+<p>不同于MVC，WebApi好像没有Session记录。所以，如果做网站的话，得将两个结合起来用。</p>
+
+  </section>
+</article>
+
+  <div class="sharing grid">
+  <section class="profile grid-item grid">
+    <img class="avatar" src="/images/chili.png" alt="avatar" />
+    <div class="grid-item">
+      <p class="title"> chilihotpot </p>
+      <p class="subtitle"> You Are The JavaScript In My HTML </p>
+    <div>
+  </section>
+
+  <section class="share-btns">
+    <!-- <p> share it if you like it~ </p> -->
+    <a
+  class="twitter-share-button"
+  data-size="large"
+  data-via="DrakeLeung"
+  href="https://twitter.com/intent/tweet?text=WebApi在我印象中是一个RESTfu"
+>
+  Tweet
+</a>
+
+<script>
+  window.twttr = (function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0],
+    t = window.twttr || {};
+  if (d.getElementById(id)) return t;
+  js = d.createElement(s);
+  js.id = id;
+  js.src = "https://platform.twitter.com/widgets.js";
+  js.async = true;
+  fjs.parentNode.insertBefore(js, fjs);
+
+  t._e = [];
+  t.ready = function(f) {
+    t._e.push(f);
+  };
+
+  return t;
+}(document, "script", "twitter-wjs"));
+</script>
+
+  </section>
+</div>
+
+
+  
+</main>
+
+</body>
+</html>

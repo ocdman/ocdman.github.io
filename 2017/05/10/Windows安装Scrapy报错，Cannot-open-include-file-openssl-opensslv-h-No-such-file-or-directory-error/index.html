@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Windows安装Scrapy报错，Cannot open include file: openssl/opensslv.h: No such file or directory error | chilihotpot</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <link rel="shortcut icon" href="/chili.ico">
+  <link rel="stylesheet" href="/css/app.css" type="text/css">
+  <!-- <link rel='stylesheet' href='http://fonts.useso.com/css?family=Source+Code+Pro'> -->
+</head>
+
+<body>
+  <nav class="app-nav">
+  
+    
+      <a href="/.">home</a>
+    
+  
+    
+      <a href="/archives">archive</a>
+    
+  
+    
+      <a href="/tags">tag</a>
+    
+  
+    
+      <a href="/categories">category</a>
+    
+  
+</nav>
+
+  <main class="post">
+  <article>
+  <h1 class="article-title">
+    <a href="/2017/05/10/Windows安装Scrapy报错，Cannot-open-include-file-openssl-opensslv-h-No-such-file-or-directory-error/">Windows安装Scrapy报错，Cannot open include file: openssl/opensslv.h: No such file or directory error</a>
+  </h1>
+
+  <section class="article-meta">
+    <p class="article-date">May 10 2017</p>
+  </section>
+
+  <section class="article-entry">
+    <p>交接爬虫项目时，要安装Scrapy框架，操作系统都是Windows。本来在我的电脑上运行好好的程序，结果在同事电脑上连安装都安装不上。</p>
+<p>究其原因，主要的错误是在安装Scrapy时，需要引入PySSlOpen模块时抛出的错误，Cannot open include file: openssl/opensslv.h: No such file or directory error。</p>
+<p>我参照了很多网上的做法，都不管用。把我给气的。由于我的电脑上的Python是32位的，而同事的则是64位，我实在没辙，让他也换成32位，又装了一个pywin32程序，让32位的Python也能运行64位的模块，本来以为能成功，结果一直报win32应用程序出错，实在是一头雾水，可是我明明已经装了pywin32程序了，而且版本号都是2.7。无奈之下，卸了再装64位的Python。</p>
+<p>因为我发现同事装了 Microsoft Visual C++ Compiler Package for Pythoon 2.7，这个在我电脑里没有，于是我让他卸了，由于卸了之后，安装Scrapy会报Visual C++ 9.0的错误，网上一搜，一种说是要安装 Microsoft Visual C++ 2008 Redistributable，还一种就是安装之前被我卸载的 Microsoft Visual C++ Compiler Package for Pythoon 2.7 程序。<br>我先安装了 Microsoft Visual C++ 2008 Redistributable 32位和64位的程序。然后运行还是报Visual C++ 9.0的错误，只能继续安装 Microsoft Visual C++ Compiler Package for Pythoon 2.7。由于我的Scrapy版本较低，其引用的模块版本也较低，于是我选定安装Scrapy关联的模块的版本，代码如下：</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install -v cryptography X<span class="class">.XX</span><span class="class">.XX</span></span><br></pre></td></tr></table></figure>
+<p>由于我安装好了较低版本的cryptography模块，以及pyopenssl模块，Scrapy这一次安装没有抛错。</p>
+<p>总结下来，<strong>可能是我安装了 Microsoft Visual C++ 2008 Redistributable，还有可能就是在安装模块时，采用了较低版本。</strong></p>
+<p><strong><em>后记</em></strong></p>
+<p>我在自己的Win10虚拟机里，也安装了Python，版本是2.7.13，64位的。Scrapy安装的是最新的，而且竟然一遍过，全程没有出错。</p>
+<p>我在虚拟机里安装了VS 2015，但这绝对不是关键，无非是装了Microsoft Visual C++ 2015 Redistributable，64和32位。关键是我看到了<strong>Microsoft Visual C++ 2008 Redistributable，32位</strong>。我想为啥同事之前一直安装Scrapy出错的关键，就是在这儿了。</p>
+
+  </section>
+</article>
+
+  <div class="sharing grid">
+  <section class="profile grid-item grid">
+    <img class="avatar" src="/images/chili.png" alt="avatar" />
+    <div class="grid-item">
+      <p class="title"> chilihotpot </p>
+      <p class="subtitle"> You Are The JavaScript In My HTML </p>
+    <div>
+  </section>
+
+  <section class="share-btns">
+    <!-- <p> share it if you like it~ </p> -->
+    <a
+  class="twitter-share-button"
+  data-size="large"
+  data-via="DrakeLeung"
+  href="https://twitter.com/intent/tweet?text=交接爬虫项目时，要安装Scrapy框架，"
+>
+  Tweet
+</a>
+
+<script>
+  window.twttr = (function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0],
+    t = window.twttr || {};
+  if (d.getElementById(id)) return t;
+  js = d.createElement(s);
+  js.id = id;
+  js.src = "https://platform.twitter.com/widgets.js";
+  js.async = true;
+  fjs.parentNode.insertBefore(js, fjs);
+
+  t._e = [];
+  t.ready = function(f) {
+    t._e.push(f);
+  };
+
+  return t;
+}(document, "script", "twitter-wjs"));
+</script>
+
+  </section>
+</div>
+
+
+  
+</main>
+
+</body>
+</html>

@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>seagate硬盘b8错误 | chilihotpot</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <link rel="shortcut icon" href="/chili.ico">
+  <link rel="stylesheet" href="/css/app.css" type="text/css">
+  <!-- <link rel='stylesheet' href='http://fonts.useso.com/css?family=Source+Code+Pro'> -->
+</head>
+
+<body>
+  <nav class="app-nav">
+  
+    
+      <a href="/.">home</a>
+    
+  
+    
+      <a href="/archives">archive</a>
+    
+  
+    
+      <a href="/tags">tag</a>
+    
+  
+    
+      <a href="/categories">category</a>
+    
+  
+</nav>
+
+  <main class="post">
+  <article>
+  <h1 class="article-title">
+    <a href="/2019/02/18/seagate硬盘b8错误/">seagate硬盘b8错误</a>
+  </h1>
+
+  <section class="article-meta">
+    <p class="article-date">February 18 2019</p>
+  </section>
+
+  <section class="article-entry">
+    <p>家里的台式机，连键盘灯都点不亮。于是去了维修店检测之后发现是主板坏了，换了一块二手的技嘉b85主板，终于又能开机了。时隔个把月之后，发现BIOS界面闪过后就黑屏，进不了系统，BIOS是可以正常操作的，推测是硬盘的问题，由于不确定，只得又去维修店一次去检查。果不其然，是硬盘坏了。话说我这台电脑也用了六年多了，之前一直都挺稳定的，只是系统运行得越来越慢。</p>
+<p>其实第二次去维修店是没有必要的，自己在家也可以检测。看了一遍维修店师傅的操作后，我立马明白了。回家后我就用U盘做了一个Windows PE引导盘。说起什么是PE引导盘之前我知之甚少，只看过我们单位的运维经常用它来重装电脑。其实PE可以理解为一个预安装系统，通过它为磁盘进行分区，格式化，以及安装新系统等功能。</p>
+<p>网上有各种版本的PE引导系统，我选择的是<a href="http://www.wepe.com.cn" target="_blank" rel="external">微PE工具箱</a>，因为口碑不错。安装制作U盘引导跳过。</p>
+<p>说回硬盘的事，我用微PE自带的HD Tune硬盘检测工具检测下来发现报错</p>
+<blockquote>
+<p>(B8) End To End Error Detection</p>
+</blockquote>
+<p>网上说这是希捷硬盘的通病，可惜我这块已经超过保修期了，否则我肯定就换了。造成硬盘报错的原因，我找到比较靠谱的一种说法是，<strong>硬盘的缓存有问题，缓存芯片出现部分损坏导致</strong>。其余的比如换IDE硬盘线，我觉得可靠性不大。</p>
+<p>但是要换硬盘上的DDR缓存芯片的话，拆卸起来又非常麻烦。除非焊接功夫到了一定的境界，否则还是放弃这种想法吧。</p>
+<p>最后，我选择了采用三星的EVO 860固态硬盘来替换当前的希捷机械硬盘的方案，采用固态之后的速度应该会提升不少。而这个开不了机的硬盘也没必要就这样扔了，因为只损坏了两个逻辑扇区，其它部分还是可以用的。我打算用它来存储一些媒体文件。</p>
+
+  </section>
+</article>
+
+  <div class="sharing grid">
+  <section class="profile grid-item grid">
+    <img class="avatar" src="/images/chili.png" alt="avatar" />
+    <div class="grid-item">
+      <p class="title"> chilihotpot </p>
+      <p class="subtitle"> You Are The JavaScript In My HTML </p>
+    <div>
+  </section>
+
+  <section class="share-btns">
+    <!-- <p> share it if you like it~ </p> -->
+    <a
+  class="twitter-share-button"
+  data-size="large"
+  data-via="DrakeLeung"
+  href="https://twitter.com/intent/tweet?text=家里的台式机，连键盘灯都点不亮。于是去了"
+>
+  Tweet
+</a>
+
+<script>
+  window.twttr = (function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0],
+    t = window.twttr || {};
+  if (d.getElementById(id)) return t;
+  js = d.createElement(s);
+  js.id = id;
+  js.src = "https://platform.twitter.com/widgets.js";
+  js.async = true;
+  fjs.parentNode.insertBefore(js, fjs);
+
+  t._e = [];
+  t.ready = function(f) {
+    t._e.push(f);
+  };
+
+  return t;
+}(document, "script", "twitter-wjs"));
+</script>
+
+  </section>
+</div>
+
+
+  
+</main>
+
+</body>
+</html>

@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>IIS配置文件限制IP访问错误代码0x80070021解决方法 | chilihotpot</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <link rel="shortcut icon" href="/chili.ico">
+  <link rel="stylesheet" href="/css/app.css" type="text/css">
+  <!-- <link rel='stylesheet' href='http://fonts.useso.com/css?family=Source+Code+Pro'> -->
+</head>
+
+<body>
+  <nav class="app-nav">
+  
+    
+      <a href="/.">home</a>
+    
+  
+    
+      <a href="/archives">archive</a>
+    
+  
+    
+      <a href="/tags">tag</a>
+    
+  
+    
+      <a href="/categories">category</a>
+    
+  
+</nav>
+
+  <main class="post">
+  <article>
+  <h1 class="article-title">
+    <a href="/2017/12/25/IIS配置文件限制IP访问错误代码0x80070021解决方法/">IIS配置文件限制IP访问错误代码0x80070021解决方法</a>
+  </h1>
+
+  <section class="article-meta">
+    <p class="article-date">December 25 2017</p>
+  </section>
+
+  <section class="article-entry">
+    <p>IIS白名单限制可以访问的IP，可以通过</p>
+<ul>
+<li>IIS管理器</li>
+<li>选择你要限制IP的网站</li>
+<li>IP地址和域限制</li>
+<li>编辑功能设置，设置未指定的客户端的访问权为<strong>拒绝</strong></li>
+<li>添加允许条目，添加允许访问的IP地址</li>
+</ul>
+<p>这是一种通过IIS管理器，操作图形界面的方式实现IP白名单的方法，但是一旦设置白名单的网站多了，手动去还原回来也挺麻烦的。</p>
+<p>索性在网上搜了一下，如何使用web.config文件实现IP白名单。</p>
+<p>方法是有的，在configuration节点中添加如下节点</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="title">system.webServer</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="title">security</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="title">ipSecurity</span> <span class="attribute">allowUnlisted</span>=<span class="value">"false"</span>&gt;</span></span><br><span class="line">			<span class="tag">&lt;<span class="title">clear</span>/&gt;</span></span><br><span class="line">			<span class="tag">&lt;<span class="title">add</span> <span class="attribute">ipAddress</span>=<span class="value">"127.0.0.1"</span> <span class="attribute">allowed</span>=<span class="value">"true"</span>/&gt;</span></span><br><span class="line">		<span class="tag">&lt;/<span class="title">ipSecurity</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;/<span class="title">security</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="title">system.webServer</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>加了这段代码之后，报错</p>
+<blockquote>
+<p>This configuration section cannot be used at this path. This happens when the section is locked at a parent level. Locking is either by default (overrideModeDefault=”Deny”), or set explicitly by a location tag with overrideMode=”Deny” or the legacy allowOverride=”false”.</p>
+</blockquote>
+<p>错误代码为0x80070021。网上的解决方法有很多，最多的说法是要修改applicationHost.config文件，将</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;<span class="tag">section</span> name=<span class="string">"IpSecurity"</span> overrideModeDefault=<span class="string">"Deny"</span></span><br></pre></td></tr></table></figure>
+<p>修改为</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;<span class="tag">section</span> name=<span class="string">"IpSecurity"</span> overrideModeDefault=<span class="string">"Allow"</span></span><br></pre></td></tr></table></figure>
+<p>我用everything搜索applicationHost.config文件，发现有好多，主要修改了%windir%\system32\inetsrv\config\applicationHost.config、%windir%\SysWOW64\inetsrv\Config\applicationHost.config、项目目录下.vs\config\applicationHost.config这几个我都有改，但是依然没有用。</p>
+<p>另一个说法是，在system.webServer标签外再加一个标签</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="title">location</span> <span class="attribute">path</span>=<span class="value">"Your WebSite Name"</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="title">system.webServer</span>&gt;</span></span><br><span class="line">		...</span><br><span class="line">	<span class="tag">&lt;/<span class="title">system.webServer</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="title">location</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>虽然这么做确实不报错了，但是白名单完全不起效果。</p>
+<p>很郁闷，真的是尝试了很多方法都不管用，直到我尝试了<a href="https://blogs.msdn.microsoft.com/webtopics/2010/03/08/troubleshooting-http-500-19-errors-in-iis-7/" target="_blank" rel="external">这篇文章</a>的方法。</p>
+<p>文章说之所以报错0x80070021，是因为文件的一部分被另一个进程给锁了，当前进程无法访问该文件，原文是这么说的</p>
+<blockquote>
+<p><strong>Reason:</strong></p>
+<p>ERROR CODE: 0x80070021 is</p>
+<p>ERROR_LOCK_VIOLATION The process cannot access the file because another process has locked a portion of the file.</p>
+</blockquote>
+<p>解决方法，需要使用appcmd.exe程序</p>
+<blockquote>
+<p><strong>Solution:</strong></p>
+<p>There are usually a few more lines in that error response that points to the exact line in the config file (and hence the locked section) that has the problem. You will either have to unlock that section or not use it in your application’s web.config file.</p>
+<p>For e.g., one can lock/unlock handlers/modules sections by either</p>
+<p>Ø use appcmd.exe</p>
+<p>%windir%\system32\inetsrv\appcmd unlock config -section:system.webServer/handlers</p>
+<p>%windir%\system32\inetsrv\appcmd unlock config -section:system.webServer/modules</p>
+</blockquote>
+<p>我执行了命令</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">%windir%\system32\inetsrv\appcmd <span class="operator"><span class="keyword">unlock</span> config -<span class="keyword">section</span>:<span class="keyword">system</span>.webServer/<span class="keyword">security</span>/ipSecurity</span></span><br></pre></td></tr></table></figure>
+<p>之后，提示</p>
+<blockquote>
+<p>在配置路径“MACHINE/WEBROOT/APPHOST”解除了“system.webServer/security/ipSecurity”节的锁定。</p>
+</blockquote>
+<p>这一次，终于成功了 T T，泪流满面。目测是因为system.webServer/security/ipSecurity节点被另一个进程锁定了导致web.config文件无法使用，所以必须先释放被锁的节点。</p>
+<p>再次打开IIS管理器里的IP地址和域限制，会发现在web.config里进行的设置，其实已经在里面得到了修改。</p>
+<p>致不轻易放弃的自己。</p>
+
+  </section>
+</article>
+
+  <div class="sharing grid">
+  <section class="profile grid-item grid">
+    <img class="avatar" src="/images/chili.png" alt="avatar" />
+    <div class="grid-item">
+      <p class="title"> chilihotpot </p>
+      <p class="subtitle"> You Are The JavaScript In My HTML </p>
+    <div>
+  </section>
+
+  <section class="share-btns">
+    <!-- <p> share it if you like it~ </p> -->
+    <a
+  class="twitter-share-button"
+  data-size="large"
+  data-via="DrakeLeung"
+  href="https://twitter.com/intent/tweet?text=IIS白名单限制可以访问的IP，可以通过"
+>
+  Tweet
+</a>
+
+<script>
+  window.twttr = (function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0],
+    t = window.twttr || {};
+  if (d.getElementById(id)) return t;
+  js = d.createElement(s);
+  js.id = id;
+  js.src = "https://platform.twitter.com/widgets.js";
+  js.async = true;
+  fjs.parentNode.insertBefore(js, fjs);
+
+  t._e = [];
+  t.ready = function(f) {
+    t._e.push(f);
+  };
+
+  return t;
+}(document, "script", "twitter-wjs"));
+</script>
+
+  </section>
+</div>
+
+
+  
+</main>
+
+</body>
+</html>

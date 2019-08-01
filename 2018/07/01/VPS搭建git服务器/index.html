@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>VPS搭建git服务器 | chilihotpot</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <link rel="shortcut icon" href="/chili.ico">
+  <link rel="stylesheet" href="/css/app.css" type="text/css">
+  <!-- <link rel='stylesheet' href='http://fonts.useso.com/css?family=Source+Code+Pro'> -->
+</head>
+
+<body>
+  <nav class="app-nav">
+  
+    
+      <a href="/.">home</a>
+    
+  
+    
+      <a href="/archives">archive</a>
+    
+  
+    
+      <a href="/tags">tag</a>
+    
+  
+    
+      <a href="/categories">category</a>
+    
+  
+</nav>
+
+  <main class="post">
+  <article>
+  <h1 class="article-title">
+    <a href="/2018/07/01/VPS搭建git服务器/">VPS搭建git服务器</a>
+  </h1>
+
+  <section class="article-meta">
+    <p class="article-date">July 01 2018</p>
+  </section>
+
+  <section class="article-entry">
+    <p>有一些项目是你在本地写的代码，不用放在公司的服务器上，但又需要版本管理。我已经受够了没有版本管理的本地代码，稍一修改就有可能导致无法还原。鉴于此类情况，一般我们会选择上传到免费的github上面去寄存。但是，说实话有些内容其实属于公司的隐私，不方便对外公开。那么这种情况下，就需要自己搭建一个版本管理的服务器，专供自己使用，如果他人也想看，可以授权。</p>
+<p>我手头正好有一个VPS，为何不拿它来搭建git服务器呢？</p>
+<h3 id="1-_服务器端安装Git">1. 服务器端安装Git</h3><p>我的VPS系统是CentOS 6，一般情况下，VPS都会预装Git，可以直接输入命令<code>git</code>来查看，如果没有安装的话，可以使用<code>yum</code>来安装</p>
+<figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum <span class="keyword">install</span> git</span><br></pre></td></tr></table></figure>
+<h3 id="2-_服务器端添加git用户">2. 服务器端添加git用户</h3><p>我们创建一个专门用来管理git服务的用户，取名为git</p>
+<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 查看是否存在git用户</span></span><br><span class="line"><span class="keyword">id</span> git</span><br><span class="line"><span class="comment">// 如果不存在，则创建git用户</span></span><br><span class="line">useradd git</span><br><span class="line"><span class="comment">// 为git用户设置密码</span></span><br><span class="line">passwd git</span><br></pre></td></tr></table></figure>
+<h3 id="3-_服务器端创建Git仓库">3. 服务器端创建Git仓库</h3><p>假设我们Git仓库的父目录为<code>/data/git</code>，在此目录下我们创建一个名为<code>example.git</code>的仓库，仓库的后缀名为<code>.git</code></p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 创建example.git仓库</span></span><br><span class="line">mkdir -<span class="tag">p</span> /data/git/example<span class="class">.git</span></span><br><span class="line"><span class="comment">// 初始化example.git仓库</span></span><br><span class="line">git init --bare /data/git/example<span class="class">.git</span></span><br><span class="line"><span class="comment">// 修改example.git仓库目录下的权限为git用户</span></span><br><span class="line">chown -R git:git /data/git/example.git</span><br></pre></td></tr></table></figure>
+<h3 id="4-_客户端克隆远程仓库">4. 客户端克隆远程仓库</h3><p>假设我们客户端Git仓库的父目录为<code>~/data/git</code>，现在需要从服务器端克隆下刚才创建的<code>example.git</code>仓库</p>
+<figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="title">mkdir</span> -p ~/<span class="typedef"><span class="keyword">data</span>/git</span></span><br><span class="line"><span class="title">cd</span> ~/<span class="typedef"><span class="keyword">data</span>/git</span></span><br><span class="line"><span class="title">git</span> clone ssh://git@yourVpsIp:yourVpsPort/<span class="typedef"><span class="keyword">data</span>/git/example.git</span></span><br></pre></td></tr></table></figure>
+<p><strong>注意，默认SSH的端口号为22，但VPS一般会修改这个端口号，可以在<code>/etc/ssh/sshd_config</code>文件中找到<code>Port</code>字段来查看具体端口号</strong>。</p>
+<p>输入git用户密码后，即可看到<code>example.git</code>仓库克隆成功！</p>
+<p><strong>至此，一个最简单的VPS上的git服务器就已经搭建完成了</strong>。</p>
+<p>在客户端打开<code>~/.ssh/known_hosts</code> 隐藏文件，可以看到刚才创建的连接，被记录在该文件中。还有一个<code>example.git</code>仓库的隐藏配置文件位于<code>~/data/git/example.git/.git/config</code>。</p>
+<h3 id="5-_进阶篇，Git免密操作">5. 进阶篇，Git免密操作</h3><h5 id="5-1_客户端创建SSH公钥和私钥">5.1 客户端创建SSH公钥和私钥</h5><p>什么是客户端的免费操作？说白了就是之前每次使用<code>git</code>命令的时候都要输一遍git用户的密码，有了免密操作之后，每次执行<code>git</code>命令都无需输入密码。</p>
+<p>首先在隐藏目录<code>~/.ssh</code>下查看，是否已经存在<code>id_rsa</code>以及<code>id_rsa.pub</code>文件。其中<code>id_rsa</code>是ssh私钥，<code>id_rsa.pub</code>是ssh公钥。那这两个文件有什么用呢？</p>
+<p>把<code>id_rsa.pub</code>，即ssh公钥放到服务器上，用户使用ssh连接VPS，会上传<code>id_rsa.pub</code>，如果服务器上的公钥和用户上传的公钥匹配，那么此次ssh操作无需输入密码。</p>
+<p>下面的命令是根据邮箱来创建ssh公钥和私钥的，将<code>yourEmail</code>替换成你的邮箱即可</p>
+<figure class="highlight mathematica"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh-keygen -t rsa -<span class="keyword">C</span> <span class="string">"yourEmail"</span></span><br></pre></td></tr></table></figure>
+<h5 id="5-2_服务器端打开RSA认证">5.2 服务器端打开RSA认证</h5><p>打开<code>/etc/ssh/sshd_config</code>文件，就是我前面说的记录VPS的SSH端口号的文件</p>
+<figure class="highlight crystal"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">/<span class="regexp">/ 打开文件</span><br><span class="line">vi /etc</span><span class="regexp">/ssh/sshd</span>_config</span><br><span class="line"></span><br><span class="line">/<span class="regexp">/ 取消这些注释</span><br><span class="line">RSAAuthentication yes</span><br><span class="line">PubkeyAuthentication yes</span><br><span class="line">AuthorizedKeysFile .ssh/authorized</span>_keys</span><br></pre></td></tr></table></figure>
+<p>保存并重启sshd服务</p>
+<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="title">service</span> sshd restart</span><br></pre></td></tr></table></figure>
+<p>根据上面的<code>AuthorizedKeysFile</code>字段可以得知，ssh公钥存放在<code>.ssh/authorized_keys</code>文件中。由于管理Git服务的用户是git，所以真正存放ssh公钥的路径为<code>/home/git/.ssh/authorized_keys</code>。</p>
+<figure class="highlight stata"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 切换git用户</span></span><br><span class="line"><span class="keyword">su</span> git</span><br><span class="line"><span class="comment">// 回到git用户的主目录</span></span><br><span class="line"><span class="keyword">cd</span> ~</span><br><span class="line"><span class="comment">// 创建.ssh隐藏文件夹</span></span><br><span class="line"><span class="keyword">mkdir</span> .ssh</span><br></pre></td></tr></table></figure>
+<h5 id="5-3_将客户端公钥导到服务器端">5.3 将客户端公钥导到服务器端</h5><p>在客户端输入命令</p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh git<span class="variable">@yourVpsIp</span> -p yourVpsPort <span class="string">'cat &gt;&gt; .ssh/authorized_keys'</span> &lt; ~<span class="regexp">/.ssh/id</span>_rsa.pub</span><br></pre></td></tr></table></figure>
+<p>上传完毕后，在服务器端查看一下<code>.ssh/authorized_keys</code>文件的权限是否属于git用户</p>
+<figure class="highlight stata"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">su</span> git</span><br><span class="line"><span class="keyword">ls</span> -al ~/.ssh</span><br></pre></td></tr></table></figure>
+<p>确保<code>.ssh</code>文件及其目录下的文件<code>.ssh/authorized_keys</code>所属人以及所属权限组都是git用户。</p>
+<p><strong>注意，接下来修改<code>.ssh</code>目录的权限为700，修改<code>.ssh/authorized_keys</code>文件的权限为600</strong>。这一步极其重要，如果采用默认权限的话，rsa权限认证，也就是git免密操作永远都无法成功，只会要求你输入git用户的密码，回到了第4步。</p>
+<p><strong>rsa权限认证的步骤为，先对比用户上传的ssh公钥和服务器端的公钥是否一致，如果一致则不用输入密码，如果不一致或着没有上传，则输入密码。</strong></p>
+<h5 id="5-4_再次克隆远程仓库">5.4 再次克隆远程仓库</h5><p>将刚才克隆的远程仓库删除</p>
+<figure class="highlight haskell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="title">cd</span> ~/<span class="typedef"><span class="keyword">data</span>/git/</span></span><br><span class="line"><span class="title">rm</span> -r example.git</span><br></pre></td></tr></table></figure>
+<p>然后重新克隆</p>
+<figure class="highlight crystal"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git clone <span class="symbol">ssh:</span>/<span class="regexp">/git@yourVpsIp:yourVpsPort/data</span><span class="regexp">/git/example</span>.git</span><br></pre></td></tr></table></figure>
+<p>这一次是不是不用再输入git用户的密码了呢，如果不再提示输入密码，并且直接克隆成功，那么恭喜你，git免密操作成功！如果仍旧要输密码，确保你哪一个步骤没有做对。</p>
+<p>我们再换一台主机，我用的是自己的linux虚拟机，这台主机没有上传自己的ssh公钥，本地也没有ssh私钥，使用上面的命令克隆仓库，你会发现，这一次服务器提示要求你输入git用户的密码。说明rsa认证功能是正确的。</p>
+<h3 id="6-_禁止git用户使用ssh登录服务器">6. 禁止git用户使用ssh登录服务器</h3><p>考虑到安全因素，需要禁止git用户ssh登录服务器，过程很简单，打开<code>/etc/passwd</code>文件，找到<code>git</code>用户那一行</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 原行</span></span><br><span class="line"><span class="string">git:</span><span class="string">x:</span><span class="number">502</span>:<span class="number">504</span>::<span class="regexp">/home/</span><span class="string">git:</span><span class="regexp">/bin/</span>bash</span><br><span class="line"><span class="comment">// 修改为</span></span><br><span class="line"><span class="string">git:</span><span class="string">x:</span><span class="number">502</span>:<span class="number">504</span>::<span class="regexp">/home/</span><span class="string">git:</span><span class="regexp">/usr/</span>bin/git-shell</span><br></pre></td></tr></table></figure>
+<p>保存后，git用户可以通过ssh正常使用git服务，但无法登录shell。</p>
+<h3 id="总结">总结</h3><p>搭建Git服务器其实并不复杂，如果只是自己或少数人使用的话，没必要配置得过于复杂。就像到过程中的第4步，其实就够了。我只是出于好奇心，才去做了rsa认证。</p>
+
+  </section>
+</article>
+
+  <div class="sharing grid">
+  <section class="profile grid-item grid">
+    <img class="avatar" src="/images/chili.png" alt="avatar" />
+    <div class="grid-item">
+      <p class="title"> chilihotpot </p>
+      <p class="subtitle"> You Are The JavaScript In My HTML </p>
+    <div>
+  </section>
+
+  <section class="share-btns">
+    <!-- <p> share it if you like it~ </p> -->
+    <a
+  class="twitter-share-button"
+  data-size="large"
+  data-via="DrakeLeung"
+  href="https://twitter.com/intent/tweet?text=有一些项目是你在本地写的代码，不用放在公"
+>
+  Tweet
+</a>
+
+<script>
+  window.twttr = (function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0],
+    t = window.twttr || {};
+  if (d.getElementById(id)) return t;
+  js = d.createElement(s);
+  js.id = id;
+  js.src = "https://platform.twitter.com/widgets.js";
+  js.async = true;
+  fjs.parentNode.insertBefore(js, fjs);
+
+  t._e = [];
+  t.ready = function(f) {
+    t._e.push(f);
+  };
+
+  return t;
+}(document, "script", "twitter-wjs"));
+</script>
+
+  </section>
+</div>
+
+
+  
+</main>
+
+</body>
+</html>

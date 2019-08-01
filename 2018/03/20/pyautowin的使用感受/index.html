@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>pyautowin的使用感受 | chilihotpot</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <link rel="shortcut icon" href="/chili.ico">
+  <link rel="stylesheet" href="/css/app.css" type="text/css">
+  <!-- <link rel='stylesheet' href='http://fonts.useso.com/css?family=Source+Code+Pro'> -->
+</head>
+
+<body>
+  <nav class="app-nav">
+  
+    
+      <a href="/.">home</a>
+    
+  
+    
+      <a href="/archives">archive</a>
+    
+  
+    
+      <a href="/tags">tag</a>
+    
+  
+    
+      <a href="/categories">category</a>
+    
+  
+</nav>
+
+  <main class="post">
+  <article>
+  <h1 class="article-title">
+    <a href="/2018/03/20/pyautowin的使用感受/">pyautowin的使用感受</a>
+  </h1>
+
+  <section class="article-meta">
+    <p class="article-date">March 20 2018</p>
+  </section>
+
+  <section class="article-entry">
+    <p>使用pyautowin研究股票自动化交易已经有一段时间了，目前基础功能已经完成，可以来讲一下自己的感受了。（本文主要针对Windows操作系统，Linux图形界面还未曾尝试）</p>
+<p>我是查了资料之后才知道，原来GUI的界面还能够被pyautowin来操作，我是闻所未闻的。</p>
+<p>就拿<a href="https://pywinauto.github.io/" target="_blank" rel="external">官网</a>的例子来讲，只需要数行python代码，就能够打开记事本程序，并保存一个文件，你敢想？</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pywinauto.application <span class="keyword">import</span> Application</span><br><span class="line"><span class="comment"># Run a target application</span></span><br><span class="line">app = Application().start(<span class="string">"notepad.exe"</span>)</span><br><span class="line"><span class="comment"># Select a menu item</span></span><br><span class="line">app.UntitledNotepad.menu_select(<span class="string">"Help-&gt;About Notepad"</span>)</span><br><span class="line"><span class="comment"># Click on a button</span></span><br><span class="line">app.AboutNotepad.OK.click()</span><br><span class="line"><span class="comment"># Type a text string</span></span><br><span class="line">app.UntitledNotepad.Edit.type_keys(<span class="string">"pywinauto Works!"</span>, with_spaces = <span class="keyword">True</span>)</span><br></pre></td></tr></table></figure>
+<h3 id="安装pyautowin">安装pyautowin</h3><figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip <span class="keyword">install</span> pyautowin</span><br></pre></td></tr></table></figure>
+<p>如果报错缺少某个包的话，只要再<code>pip install</code>那个包就行了。</p>
+<h3 id="第一步">第一步</h3><p>使用pyautowin的第一步操作就是连接你想要自动化的GUI程序，可以使用命令</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">import pyautowin</span><br><span class="line">app = pyautowin.<span class="function"><span class="title">Application</span><span class="params">()</span></span>.<span class="function"><span class="title">connect</span><span class="params">(path=exe_path, timeout=<span class="number">10</span>)</span></span></span><br></pre></td></tr></table></figure>
+<p><code>exe_path</code>就是你的GUI程序，比方说我要操作股票客户端，那么我的<code>exe_path</code>的值为<code>C:\\cfjc_dlwt\xiadan.exe</code>，即客户端程序路径。</p>
+<p>接下来<code>app</code>这个变量就包含了所有我要操作的信息。</p>
+<h3 id="第二步">第二步</h3><p>一个GUI程序，它可以由不同控件组成，比方说，树形控件、菜单、按钮、下拉框、工具条、状态栏等等。如何区别不同控件，并获取相关控件的属性呢？答案是<code>Spy++</code>。当然，类似功能的软件也有很多，只是我个人的选择罢了。</p>
+<p>以前一直看到Windows系统上有这么一个内置的程序，但从来不知道它的用途，而且还取名为Spy（间谍的意思）。使用了之后才知道，原来它是专门用来获取GUI相关的信息的软件。</p>
+<p><img src="/img/2018032001.png" width="670px"></p>
+<p>点击第一个望远镜图标，然后拖动查找工具里的靶心，移到你想要观察的GUI控件上，会有黑色框提示具体位置，然后就能获取相关的控件信息。我们最关心的当然是控件ID了，点击确定，在常规选项卡里，就有控件ID，不过那是十六进制数，需要转化成十进制来使用。</p>
+<p><img src="/img/2018032002.png" width="670px"></p>
+<h3 id="第三步">第三步</h3><p>比方说我要获取某个控件的属性，执行命令</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">grid = app.<span class="function"><span class="title">top_window</span><span class="params">()</span></span>.window(</span><br><span class="line">    control_id=<span class="number">1047</span></span><br><span class="line">)</span><br><span class="line"><span class="function"><span class="title">print</span><span class="params">(grid.GetProperties()</span></span>)</span><br></pre></td></tr></table></figure>
+<p>这只是其中最常用的命令之一，如果想要实现自动化操作就要参考<a href="https://pywinauto.readthedocs.io/en/latest/controls_overview.html" target="_blank" rel="external">官方文档</a>。</p>
+<h3 id="总结">总结</h3><p>pyautowin结合<code>Spy++</code>基本可以完成所有的GUI操作，股票自动化交易中还有很多细节的地方，需要对交易软件以及python有基本的了解。总之，有了pyautowin之后，妈妈再也不用担心我的学习了，堪称懒人的福音。</p>
+
+  </section>
+</article>
+
+  <div class="sharing grid">
+  <section class="profile grid-item grid">
+    <img class="avatar" src="/images/chili.png" alt="avatar" />
+    <div class="grid-item">
+      <p class="title"> chilihotpot </p>
+      <p class="subtitle"> You Are The JavaScript In My HTML </p>
+    <div>
+  </section>
+
+  <section class="share-btns">
+    <!-- <p> share it if you like it~ </p> -->
+    <a
+  class="twitter-share-button"
+  data-size="large"
+  data-via="DrakeLeung"
+  href="https://twitter.com/intent/tweet?text=使用pyautowin研究股票自动化交易"
+>
+  Tweet
+</a>
+
+<script>
+  window.twttr = (function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0],
+    t = window.twttr || {};
+  if (d.getElementById(id)) return t;
+  js = d.createElement(s);
+  js.id = id;
+  js.src = "https://platform.twitter.com/widgets.js";
+  js.async = true;
+  fjs.parentNode.insertBefore(js, fjs);
+
+  t._e = [];
+  t.ready = function(f) {
+    t._e.push(f);
+  };
+
+  return t;
+}(document, "script", "twitter-wjs"));
+</script>
+
+  </section>
+</div>
+
+
+  
+</main>
+
+</body>
+</html>

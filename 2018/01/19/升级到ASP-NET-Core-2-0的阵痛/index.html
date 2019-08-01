@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>升级到ASP.NET Core 2.0的阵痛 | chilihotpot</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <link rel="shortcut icon" href="/chili.ico">
+  <link rel="stylesheet" href="/css/app.css" type="text/css">
+  <!-- <link rel='stylesheet' href='http://fonts.useso.com/css?family=Source+Code+Pro'> -->
+</head>
+
+<body>
+  <nav class="app-nav">
+  
+    
+      <a href="/.">home</a>
+    
+  
+    
+      <a href="/archives">archive</a>
+    
+  
+    
+      <a href="/tags">tag</a>
+    
+  
+    
+      <a href="/categories">category</a>
+    
+  
+</nav>
+
+  <main class="post">
+  <article>
+  <h1 class="article-title">
+    <a href="/2018/01/19/升级到ASP-NET-Core-2-0的阵痛/">升级到ASP.NET Core 2.0的阵痛</a>
+  </h1>
+
+  <section class="article-meta">
+    <p class="article-date">January 19 2018</p>
+  </section>
+
+  <section class="article-entry">
+    <p>上一篇讲到了 Vue.js 2.0 + webpack + Asp.net Core 2.0 的框架选型，这在很大程度上是未来的趋势，但是太赶时髦的话也未必全是好事，比如说从Asp.net到Asp.net Core的升级。</p>
+<p>Asp.net依然采用的是传统的.net framework的框架，但是到了Asp.net Core就完全不是一回事了，它采用了全新的.net core框架，抛弃了传统的.net framework框架中的大部分的引用。为什么要这么做？我也不是很清楚，<strong>可能我猜测是为了更好地做到跨平台做出的牺牲</strong>。.net framework只能够运行于windows平台，但是.net core却可以做到跨平台，这其中的原理不是我能道得清说得明的，但至少可以看出微软的态度，不再闭门造车，以一个开放者的姿态来拥抱软件行业才是开发者想看见的。</p>
+<p>说到这次的升级，最大的痛莫过于未知。以前习惯了.net framework那一套调用方式，但是到了.net core上时，突然发现连web.config都没有了，该怎么读取配置文件，到处都充满了不适应感。从舒适感到陌生感是需要勇气的，从不习惯到习惯是需要时间来磨合的。</p>
+<p>首先来讲讲我遇到的一些阵痛感。</p>
+<h3 id="没有web-config配置文件">没有web.config配置文件</h3><p>Asp.net Core已经取消了web.config配置文件，所有的配置默认都使用<code>appsettings.json</code>作为配置文件。当然你也可以添加自己的json文件来读取配置。找到<code>Startup.cs</code>文件，添加如下代码，就可以设置读取的配置文件了</p>
+<figure class="highlight aspectj"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> IConfigurationRoot Configuration &#123; get; &#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="title">Startup</span><span class="params">(IHostingEnvironment env)</span></span><br><span class="line"></span>&#123;</span><br><span class="line">    var builder = <span class="keyword">new</span> ConfigurationBuilder()</span><br><span class="line">        .SetBasePath(env.ContentRootPath)</span><br><span class="line">        .AddJsonFile(<span class="string">"appsettings.json"</span>, optional: <span class="keyword">false</span>, reloadOnChange: <span class="keyword">true</span>)</span><br><span class="line">        .AddJsonFile($<span class="string">"appsettings.&#123;env.EnvironmentName&#125;.json"</span>, optional: <span class="keyword">true</span>)</span><br><span class="line">        .AddEnvironmentVariables();</span><br><span class="line"></span><br><span class="line">    Configuration = builder.Build();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>当然，这也不是完全必要的，默认情况下，哪怕不写一样可以读取<code>appsettings.json</code>配置文件。</p>
+<h3 id="如何配置数据库的连接">如何配置数据库的连接</h3><p>和web.config文件配置数据库连接的写法不同，<code>appsettings.json</code>文件的数据库连接写法变了，默认连接的写法为</p>
+<figure class="highlight xquery"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">"ConnectionStrings"</span>: &#123;</span><br><span class="line">    <span class="string">"DefaultConnection"</span>: </span><br><span class="line">        <span class="string">"Server=localhost;User Id=userid;port=5432;Password=password;Database=db;"</span></span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+<p>读取数据库连接的方式也发生了改变，asp.net core通过构造函数来注入<code>IConfiguration</code>，从而读取配置文件里的数据库连接</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">Class1</span><span class="params">()</span></span><br><span class="line"></span>&#123;</span><br><span class="line">  <span class="keyword">private</span> IConfigurationRoot _configuration;</span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="title">Class1</span><span class="params">(IConfiguration configuration)</span></span><br><span class="line">  </span>&#123;</span><br><span class="line">    _configuration = configuration;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">Function</span><span class="params">()</span></span><br><span class="line">  </span>&#123;</span><br><span class="line">        <span class="keyword">using</span> (var conn = <span class="keyword">new</span> SqlConnection(_configuration.GetConnectionString(<span class="string">"DefaultConnection"</span>)))</span><br><span class="line">        &#123;</span><br><span class="line">            conn.Open();</span><br><span class="line">            ...</span><br><span class="line">        &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="无法添加System-Configuration-ConfigurationManager引用">无法添加System.Configuration.ConfigurationManager引用</h3><p>此次的项目中有引用基于.net framework开发的公用库，该公用库大量使用了<code>System.Configuration.ConfigurationManager</code>来读取web.config文件下的<code>AppSettings</code>节点的配置。如果直接运行的话，会报错</p>
+<blockquote>
+<p>未找到”System.Configuration.ConfigurationManager”类型的文件</p>
+</blockquote>
+<p>说白了就是找不到该引用，网上有人说，Asp.net Core没法引用<code>System.Configuration.ConfigurationManager</code>，只能重写读取配置的部分。我这人就是不撞南墙不回头，偏不放弃。好在看到一个大神写的博客<a href="http://www.cnblogs.com/mantgh/p/7425113.html" target="_blank" rel="external">.NET Core 2.0迁移技巧之web.config配置文件</a>，我总算吃了颗定心丸。步骤如下：</p>
+<ol>
+<li>其实NuGet包管理器提供了<code>System.Configuration.ConfigurationManager</code>的引用，并不是像网友说的那样。加入了该引用之后，再读取<code>AppSettings</code>节点至少不会报错了。</li>
+</ol>
+<p><img src="/img/2018011901.png" width="670px"></p>
+<ol>
+<li><p>导入web.config文件到项目根目录，并<strong>将名称改为app.config</strong>，因为.net core项目的本质是控制台应用，而控制台应用默认读取的就是app.config文件。</p>
+<p><img src="/img/2018011902.png" width="670px"></p>
+</li>
+<li><p>去除config中和配置无关的内容。</p>
+</li>
+</ol>
+<p>至此，可以安心地使用公用库，再也不用担心因为引用<code>System.Configuration.ConfigurationManager</code>来读取web.config文件，导致asp.net core运行时出错的问题。</p>
+<h3 id="添加WCF服务">添加WCF服务</h3><p>asp.net core中可以添加wcf服务，但是和asp.net中不同的是，添加的wcf服务都是异步的。现在的很多接口都采用了异步的模式，这个对于我来说没有问题。但是总的来说，asp.net core添加wcf服务有两个明显的问题：</p>
+<ol>
+<li>如果asp.net core引用了公用库，即.net framework框架的项目后，再添加wcf服务会报错。目前没有找到更好的解决方案，只能去除公用库的引用，然后添加wcf服务才不至于报错。</li>
+<li>添加wcf服务后，无法在web.config中体现引用url地址的配置。因为前面提过asp.net core里没有web.config文件。只能在<code>Reference.cs</code>文件里对url地址进行修改，极其不方便。</li>
+</ol>
+<p>这是我对asp.net core添加wcf服务的吐槽，真心没有asp.net下添加wcf服务来的方便，这是我对asp.net core比较失望的地方。</p>
+<p>###程序发布</p>
+<p>如果暂时一切都没啥问题的话，不妨先发布一个版本到服务器来看看效果。谁知在程序发布的时候报错了，这本来和asp.net core没啥关系，但是因为涉及到发布功能，所以不得不提一下。</p>
+<p>vs上给出的错误信息很不明确，导致我不得不在cmd中使用node命令行来打包程序，查看具体的错误原因。执行命令</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">node node_modules/webpack/bin/webpack<span class="class">.js</span> --env.prod</span><br></pre></td></tr></table></figure>
+<p>发现报错</p>
+<blockquote>
+<p>SyntaxError: Unexpected token: name (xxxxxx) from Uglify plugin</p>
+</blockquote>
+<p>网上一查，原来是因为es6的语法没办法混淆，解决办法是使用<code>babel-loader</code>来将es6的语法转化为es5的语法，使得生产环境下的代码能够混淆。执行命令</p>
+<figure class="highlight armasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="label">npm</span> install <span class="keyword">babel-core </span><span class="keyword">babel-loader </span><span class="keyword">babel-preset-es2015 </span>--save-dev</span><br></pre></td></tr></table></figure>
+<p>最后，在项目根目录下新增一个<code>.babelrc</code>文件，里面的内容如下</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  "<span class="attribute">presets</span>": <span class="value">[</span><br><span class="line">      <span class="string">"es2015"</span></span><br><span class="line">    ]</span><br><span class="line"></span>&#125;</span><br></pre></td></tr></table></figure>
+<p>再次发布程序，就没有错误抛出了。</p>
+<h3 id="总结">总结</h3><p>总结一下，.net core和.net framework有很大的区别，最大的区别体现在命名空间的引用上，.net core少掉了很多的引用，这会给开发者带来不便，尤其是向下兼容上。但是可以通过其它的手段，依然保证asp.net core的正常运转。</p>
+
+  </section>
+</article>
+
+  <div class="sharing grid">
+  <section class="profile grid-item grid">
+    <img class="avatar" src="/images/chili.png" alt="avatar" />
+    <div class="grid-item">
+      <p class="title"> chilihotpot </p>
+      <p class="subtitle"> You Are The JavaScript In My HTML </p>
+    <div>
+  </section>
+
+  <section class="share-btns">
+    <!-- <p> share it if you like it~ </p> -->
+    <a
+  class="twitter-share-button"
+  data-size="large"
+  data-via="DrakeLeung"
+  href="https://twitter.com/intent/tweet?text=上一篇讲到了 Vue.js 2.0 + "
+>
+  Tweet
+</a>
+
+<script>
+  window.twttr = (function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0],
+    t = window.twttr || {};
+  if (d.getElementById(id)) return t;
+  js = d.createElement(s);
+  js.id = id;
+  js.src = "https://platform.twitter.com/widgets.js";
+  js.async = true;
+  fjs.parentNode.insertBefore(js, fjs);
+
+  t._e = [];
+  t.ready = function(f) {
+    t._e.push(f);
+  };
+
+  return t;
+}(document, "script", "twitter-wjs"));
+</script>
+
+  </section>
+</div>
+
+
+  
+</main>
+
+</body>
+</html>

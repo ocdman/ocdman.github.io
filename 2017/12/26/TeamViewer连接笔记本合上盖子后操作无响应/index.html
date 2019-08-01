@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>TeamViewer连接笔记本合上盖子后操作无响应 | chilihotpot</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <link rel="shortcut icon" href="/chili.ico">
+  <link rel="stylesheet" href="/css/app.css" type="text/css">
+  <!-- <link rel='stylesheet' href='http://fonts.useso.com/css?family=Source+Code+Pro'> -->
+</head>
+
+<body>
+  <nav class="app-nav">
+  
+    
+      <a href="/.">home</a>
+    
+  
+    
+      <a href="/archives">archive</a>
+    
+  
+    
+      <a href="/tags">tag</a>
+    
+  
+    
+      <a href="/categories">category</a>
+    
+  
+</nav>
+
+  <main class="post">
+  <article>
+  <h1 class="article-title">
+    <a href="/2017/12/26/TeamViewer连接笔记本合上盖子后操作无响应/">TeamViewer连接笔记本合上盖子后操作无响应</a>
+  </h1>
+
+  <section class="article-meta">
+    <p class="article-date">December 26 2017</p>
+  </section>
+
+  <section class="article-entry">
+    <p>首先要说明的是，我一直在找小而美的远程连接软件，不是内网的远程，内网连接Windows服务器我只用mstsc，我在这里要说的是从外网连接内网，具有穿透性内网功能的软件，有试过TeamViewer、AnyDesk、Radmin、向日葵和QQ远程，对比之后说说我的感受。</p>
+<h3 id="QQ远程">QQ远程</h3><p>不用我说，用过qq的人都知道，请求远程协助，优点是方便，稳定，作为QQ的附加功能，增色不少。缺点是，为了远程还得特意装一个QQ，我只想要一个功能单一的远程软件。</p>
+<h3 id="向日葵">向日葵</h3><p>向日葵的功能就是远程连接，作为一款国产软件，功能也是蛮多的，和QQ一样，无法设置无人值守，但是因为分辨率太差，我个人不是很喜欢。</p>
+<h3 id="TeamViewer">TeamViewer</h3><p>用来用去还是TeamViewer比较顺手一点，穿透性强，还能设置无人值守。屏幕分辨率这款也还不错，唯一的缺点是服务器在国外，有时候可能会受GFW的波及，会出现长时间连不上的情况。</p>
+<h3 id="AnyDesk">AnyDesk</h3><p>由TeamViewer前成员开发，优点是小巧，占用容量极少，基本只需要几个MB就够了。缺点是，稳定性极差，影响体验。</p>
+<h3 id="Radmin">Radmin</h3><p>公司的运维用的就是Radmin，据说，用Radmin远程桌面都能看720P的电影了，不知道是真是假。缺点是必须给内网映射外网的端口才行，无法直接穿透内网，还有就是收费，不是免费使用。</p>
+<p>总的来说，我还是没有遇到特别心水的远程桌面的软件，如果非要矮个里挑高个的话，还是比较倾向于TeamViewer和Radmin的。鉴于TeamViewer免费以及能穿透内网，我更偏向于使用TeamViewer。</p>
+<p>在使用TeamViewer的时候，有个问题，当远程的是笔记本电脑，且合上盖子的时候，虽然TeamViewer能显示当前屏幕，但是点击屏幕无任何反应。也有人说，看视频只有声音没有画面，画面是黑屏。不过只要打开笔记本的盖子，TeamViewer又可以正常工作了。我之前一直弄不明白这个问题，直到我看到了<a href="http://forum.notebookreview.com/threads/how-to-not-make-my-screen-go-black-when-i-close-my-lid.804712/" target="_blank" rel="external">这个帖子</a>里提到了GPU。我算是弄明白了一点，如果远程的电脑GPU不渲染的话，通过TeamViewer来查看页面也不会渲染的。搞清这一点，就很容易明白，为啥合上盖子的时候，笔记本GPU不进行渲染了，因为电脑为了延长屏幕的寿命，默认合上盖子后，屏幕会黑屏。哪怕是在Windows操作系统里的电源设置里，设置了合上盖子无任何操作的选项，笔记本依然会黑屏。出于对屏幕寿命的考虑，貌似硬件上会设置合盖黑屏这一操作。为了能合盖还能操作TeamViewer，方法还是有的，可能需要借助一些别的办法。但至少我弄明白了这其中的原委，也算是不枉对这个问题的研究下的心血。</p>
+
+  </section>
+</article>
+
+  <div class="sharing grid">
+  <section class="profile grid-item grid">
+    <img class="avatar" src="/images/chili.png" alt="avatar" />
+    <div class="grid-item">
+      <p class="title"> chilihotpot </p>
+      <p class="subtitle"> You Are The JavaScript In My HTML </p>
+    <div>
+  </section>
+
+  <section class="share-btns">
+    <!-- <p> share it if you like it~ </p> -->
+    <a
+  class="twitter-share-button"
+  data-size="large"
+  data-via="DrakeLeung"
+  href="https://twitter.com/intent/tweet?text=首先要说明的是，我一直在找小而美的远程连"
+>
+  Tweet
+</a>
+
+<script>
+  window.twttr = (function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0],
+    t = window.twttr || {};
+  if (d.getElementById(id)) return t;
+  js = d.createElement(s);
+  js.id = id;
+  js.src = "https://platform.twitter.com/widgets.js";
+  js.async = true;
+  fjs.parentNode.insertBefore(js, fjs);
+
+  t._e = [];
+  t.ready = function(f) {
+    t._e.push(f);
+  };
+
+  return t;
+}(document, "script", "twitter-wjs"));
+</script>
+
+  </section>
+</div>
+
+
+  
+</main>
+
+</body>
+</html>

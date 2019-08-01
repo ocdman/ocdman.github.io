@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>GoProxy-VPS实现自动更新letsencrypt证书 | chilihotpot</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <link rel="shortcut icon" href="/chili.ico">
+  <link rel="stylesheet" href="/css/app.css" type="text/css">
+  <!-- <link rel='stylesheet' href='http://fonts.useso.com/css?family=Source+Code+Pro'> -->
+</head>
+
+<body>
+  <nav class="app-nav">
+  
+    
+      <a href="/.">home</a>
+    
+  
+    
+      <a href="/archives">archive</a>
+    
+  
+    
+      <a href="/tags">tag</a>
+    
+  
+    
+      <a href="/categories">category</a>
+    
+  
+</nav>
+
+  <main class="post">
+  <article>
+  <h1 class="article-title">
+    <a href="/2018/08/31/GoProxy-VPS实现自动更新letsencrypt证书/">GoProxy-VPS实现自动更新letsencrypt证书</a>
+  </h1>
+
+  <section class="article-meta">
+    <p class="article-date">August 31 2018</p>
+  </section>
+
+  <section class="article-entry">
+    <p>之前写过一篇<a href="http://ocdman.github.io/2018/06/08/letsencrypt%E6%89%8B%E5%8A%A8%E6%9B%B4%E6%96%B0%E8%AF%81%E4%B9%A6/" target="_blank" rel="external">Letsencrypt手动更新证书</a>，时隔数月之后，终于想要实现自动更新letsencrypt证书。</p>
+<h3 id="更改goproxy-vps配置文件">更改goproxy-vps配置文件</h3><p>首先goproxy-vps依赖于letsencrypt生成的证书，我之前的配置文件<code>goproxy-vps.toml</code>内容如下</p>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="title">[[http2]]</span></span><br><span class="line"><span class="setting">listen = <span class="value"><span class="string">":443"</span></span></span></span><br><span class="line"><span class="setting">server_name = <span class="value">[<span class="string">"example.org"</span>]</span></span></span><br><span class="line"><span class="setting">disable_legacy_ssl = <span class="value"><span class="keyword">false</span></span></span></span><br><span class="line"><span class="setting">proxy_fallback = <span class="value"><span class="string">"http://127.0.0.1:80"</span></span></span></span><br><span class="line"><span class="setting">proxy_auth_method = <span class="value"><span class="string">"pam"</span></span></span></span><br><span class="line"><span class="setting">pem = <span class="value"><span class="string">"""</span><br><span class="line">-----BEGIN PRIVATE KEY-----</span><br><span class="line">-----END PRIVATE KEY-----</span><br><span class="line">-----BEGIN CERTIFICATE-----</span><br><span class="line">-----END CERTIFICATE-----</span><br><span class="line">"""</span></span></span></span><br></pre></td></tr></table></figure>
+<p>手动更新完letsencrypt证书后，还要将<code>/etc/letsencrypt/live/yourdomain</code>目录下的<code>cert.pem</code>以及<code>privkey.pem</code>的证书内容黏贴到配置文件中的<code>pem</code>处，非常麻烦。好在goproxy-vps支持直接从文件读取证书，修改一下<code>goproxy-vps.toml</code>配置文件</p>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="title">[[http2]]</span></span><br><span class="line"><span class="setting">listen = <span class="value"><span class="string">":443"</span></span></span></span><br><span class="line"><span class="setting">server_name = <span class="value">[<span class="string">"example.org"</span>]</span></span></span><br><span class="line"><span class="setting">disable_legacy_ssl = <span class="value"><span class="keyword">false</span></span></span></span><br><span class="line"><span class="setting">proxy_fallback = <span class="value"><span class="string">"http://127.0.0.1:80"</span></span></span></span><br><span class="line"><span class="setting">proxy_auth_method = <span class="value"><span class="string">"pam"</span></span></span></span><br><span class="line"><span class="setting">certfile = <span class="value"><span class="string">"/etc/letsencrypt/live/yourdomain/cert.pem"</span></span></span></span><br><span class="line"><span class="setting">keyfile = <span class="value"><span class="string">"/etc/letsencrypt/live/yourdomain/privkey.pem"</span></span></span></span><br></pre></td></tr></table></figure>
+<p>这样的话，每次证书更新完毕后，不用去黏贴证书内容了，方便了许多。对于实现自动更新letsencrypt证书也同样如此。</p>
+<h3 id="使用crontab实现定时更新">使用crontab实现定时更新</h3><p>如果要实现letsencrypt自动更新，就需要用到crontab来定时执行。letsencrypt的证书有效期为90天，貌似少于30天才给更新，否则letsencrypt会提示你更新无效，这也是对服务器的一种保护。</p>
+<p>由于我之前首次生成letsencrypt证书的时候使用的是<code>--standalone</code>模式，在验证域名的时候需要启用443端口，而我的goproxy-vps占用了该端口，所以不管是自动更新还是手动更新，都需要先停止goproxy-vps的进程。</p>
+<p>先查看crontab服务是否开启</p>
+<figure class="highlight fortran"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">service crond <span class="keyword">status</span></span><br></pre></td></tr></table></figure>
+<p>如果开启则创建crontab定时任务</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">crontab <span class="operator">-e</span></span><br></pre></td></tr></table></figure>
+<p>certbot工具支持钩子参数写法</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">15</span>  <span class="number">2</span> * */<span class="number">2</span> * certbot-<span class="keyword">auto</span> renew --pre-hook <span class="string">"service goproxy-vps stop"</span> --post-hook <span class="string">"service goproxy-vps start"</span> &gt; /home/youraccount/<span class="built_in">log</span>.txt</span><br></pre></td></tr></table></figure>
+<p>上面代码中goproxy-vps已经设置成一个服务了。如果没有设置成服务，可以使用绝对路径来执行。<code>certbot-auto</code>已经放到<code>usr/local/bin</code>目录下了成为一个全局命令。<code>--pre-hook</code> 这个参数表示执行更新操作之前要做的事情，<code>--post-hook</code> 这个参数表示执行更新操作完成后要做的事情。这条命令的含义是，每隔2个月的02:15分执行一次letsencrypt证书更新。执行日志输出到你的用户名的目录下。</p>
+<p>查看刚才创建的crontab定时任务</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">crontab <span class="operator">-l</span></span><br></pre></td></tr></table></figure>
+<h3 id="总结">总结</h3><p>目前还没有测试过这段代码，要等两个月后，才能确定是否能正常执行。据我所知，443端口是要在执行certbot前必须关闭的，但是占用80端口的Nginx服务我没有关闭，不知道会不会受影响。主要是<code>--pre-hook</code>这个钩子参数貌似不支持执行多个命令，官方文档又看着头大，等两个月后就见分晓了。</p>
+
+  </section>
+</article>
+
+  <div class="sharing grid">
+  <section class="profile grid-item grid">
+    <img class="avatar" src="/images/chili.png" alt="avatar" />
+    <div class="grid-item">
+      <p class="title"> chilihotpot </p>
+      <p class="subtitle"> You Are The JavaScript In My HTML </p>
+    <div>
+  </section>
+
+  <section class="share-btns">
+    <!-- <p> share it if you like it~ </p> -->
+    <a
+  class="twitter-share-button"
+  data-size="large"
+  data-via="DrakeLeung"
+  href="https://twitter.com/intent/tweet?text=之前写过一篇<a href="http:"
+>
+  Tweet
+</a>
+
+<script>
+  window.twttr = (function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0],
+    t = window.twttr || {};
+  if (d.getElementById(id)) return t;
+  js = d.createElement(s);
+  js.id = id;
+  js.src = "https://platform.twitter.com/widgets.js";
+  js.async = true;
+  fjs.parentNode.insertBefore(js, fjs);
+
+  t._e = [];
+  t.ready = function(f) {
+    t._e.push(f);
+  };
+
+  return t;
+}(document, "script", "twitter-wjs"));
+</script>
+
+  </section>
+</div>
+
+
+  
+</main>
+
+</body>
+</html>

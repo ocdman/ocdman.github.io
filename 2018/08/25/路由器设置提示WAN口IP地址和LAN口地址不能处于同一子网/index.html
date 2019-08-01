@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>路由器设置提示WAN口IP地址和LAN口地址不能处于同一子网 | chilihotpot</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <link rel="shortcut icon" href="/chili.ico">
+  <link rel="stylesheet" href="/css/app.css" type="text/css">
+  <!-- <link rel='stylesheet' href='http://fonts.useso.com/css?family=Source+Code+Pro'> -->
+</head>
+
+<body>
+  <nav class="app-nav">
+  
+    
+      <a href="/.">home</a>
+    
+  
+    
+      <a href="/archives">archive</a>
+    
+  
+    
+      <a href="/tags">tag</a>
+    
+  
+    
+      <a href="/categories">category</a>
+    
+  
+</nav>
+
+  <main class="post">
+  <article>
+  <h1 class="article-title">
+    <a href="/2018/08/25/路由器设置提示WAN口IP地址和LAN口地址不能处于同一子网/">路由器设置提示WAN口IP地址和LAN口地址不能处于同一子网</a>
+  </h1>
+
+  <section class="article-meta">
+    <p class="article-date">August 25 2018</p>
+  </section>
+
+  <section class="article-entry">
+    <p>最近在将二级路由的网关改成一级路由网关的时候提示</p>
+<blockquote>
+<p>WAN口IP地址和LAN口地址不能处于同一子网</p>
+</blockquote>
+<p>不允许继续执行下去。先来了解一下为什么会报这个错。</p>
+<p>路由器有个最基本的功能，就是连接两个不同的网段，并实现这两个网段之间的通信。所以，路由器中的WAN口IP地址，不能和LAN口IP地址处于同一子网。</p>
+<p>什么是同一子网？比方说，IP地址为192.168.1.1，子网掩码为255.255.255.0和IP地址192.168.1.100，子网掩码255.255.255.0就是同一网段，也称同一子网。</p>
+<p>而IP地址为192.168.1.1，子网掩码为255.255.0.0，和192.168.2.1，子网掩码255.255.255.0，看上去不在同一子网，但实际上是在同一子网，注意子网掩码的不同。所以，才会报上面的提示。</p>
+<p>解决方法是，修改路由器的LAN口IP地址，让WAN口喝LAN口IP地址不在同一子网就行了。</p>
+
+  </section>
+</article>
+
+  <div class="sharing grid">
+  <section class="profile grid-item grid">
+    <img class="avatar" src="/images/chili.png" alt="avatar" />
+    <div class="grid-item">
+      <p class="title"> chilihotpot </p>
+      <p class="subtitle"> You Are The JavaScript In My HTML </p>
+    <div>
+  </section>
+
+  <section class="share-btns">
+    <!-- <p> share it if you like it~ </p> -->
+    <a
+  class="twitter-share-button"
+  data-size="large"
+  data-via="DrakeLeung"
+  href="https://twitter.com/intent/tweet?text=最近在将二级路由的网关改成一级路由网关的"
+>
+  Tweet
+</a>
+
+<script>
+  window.twttr = (function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0],
+    t = window.twttr || {};
+  if (d.getElementById(id)) return t;
+  js = d.createElement(s);
+  js.id = id;
+  js.src = "https://platform.twitter.com/widgets.js";
+  js.async = true;
+  fjs.parentNode.insertBefore(js, fjs);
+
+  t._e = [];
+  t.ready = function(f) {
+    t._e.push(f);
+  };
+
+  return t;
+}(document, "script", "twitter-wjs"));
+</script>
+
+  </section>
+</div>
+
+
+  
+</main>
+
+</body>
+</html>

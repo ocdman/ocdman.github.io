@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>树莓派Zero W运行frp服务实现内网穿透 | chilihotpot</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <link rel="shortcut icon" href="/chili.ico">
+  <link rel="stylesheet" href="/css/app.css" type="text/css">
+  <!-- <link rel='stylesheet' href='http://fonts.useso.com/css?family=Source+Code+Pro'> -->
+</head>
+
+<body>
+  <nav class="app-nav">
+  
+    
+      <a href="/.">home</a>
+    
+  
+    
+      <a href="/archives">archive</a>
+    
+  
+    
+      <a href="/tags">tag</a>
+    
+  
+    
+      <a href="/categories">category</a>
+    
+  
+</nav>
+
+  <main class="post">
+  <article>
+  <h1 class="article-title">
+    <a href="/2018/08/11/树莓派Zero-W运行frp服务实现内网穿透/">树莓派Zero W运行frp服务实现内网穿透</a>
+  </h1>
+
+  <section class="article-meta">
+    <p class="article-date">August 11 2018</p>
+  </section>
+
+  <section class="article-entry">
+    <p>之前我写过一篇<a href="http://ocdman.github.io/2018/06/21/%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8frp%E5%AE%9E%E7%8E%B0%E8%BF%9C%E7%A8%8B%E6%A1%8C%E9%9D%A2/" target="_blank" rel="external">如何使用Frp实现远程桌面</a>的文章，以及另外一篇<a href="http://ocdman.github.io/2018/07/17/%E5%80%9F%E5%8A%A9frp%E5%AE%9E%E7%8E%B0ftp%E6%9C%8D%E5%8A%A1%E5%86%85%E7%BD%91%E7%A9%BF%E9%80%8F/" target="_blank" rel="external">借助Frp实现Ftp服务内网穿透</a>的文章，都提到了利用Frp来实现内网穿透。内网穿透了之后就可以跟访问内网一样进行远程桌面，或者FTP上传或下载文件了，没有任何限制。</p>
+<p>之前因为有一台国外的VPS，就直接拿来运行Frp服务了，作为一个内网穿透的跳板。虽然功能上没问题，但延迟过高，导致远程桌面的时候，延迟性比较高，影响体验。包括FTP上传或下载文件的时候，最高速度也就几十KB。所以理论上来说，功能正常，但是我不会过多使用。</p>
+<p>虽然有想再买一台国内VPS的想法，无奈国内VPS租用的价格太高，带宽又不高。现在有了树莓派Zero W，对家里的电信网络进行外网端口映射后，Zero W可以直接看作一台国内的VPS，价格便宜又省电。</p>
+<p>经过实测后发现，利用运行frp服务的Zero W作内网穿透后，远程桌面没有任何延迟的感觉了，非常的顺畅。FTP上传或下载速度也快了20倍都不止，光是上传都可以达到500KB以上。而且此时看一下Zero W的内存消耗，几乎没有任何多余的内存消耗。在进行远程桌面或FTP上传的时候，内存占用极少，几乎没有变过。这么一台便宜又省电的VPS确实让我很欣慰，庆幸自己当时没有买国内的VPS。</p>
+<p>最后说一下，在进行电信外网端口映射的时候，不光需要映射服务端端口，还有客户端的远程端口都要映射。比如frp服务的默认端口号为7000，远程桌面客户端的端口号为6000，那么映射的时候，6000和7000就都要进行映射。</p>
+
+  </section>
+</article>
+
+  <div class="sharing grid">
+  <section class="profile grid-item grid">
+    <img class="avatar" src="/images/chili.png" alt="avatar" />
+    <div class="grid-item">
+      <p class="title"> chilihotpot </p>
+      <p class="subtitle"> You Are The JavaScript In My HTML </p>
+    <div>
+  </section>
+
+  <section class="share-btns">
+    <!-- <p> share it if you like it~ </p> -->
+    <a
+  class="twitter-share-button"
+  data-size="large"
+  data-via="DrakeLeung"
+  href="https://twitter.com/intent/tweet?text=之前我写过一篇<a href="http"
+>
+  Tweet
+</a>
+
+<script>
+  window.twttr = (function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0],
+    t = window.twttr || {};
+  if (d.getElementById(id)) return t;
+  js = d.createElement(s);
+  js.id = id;
+  js.src = "https://platform.twitter.com/widgets.js";
+  js.async = true;
+  fjs.parentNode.insertBefore(js, fjs);
+
+  t._e = [];
+  t.ready = function(f) {
+    t._e.push(f);
+  };
+
+  return t;
+}(document, "script", "twitter-wjs"));
+</script>
+
+  </section>
+</div>
+
+
+  
+</main>
+
+</body>
+</html>

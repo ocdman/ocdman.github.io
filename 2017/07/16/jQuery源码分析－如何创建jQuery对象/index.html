@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>jQuery源码分析－如何创建jQuery对象 | chilihotpot</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <link rel="shortcut icon" href="/chili.ico">
+  <link rel="stylesheet" href="/css/app.css" type="text/css">
+  <!-- <link rel='stylesheet' href='http://fonts.useso.com/css?family=Source+Code+Pro'> -->
+</head>
+
+<body>
+  <nav class="app-nav">
+  
+    
+      <a href="/.">home</a>
+    
+  
+    
+      <a href="/archives">archive</a>
+    
+  
+    
+      <a href="/tags">tag</a>
+    
+  
+    
+      <a href="/categories">category</a>
+    
+  
+</nav>
+
+  <main class="post">
+  <article>
+  <h1 class="article-title">
+    <a href="/2017/07/16/jQuery源码分析－如何创建jQuery对象/">jQuery源码分析－如何创建jQuery对象</a>
+  </h1>
+
+  <section class="article-meta">
+    <p class="article-date">July 16 2017</p>
+  </section>
+
+  <section class="article-entry">
+    <p>这两天想把一个c#的项目转成js来写，加深自己对js的理解。可是刚开始没多久，就遇到了瓶颈。如何将c#中的类，转换成js中的对象，是一个问题，类中的属性，难道在js中要用构造函数模式，以参数的形式传递进去吗？万一属性很多，要传的参数岂不是也很多？带着这些疑问，我不禁想找找那些优秀的框架是怎么设计对象的，正好看到网上一篇文章讲jQuery源码的分析和jQuery对象的创建(<a href="http://www.cnblogs.com/sharpxiajun/archive/2012/05/07/2487208.html)，虽然这篇文章有一些关于用new去调用jQuery函数会出现内存溢出的错误说法以外，瑕不掩瑜，总体说得很不错，对jquery分析地很有见解。我就谈谈看了这篇文章之后，我对jQuery的理解以及对于自己的项目，我该如何创建对象的考虑。" target="_blank" rel="external">http://www.cnblogs.com/sharpxiajun/archive/2012/05/07/2487208.html)，虽然这篇文章有一些关于用new去调用jQuery函数会出现内存溢出的错误说法以外，瑕不掩瑜，总体说得很不错，对jquery分析地很有见解。我就谈谈看了这篇文章之后，我对jQuery的理解以及对于自己的项目，我该如何创建对象的考虑。</a></p>
+<p>要知道jQuery框架里最最基础的就是jQuery对象的定义，要想实现一个对象的定义，我们最常见的做法是声明一个函数<br>function F(name,type){<br>  this.name = name;<br>  this.type = type;<br>}<br>使用构造函数模式来定义jQuery对象，是早期jQuery的做法，1.0版本以后，jQuery对象的创建，加入了很多的技巧，使得jQuery的使用变得更加地方便以及有效率。<br>jQuery其实对于类型的定义，使用的并不是函数声明的方式，而是函数表达式的形式。所以，将上述函数F进行一下变动，会让我们的代码风格看上去更像是jQuery。<br>var F = function(name, type){<br>  this.name = name;<br>  this.type = type;<br>}<br>以上函数F，经过变动，看上去就和jQuery的定义有些相像了。<br>我们应该都用过jQuery创建过对象，但是我们从来不加new关键字。这个不加new关键字的实现，依靠的是工厂模式，看看下面的代码：<br>var F = function(name, type){<br>  var obj = new Object();<br>  obj.name = name;<br>  obj.type = type;<br>  return obj;<br>}<br>是不是经过了这种模式的调用之后，new关键字被省略了，同样的，也更贴近于jQuery的做法。<br>接下来模仿jQuery，我们创建一个xQuery对象。<br>(function(window, undefined){<br>  //window作为参数传入是为了缩短作用域的查询，同样地，undefined作为参数一是为了缩短作用域查询，二是为了防止undefined被重写。<br>  var xQuery = (function(){<br>    //xQuery中又定义一个xQuery函数，是为了防止xQuery在扩展的时候被其它变量污染。<br>    var xQuery = function(){<br>      //xQuery对象真正的类型<br>      return new xQuery.fn.init();<br>    };<br>    //xQuery.fn是xQuery函数原型的别名<br>    xQuery.fn = xQuery.prototype = {<br>      init: function(){<br>        this.name = ‘xQuery.prototype.init’;<br>        this.type = ‘init’;<br>        this.length = 0;<br>        return this;<br>      },<br>      length: 1,<br>      size: function(){<br>        return this.length;<br>      }<br>    };<br>    //将函数xQuery.fn.init的原型指向函数xQuery的原型<br>    xQuery.fn.init.prototype = xQuery.fn;<br>    //将xQuery作为全局属性<br>    window.xQuery = window.$ = xQuery;<br>    return xQuery;<br>  })();<br>  //函数xQuery的扩展和xQuery对象的扩展<br>  xQuery.extend = xQuery.fn.extend = function(){};<br>})(window);</p>
+<p>var x = xQuery();<br>alert(x.name); //‘xQuery.fn.init’<br>alert(x.type); //‘init’<br>alert(x.length); //0<br>alert(x.size()); //0<br>以上代码是仿写jQuery，其实所有的jQuery对象，它的类型都是jQuery.fn.init。又因为jQuery.fn.init的原型指回了jQuery的原型，所以jQuery对象拥有jQuery原型里定义的变量和函数。<br>以上这部分就是对jQuery源码关于jQuery对象创建的理解。</p>
+
+  </section>
+</article>
+
+  <div class="sharing grid">
+  <section class="profile grid-item grid">
+    <img class="avatar" src="/images/chili.png" alt="avatar" />
+    <div class="grid-item">
+      <p class="title"> chilihotpot </p>
+      <p class="subtitle"> You Are The JavaScript In My HTML </p>
+    <div>
+  </section>
+
+  <section class="share-btns">
+    <!-- <p> share it if you like it~ </p> -->
+    <a
+  class="twitter-share-button"
+  data-size="large"
+  data-via="DrakeLeung"
+  href="https://twitter.com/intent/tweet?text=这两天想把一个c#的项目转成js来写，加"
+>
+  Tweet
+</a>
+
+<script>
+  window.twttr = (function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0],
+    t = window.twttr || {};
+  if (d.getElementById(id)) return t;
+  js = d.createElement(s);
+  js.id = id;
+  js.src = "https://platform.twitter.com/widgets.js";
+  js.async = true;
+  fjs.parentNode.insertBefore(js, fjs);
+
+  t._e = [];
+  t.ready = function(f) {
+    t._e.push(f);
+  };
+
+  return t;
+}(document, "script", "twitter-wjs"));
+</script>
+
+  </section>
+</div>
+
+
+  
+</main>
+
+</body>
+</html>

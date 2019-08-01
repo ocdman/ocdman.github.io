@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>DNS工作原理讲解 | chilihotpot</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <link rel="shortcut icon" href="/chili.ico">
+  <link rel="stylesheet" href="/css/app.css" type="text/css">
+  <!-- <link rel='stylesheet' href='http://fonts.useso.com/css?family=Source+Code+Pro'> -->
+</head>
+
+<body>
+  <nav class="app-nav">
+  
+    
+      <a href="/.">home</a>
+    
+  
+    
+      <a href="/archives">archive</a>
+    
+  
+    
+      <a href="/tags">tag</a>
+    
+  
+    
+      <a href="/categories">category</a>
+    
+  
+</nav>
+
+  <main class="post">
+  <article>
+  <h1 class="article-title">
+    <a href="/2018/07/08/DNS工作原理讲解/">DNS工作原理讲解</a>
+  </h1>
+
+  <section class="article-meta">
+    <p class="article-date">July 08 2018</p>
+  </section>
+
+  <section class="article-entry">
+    <p>在看<strong>build-web-application-with-golang</strong>里的<a href="https://github.com/astaxie/build-web-application-with-golang/blob/master/zh/03.1.md" target="_blank" rel="external">Web工作方式</a>篇时，看到有对DNS的详细讲解，遂记录之。</p>
+<p>简单点讲，DNS的用途就是将域名转换成IP地址，所以说DNS也可以称之为一名翻译官。真实的网络世界中，主机与服务器通信，其本质都是依靠IP地址来进行交互的，DNS只是起到了一个方便记忆服务器地址的作用。</p>
+<p>更详细一点讲，比方说我们在浏览器中输入www.google.com访问谷歌搜索，其中DNS的解析一共分为以下步骤：</p>
+<ol>
+<li>操作系统查看本机的hosts文件，检查是否有这个网址的映射关系，如果有，则先调用这个IP地址映射，完成域名解析。</li>
+<li>如果本机的hosts文件里没有该域名的映射，则查找本机DNS解析器缓存，检查是否有这个网址的映射关系，如果有，则直接返回，完成域名解析。</li>
+<li>如果本机的hosts文件以及DNS解析器缓存都没有该网址对应的映射关系的话，则会在TCP/IP参数中设置的首选DNS服务器，我们可以暂时称它为本机DNS服务器，此服务器收到查询后，如果要查询的域名包含在本地配置区域资源中，则返回结果给客户机，完成域名解析。此解析具有权威性。</li>
+<li>如果要查询的域名不在本机DNS服务器区域解析，但该服务器已缓存了此网址的映射关系，则调用这个IP地址映射，完成域名解析。此解析不具有权威性。</li>
+<li>如果本机DNS服务器的本地区域文件以及缓存解析都失效了，则根据本机DNS服务器的设置（是否设置转发器）进行查询。如果未设置转发模式，本机DNS就会把请求发送至根DNS服务器，根DNS服务器收到请求后会判断这个域名（.com）是由谁来授权管理，并返回一个负责该顶级域名服务器的IP。本机DNS服务器收到此IP后，将会联系负责.com域下的这台服务器。这台负责.com域的服务器收到请求后，如果自己无法完成解析，就会找一个管理.com域的下一级DNS服务器地址（google.com）给到本机DNS服务器。当本机DNS服务器收到该地址后，就会找google.com域服务器，重复上面的动作进行查询，直至找到www.google.com主机。</li>
+<li>如果本机DNS服务器设置了转发模式，此DNS服务器就会把请求转发至上一级DNS服务器，由上一级服务器进行解析，上一级服务器如果不能解析，或找根DNS或把请求转至上上级，以此类推。最后，不论是本机DNS服务器还是转发，还是根DNS，最后都是把结果返回到本地DNS服务器，由此DNS服务器再返回给客户机。</li>
+</ol>
+<p>最后用一张图来概括</p>
+<p><img src="/img/2018070801.png" width="630px"></p>
+
+  </section>
+</article>
+
+  <div class="sharing grid">
+  <section class="profile grid-item grid">
+    <img class="avatar" src="/images/chili.png" alt="avatar" />
+    <div class="grid-item">
+      <p class="title"> chilihotpot </p>
+      <p class="subtitle"> You Are The JavaScript In My HTML </p>
+    <div>
+  </section>
+
+  <section class="share-btns">
+    <!-- <p> share it if you like it~ </p> -->
+    <a
+  class="twitter-share-button"
+  data-size="large"
+  data-via="DrakeLeung"
+  href="https://twitter.com/intent/tweet?text=在看<strong>build-web-"
+>
+  Tweet
+</a>
+
+<script>
+  window.twttr = (function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0],
+    t = window.twttr || {};
+  if (d.getElementById(id)) return t;
+  js = d.createElement(s);
+  js.id = id;
+  js.src = "https://platform.twitter.com/widgets.js";
+  js.async = true;
+  fjs.parentNode.insertBefore(js, fjs);
+
+  t._e = [];
+  t.ready = function(f) {
+    t._e.push(f);
+  };
+
+  return t;
+}(document, "script", "twitter-wjs"));
+</script>
+
+  </section>
+</div>
+
+
+  
+</main>
+
+</body>
+</html>

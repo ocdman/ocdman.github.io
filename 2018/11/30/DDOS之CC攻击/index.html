@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>DDOS之CC攻击 | chilihotpot</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <link rel="shortcut icon" href="/chili.ico">
+  <link rel="stylesheet" href="/css/app.css" type="text/css">
+  <!-- <link rel='stylesheet' href='http://fonts.useso.com/css?family=Source+Code+Pro'> -->
+</head>
+
+<body>
+  <nav class="app-nav">
+  
+    
+      <a href="/.">home</a>
+    
+  
+    
+      <a href="/archives">archive</a>
+    
+  
+    
+      <a href="/tags">tag</a>
+    
+  
+    
+      <a href="/categories">category</a>
+    
+  
+</nav>
+
+  <main class="post">
+  <article>
+  <h1 class="article-title">
+    <a href="/2018/11/30/DDOS之CC攻击/">DDOS之CC攻击</a>
+  </h1>
+
+  <section class="article-meta">
+    <p class="article-date">November 30 2018</p>
+  </section>
+
+  <section class="article-entry">
+    <p>上一篇讲了SYN Flood攻击，该种攻击方式处于OSI模型的第四层，TCP层。下面来讲讲应用层的经典攻击，CC攻击，更为官方的名字应该叫做HTTP Flood攻击，只是CC叫得更多一点。</p>
+<p>CC攻击和SYN Flood攻击的区别在于，前者发生在TCP三次握手后，应用程序处理请求的时候，而后者发生在TCP三次握手过程中。</p>
+<h3 id="CC攻击原理">CC攻击原理</h3><p>CC攻击和正常的HTTP请求的区别在于，CC攻击借助肉鸡或代理向目标服务器发送海量的HTTP请求，当服务器收到高并发的时候，服务器的响应就变得极其缓慢。不光如此，CC攻击尤其喜欢挑一些对数据库查询慢的请求，导致服务器CPU负载过高，从而宕机。</p>
+<p>总结一下，CC攻击的表象有以下几类：</p>
+<ul>
+<li>利用服务器向受害者发起大量HTTP GET请求</li>
+<li>主要请求动态页面，涉及数据库访问操作</li>
+<li>数据库负载以及数据库连接池负载极高，无法响应正常请求</li>
+</ul>
+<h3 id="如何判断CC攻击">如何判断CC攻击</h3><p>总的可以概括为以下几点：</p>
+<ol>
+<li>服务器CPU占用率很高</li>
+<li>Web服务器出现类似Service Unvailable提示</li>
+<li>出现大量的ESTABLISHED的网络连接状态且单个IP高达几十甚至上百个连接，Windows可以通过命令<code>netstat -n -p TCP</code>来查看</li>
+<li>用户无法正常访问网站页面或打开过程非常缓慢，软重启后短期内恢复正常，几分钟后又无法访问</li>
+</ol>
+<h3 id="CC攻击示例">CC攻击示例</h3><p>Github上有很多CC攻击的示例，我个人比较推荐使用Go语言写的，因为Go的并发做得真的很好，如果模拟CC攻击，一台电脑足矣。可以看看这个<a href="https://github.com/Konstantin8105/DDoS" target="_blank" rel="external">CC攻击的工具</a>，代码十分简洁，但是却霸道异常。如果只是用来做压力测试的话，开1000并发就能瞬间搞瘫一台服务器。</p>
+<h3 id="总结">总结</h3><p>CC攻击比之SYN Flood攻击而言，更难被拦截，尤其是肉鸡多的情况下。但并不是不可防，网上也有相关的CC防御脚本可以参考，比如<a href="https://github.com/jagerzhang/CCKiller" target="_blank" rel="external">CC Killer</a>。</p>
+
+  </section>
+</article>
+
+  <div class="sharing grid">
+  <section class="profile grid-item grid">
+    <img class="avatar" src="/images/chili.png" alt="avatar" />
+    <div class="grid-item">
+      <p class="title"> chilihotpot </p>
+      <p class="subtitle"> You Are The JavaScript In My HTML </p>
+    <div>
+  </section>
+
+  <section class="share-btns">
+    <!-- <p> share it if you like it~ </p> -->
+    <a
+  class="twitter-share-button"
+  data-size="large"
+  data-via="DrakeLeung"
+  href="https://twitter.com/intent/tweet?text=上一篇讲了SYN Flood攻击，该种攻"
+>
+  Tweet
+</a>
+
+<script>
+  window.twttr = (function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0],
+    t = window.twttr || {};
+  if (d.getElementById(id)) return t;
+  js = d.createElement(s);
+  js.id = id;
+  js.src = "https://platform.twitter.com/widgets.js";
+  js.async = true;
+  fjs.parentNode.insertBefore(js, fjs);
+
+  t._e = [];
+  t.ready = function(f) {
+    t._e.push(f);
+  };
+
+  return t;
+}(document, "script", "twitter-wjs"));
+</script>
+
+  </section>
+</div>
+
+
+  
+</main>
+
+</body>
+</html>

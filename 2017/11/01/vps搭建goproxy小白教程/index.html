@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>vps搭建goproxy小白教程 | chilihotpot</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <link rel="shortcut icon" href="/chili.ico">
+  <link rel="stylesheet" href="/css/app.css" type="text/css">
+  <!-- <link rel='stylesheet' href='http://fonts.useso.com/css?family=Source+Code+Pro'> -->
+</head>
+
+<body>
+  <nav class="app-nav">
+  
+    
+      <a href="/.">home</a>
+    
+  
+    
+      <a href="/archives">archive</a>
+    
+  
+    
+      <a href="/tags">tag</a>
+    
+  
+    
+      <a href="/categories">category</a>
+    
+  
+</nav>
+
+  <main class="post">
+  <article>
+  <h1 class="article-title">
+    <a href="/2017/11/01/vps搭建goproxy小白教程/">vps搭建goproxy小白教程</a>
+  </h1>
+
+  <section class="article-meta">
+    <p class="article-date">November 01 2017</p>
+  </section>
+
+  <section class="article-entry">
+    <p>十九大期间，GFW又再次发力，波及到一大批翻墙软件。其中就包括以稳定著称的蓝灯和Shadowsocks。而我一向稳定并且赖以生存的goproxy也出现了短时间连接不上的情况。平日里没被墙的时候没觉得什么，毕竟我还有备用梯子。可是当真的被墙了，备用梯子也不能用的时候，我才发现原来真的应该未雨绸缪。</p>
+<p>被墙期间，不光是某些网站上不了，还有国内的搜索引擎，关于翻墙软件、教程的搜索一律进行了过滤。得不到有效的搜索就意味着举足无措。就算有漏网之鱼，也都是些被墙了的网址。这感觉就像一座无形的牢笼束缚着我，关押者我，让你看得着却摸不着外面的世界。所以这也是我为什么要翻墙的最大原因。</p>
+<p>之前，在goproxy-vps发行没多久之后，我就想尝试一下在vps上搭建goproxy。但是苦于没有找到这方面详细的教程，包括购买vps需要花钱等等因素，导致我一直都在拖着，取而代之使用免费的goproxy的php模式来科学上网。</p>
+<p>没想到这一天还是来了，php模式的goproxy总有一天会被墙，所以我要尽早找到备用的梯子。而目前市面上最稳定、最安全的方法就是使用goproxy-vps版本，使用vps作为跳板来进行科学上网。其原理使用的是TLS1.3 + http2 代理。虽然我也不懂这是什么。</p>
+<p>自goproxy php模式短暂被墙了之后，我就想试试vps来翻墙。趁着goproxy恢复期间，赶紧找了一大堆关于goproxy-vps的安装和使用教程，没有一个是写得很详细的。我个人推荐<a href="https://goproxy0.github.io/discuss_history/goproxy/1470.html" target="_blank" rel="external">这篇goproxy issues帖子</a>，写的最全。我就是参考这个帖子，在vps上搭建goproxy成功的，但这个帖子也是寥寥数笔，对于小白来说，要摸索个半天。于是我决定自己写一个连小白都能看得懂的教程，把搭建的过程和心得跟大家分享一下。</p>
+<h2 id="一、关于原作者">一、关于原作者</h2><p>goproxy这个项目已经从github上删除，原作者phuslu被请去喝茶。我个人最早是从goagent一路跟随社长到goproxy的，那会儿还得自己扫google ip来搭配goagent使用，一路走来，无论是goagent也好，goproxy也罢，对于社长我只能说一声由衷地感谢。原先社长项目里的issues也全部被删除，导致可以参考的教程都没有了。好在还有一批热心人士，趁着goproxy还未删除之前，将社长的goproxy项目整个给爬了下了，以作备份。goproxy在github上的<a href="https://github.com/goproxy0/goproxy" target="_blank" rel="external">备份地址</a>，以前的issues，包括goagent和goproxy的<a href="https://github.com/goproxy0/discuss_history" target="_blank" rel="external">备份地址</a>。</p>
+<p>真心感谢xxnet这些热心人，没有你们爬下社长的项目，我就压根连goproxy-vps的最后一版也下载不到，sourceforge上的goproxy也被删除了。更别说还能找到以前的issues，对我来说简直是欣喜若狂。感谢各位的付出！</p>
+<h2 id="二、购买VPS">二、购买VPS</h2><p>首先来科普一下VPS，说简单点，VPS就是一个虚拟机，只不过它有自己独立的IP和端口号。大部分国内的VPS我不是很推荐，原因很简单，有可能被监控，而且价格也不便宜。国外的VPS就看个人经济能力了，我个人买的是<a href="http://banwagong.cn" target="_blank" rel="external">搬瓦工</a>。有条件的朋友可以选择使用Visa或者Paypal支付，像我这种没有信用卡的穷逼，就只有用支付宝来支付。买国外的VPS前，一定要了解清楚，是否支持支付宝支付，毕竟不是每个人都有信用卡的。</p>
+<p><img src="/img/56B75F11D0AF89B6085E74FCA4C6B94F.png" alt="搬瓦工套餐.png"></p>
+<p>这是我的套餐，貌似只支持年付，核算下来还是便宜的，加上优惠券的话，大概只要180多块钱一年，平均每月15元，比你自己开一台机子，用去的电费还要省。这还不是最便宜的套餐，最便宜的已经售罄了。</p>
+<p>搬瓦工的网站是全英文的，相信大部分人还是能看得懂的，如果看不懂也不用翻墙了。VPS有两种架构，分别为KVM和OpenVZ。至于KVM和OpenVZ怎么取舍，官网给出的解释是</p>
+<blockquote>
+<p>OpenVZ advantages:</p>
+<ul>
+<li>IPv6 support</li>
+<li>Better CPU performance</li>
+</ul>
+<p>KVM advantages:</p>
+<ul>
+<li>Full virtualization</li>
+<li>Custom kernel support (BBR, etc)</li>
+<li>Docker support</li>
+<li>Better isolation</li>
+<li>Better network throughput</li>
+</ul>
+</blockquote>
+<p>我个人推荐KVM架构，原因之一，goproxy-vps需要开启bbr算法，恰好KVM有。<strong>另外搬瓦工的话，只支持Linux操作系统，并没有Windows系统可选</strong>。而且没有图形化界面，只支持命令行操作，512MB的内存也别指望流畅地运行一个图形化界面了。如果对Linux命令行不熟悉的话也不用慌，跟着我一步步走。</p>
+<p>搬瓦工的注册和套餐购买的流程就不赘述了，套餐支付完成之后，搬瓦工会发一封邮件到你的邮箱，里面就有你的VPS IP地址以及SSH端口号。记住这些信息，以后ssh登录就靠它。</p>
+<h2 id="三、操作VPS">三、操作VPS</h2><p>买了VPS之后总要去操作吧，操作的入口在哪儿呢。我第一次用的时候还真没找到，以搬瓦工为例，在<strong>Client Area &gt; Services &gt; My Services</strong>里，点击一下就能进入VPS操作入口了。<br><img src="/img/6380480E3B002601F40CE5CABF6C9304.png" width="670px"></p>
+<p>接着找到KiwiVM Control Panel按钮，点击一下就能进入KVM操作面板了。<br><img src="/img/A8434427780B494F44CF6617EF6863C0.png" width="670px"></p>
+<p>进入KVM操作面板之后，你可以选择修改登录KVM的密码，也可以用邮件里给你的原始密码。<br><img src="/img/895B8AA7EA44C144C0A7E9A6AAC850F2.png" width="670px"></p>
+<p>我手上的这台VPS默认的操作系统是Centos-6-x86-bbr，正好goproxy-vps需要开启bbr算法。如果你的vps系统不带bbr也不用着急重装，先看下去。<br><img src="/img/653E3C92C0DDBEDE20BFB38E988C64EB.png" width="670px"></p>
+<p>Main Controls里可以开关KVM，我们先停止KVM，按下 stop按钮。然后点击Root password modification，按下Generate and set new root password按钮，一定要记下新生成的root密码。忘了可以再重置一次。最后，回到Main Controls，按下start按钮，启动KVM。<br><img src="/img/B74B6D7C860AE161CA126C48F908F45C.png" width="670px"><br><img src="/img/E83555B928D40B6149CA7F42C9A378F6.png" width="670px"></p>
+<p>到这一步KVM的操作差不多了。</p>
+<h2 id="四、申请域名">四、申请域名</h2><p>goproxy-vps需要使用域名和VPS的IP进行绑定，所以需要申请一个域名。我们没必要花钱去买一个，<a href="http://www.freenom.com/" target="_blank" rel="external">freenom</a>上可以申请免费的域名。找一个可以用的域名，比如说：example.tk。当然这个域名已经被注册了，我只是举个例子。<br><img src="/img/6384350C423ADA9B77A1C8D618BFBAC5.png" width="670px"></p>
+<p>免费域名最多可以使用12个月。超过12个月要么续费，要么再找一个新的。<br><img src="/img/2A1A8BE8C039328916FF13F202F029CC.png" width="670px"></p>
+<p>然后就是验证邮箱，freenom会发一封邮件到你的邮箱，确认之后，等待freenom审核通过，域名就正式归你所有了。<br><img src="/img/47CE1BF9B8447205921D73208B23FF68.png" width="670px"></p>
+<h2 id="五、管理域名">五、管理域名</h2><p>域名申请完成之后，找到<strong>Services &gt; My Domains</strong>，可以看到刚才申请的域名。<br><img src="/img/A5CBDAF10CD1029090186154E02005A1.png" width="670px"></p>
+<p>点击Manage Domain按钮，进入域名管理界面。<br><img src="/img/DC346138A1077F2A3EE7DCC336B8C054.png" width="670px"></p>
+<p>在域名管理界面下，点击Manage Freenom DNS，进入域名DNS管理。<br><img src="/img/32EAD8807FE083AEA02A696D20A4A7F0.png" width="670px"></p>
+<p>添加一个A记录，Target填你的VPS IP地址。Name可以留空，TTL默认。<br><img src="/img/7469310C728FD394D5F4A4F93A8911C0.png" width="670px"></p>
+<p>现在你注册的域名和你的VPS Ip地址就绑定在一块儿了。</p>
+<h2 id="六、在VPS上安装goproxy-vps">六、在VPS上安装goproxy-vps</h2><p>还记得刚才邮件里给你发的VPS的IP地址和SSH端口号吗？现在我们就要用到，如果不记得了去查一下邮件或者登录搬瓦工KVM控制面板里也有，从这一步起我们要用到命令行操作。如果你是Mac电脑的话直接打开终端terminal，Windows的话可以使用<a href="http://www.putty.org/" target="_blank" rel="external">Putty</a>。我以Mac为例，Windows的话自行搜索如何使用Putty登录VPS。</p>
+<p>Mac自带SSH，只需要在终端里输入<br><figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="title">ssh</span> root<span class="variable">@yourVpsIp</span> -p yourVpsSshPort</span><br></pre></td></tr></table></figure></p>
+<p>就能远程登录你的VPS了。和Windows不同的是，这一切都是命令行操作。这里的<strong>yourVpsIp</strong>以及<strong>yourVpsSshPort</strong>替换成你的VPS IP地址和SSH端口就行了，注意空格，-p的意思是端口号。</p>
+<p>root是最高权限用户， 还记得第三步重置了root的密码吗，现在就要拿来用了。不记得的话，去KVM里再重置一次，这一次可别忘了，重置root密码必须先把KVM给关了，重置完了一定要打开KVM，不然ssh就登不上了。</p>
+<p>在上一条命令输入完了之后，会提示你输入root的密码，输入完成之后，会显示<br><img src="/img/58DDE367958C0FAD9800F9DCDDB9C553.png" width="670px"><br>说明你以root身份登录成功。</p>
+<p>root的权限很大，不建议直接用root来登录，那么就创建一个新的用户吧，用新的用户来登录，执行命令<br><figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="title">useradd</span> example</span><br></pre></td></tr></table></figure></p>
+<p>系统就创建了一个叫example的用户，查看一下是否创建成功<br><figure class="highlight mel"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">ls</span> /home</span><br></pre></td></tr></table></figure></p>
+<p><img src="/img/D33E920B10F84B9B9F1CBC75E1B815AD.png" width="670px"></p>
+<p>如果有example这个文件夹的话，说明用户example创建成功。接下来就是给example用户创建密码，执行命令<br><figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="title">passwd</span> example</span><br></pre></td></tr></table></figure></p>
+<p>来设置用户密码，example是用户名，如果密码过于简单，会给出提示。最后会提示密码成功更新。<br><img src="/img/D5E103E217AC80CF2B0983211AB83FEF.png" width="670px"></p>
+<p>创建完了用户example并且设置了密码之后，需要给该用户分配权限，我们只需要把example用户加入到sudo组里就行了。执行命令<br><figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="title">sudo</span> visudo</span><br></pre></td></tr></table></figure></p>
+<p>打开visudo文件，在文件的最后添加一行代码<br><figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">example</span> <span class="literal">ALL</span>=(<span class="literal">ALL</span>:<span class="literal">ALL</span>) <span class="literal">ALL</span></span><br></pre></td></tr></table></figure></p>
+<p>就行了。这里example就是创建的用户名。如果你不知道如何写入并且保存文件的话，请自行搜索如何使用vi。在Linux命令行中必须要学会的技能就是如何操作vi或vim。</p>
+<p>把example用户添加进sudo组之后，我们要换example用户来登录。执行命令<br><figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="title">su</span> example</span><br></pre></td></tr></table></figure></p>
+<p>就可以看到我们的身份从root切换到example用户了。<br><img src="/img/ACE8EA3819D89920E8E761704A2E627A.png" width="670px"></p>
+<p>要回到example用户的主页，需执行命令<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> ~</span><br></pre></td></tr></table></figure></p>
+<p>然后创建一个文件夹，就叫Downloads好了。需执行命令<br><figure class="highlight dos"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">mkdir</span> Downloads</span><br></pre></td></tr></table></figure></p>
+<p>查看一下是否创建成功，执行命令<br><figure class="highlight mel"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">ls</span> ~</span><br></pre></td></tr></table></figure></p>
+<p><img src="/img/3CE15E50368982B91156D6716BA937D2.png" width="670px"></p>
+<p>接下来就是从网络上下载goproxy-vps版本了，首先根据你的VPS的cpu架构以及操作系统，来选择你的goproxy-vps版本，<a href="https://github.com/goproxy0/goproxy/releases" target="_blank" rel="external">goproxy-vps下载地址</a>。</p>
+<p>因为我VPS的cpu架构是intel 32位的，操作系统是Linux，所以我选择的版本是goproxy-vps_linux_386-r266.tar.xz。<br><img src="/img/151F56C2F4D7A11A9F4FCD8D0B1588A3.png" width="670px"></p>
+<p>这里并不是点击你要下载的文件，而是用命令行来下载，我们需要的是文件的下载地址，下载文件需要下载工具，以Centos为例，执行命令<br><figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo yum <span class="keyword">install</span> wget</span><br></pre></td></tr></table></figure></p>
+<p><strong>wget</strong>就是下载工具，专门下载网络上的文件。刚才我们把example用户加入sudo组了，所以现在可以使用sudo命令。当加上sudo前缀时，用户在执行命令的那一刻具有root权限，而且要输入一次当前用户的密码。yum则是Centos的包管理器，专门下载各种各样的包，wget就是其中之一。</p>
+<p>安装完wget之后，我们就要下载goproxy-vps了，执行命令<br><figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">cd</span> Downloads</span><br><span class="line">wget http<span class="variable">s:</span>//github.<span class="keyword">com</span>/goproxy0/goproxy/releases/download/r1623/goproxy-vps_linux_386-r266.tar.xz</span><br></pre></td></tr></table></figure></p>
+<p>cd命令用来切换文件夹，刚才创建的Downloads文件夹是专门用来放下载文件的，我们先进入该文件夹，再下载goproxy-vps到该目录下。wget后面加下载地址，就能下载goproxy-vps文件了。<br><img src="/img/E7CFDA240A8E504C30AE8F1E17F95C00.png" width="670px"></p>
+<p>检查一下是否下载成功，执行命令<br><figure class="highlight mel"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">ls</span></span><br></pre></td></tr></table></figure></p>
+<p><img src="/img/E2F175F514915BA0D70738512570CE86.png" width="670px"></p>
+<p>说明已经下载成功。接下来就是要解压文件，可以看到该文件有两个后缀名，分别为.xz和.tar。我们首先要解压.xz文件。安装xz解压工具，执行命令<br><figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo yum <span class="keyword">install</span> xz</span><br></pre></td></tr></table></figure></p>
+<p>还记得刚才安装wget工具的写法吗，只不过这里变成了xz。xz是个压缩和解压的工具，专门针对.xz结尾的文件。执行命令<br><figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">xz -d goproxy-vps_linux_386-r266<span class="class">.tar</span><span class="class">.xz</span></span><br><span class="line">ls</span><br></pre></td></tr></table></figure></p>
+<p>-d参数用来解压.xz文件，可以看到原来.xz结尾的文件变成了.tar结果了，说明xz解压成功。<br><img src="/img/8B38F8FC838405BF0FCE1DF13A8DB537.png" width="670px"></p>
+<p>接下来就是要解压.tar文件，执行命令<br><figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">tar</span> <span class="tag">-xvf</span> <span class="tag">goproxy-vps_linux_386-r266</span><span class="class">.tar</span></span><br></pre></td></tr></table></figure></p>
+<p>-xvf参数用来解压.tar文件，因为tar是自带命令，所以无需安装。可以看到解压完成后，多出来一个goproxy-vps的文件夹，这个就是我们需要的文件。<br><img src="/img/EBE0DCABDCF42BDB36F1112E9436DB76.png" width="670px"></p>
+<p>在主目录下新建一个Documents文件夹，把解压出来的goproxy-vps文件夹移到该文件夹下，执行命令<br><figure class="highlight stata"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">mkdir</span> ~/Documents</span><br><span class="line">mv goproxy-vps ~/Documents</span><br><span class="line"><span class="keyword">ls</span> ~/Documents</span><br></pre></td></tr></table></figure></p>
+<p>mv有很多种用法，这里是把goproxy-vps文件夹移到Documents文件夹下。可以看到，当前Downloads文件夹里的goproxy-vps文件夹被移到了Documents文件夹里，这么做的目的是为了分得更详细一点，找起来方便。<br><img src="/img/1615C89278BA2A13E8264C7019D678B0.png" width="670px"></p>
+<p>接下来需要修改一下goproxy-vps的参数，切换到goproxy-vps的目录下，执行命令<br><figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">cd</span> ~/Documents/goproxy-vps</span><br><span class="line"><span class="keyword">ls</span></span><br><span class="line"><span class="keyword">vi</span> goproxy-vps.toml</span><br></pre></td></tr></table></figure></p>
+<p>前面说过vi的基本操作必须掌握，不会的话自行找个教程看一下。这里的goproxy-vps.toml是goproxy的配置文件。<br><img src="/img/494539D796262509AD9FD61ECB4EC0C3.png" width="670px"></p>
+<p>需要修改的地方有三个，<strong>将第一个http2里的example.org改成你的注册域名，同样的，将https里的proxy.example.org改成你注册的域名，将http部分注释，注释用#</strong>。注意，前面第五节域名管理里有让创建一个A记录，Name留空，如果这里你填写了Name，那么你的域名就是Name加上域名，用.分隔，例如我的Name填的是www，那么我的域名就是www.mydomain。建议Name不要填，留空。</p>
+<p>最后就是运行goproxy-vps了，执行命令<br><figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="title">sudo</span> ./goproxy-vps</span><br></pre></td></tr></table></figure></p>
+<p>输入密码后，可以看到goproxy-vps占用了443端口，443走的是https协议。<br><img src="/img/6F1098872214CFE4189FEF80EA54F627.png" width="670px"></p>
+<p>到这一步goproxy-vps的配置和运行算是完成了。</p>
+<h2 id="七、安装配置SwitchyOmega">七、安装配置SwitchyOmega</h2><p>前面goproxy-vps已经在运行了，接下来就是要科学上网了，怎么做呢？需要安装一个浏览器插件，SwitchyOmega。这是一个Chrome浏览器的插件，其它浏览器的话，我没怎么用过。如果第一次听说SwitchyOmega的话，自行去下载安装并学习，这里只介绍如何配置SwitchyOmega，搭配goproxy-vps来实现科学上网。</p>
+<p>首先，新建一个情景模式，命名为goproxy-vps，接下来在代理协议里选择https协议，代理服务器填你注册的域名，也就是你在第六步修改goproxy-vps.toml文件里的域名。端口号填443，保存。<br><img src="/img/24C6FD08E116873356CD9AD4955A5A4D.png" width="670px"></p>
+<p>最后在Chrome浏览器里新建一个标签页，将SwitchOmega切换到你新建的goproxy-vps情景，地址栏输入www.google.com，会跳出一个验证框，让你输入用户名和密码。用户名是你在vps上新建的用户example，然后输入它的密码，接下来就好好享受墙外的世界吧。<br><img src="/img/A74CBC4C973E013990A9D642CDD69C4B.png" width="670px"></p>
+<h2 id="八、长久连接vps">八、长久连接vps</h2><p>前面的教程有一个不足就是当ssh断开连接后，goproxy-vps进程就会自动停止，无法继续翻墙，必须再次连接ssh，执行goproxy-vps程序，才能继续科学上网。好在linux有nohup命令，就算终端断开连接，进程也不会退出。执行命令<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> ~/Documents/goproxy-vps</span><br><span class="line">nohup sudo ./goproxy-vps &amp;</span><br></pre></td></tr></table></figure></p>
+<p>注意，nohup要以&amp;结尾。nohup允许用户终端退出之后，后台仍然运行程序，这样的话就不用每次都去手动连接ssh，并且执行goproxy-vps程序了。一劳永逸。<br><img src="/img/3AD7AAB0F07468FAD08DCDCA992A6042.png" width="670px"></p>
+<h2 id="总结">总结</h2><p>教程到这里就结束了，回顾一下，本教程需要一些linux的基本操作知识，还有一些例如SwitchOmega的使用。对于肯动手的朋友，应该没啥难度。如果图方便的话，搬瓦工还支持一键安装Shadowsocks，比起本教程省力很多，本文不做介绍。</p>
+<h2 id="附">附</h2><p>社长的建议是要开启bbr算法的，如何开启呢？执行命令<br><figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">vi</span> /etc/sysctl.<span class="keyword">conf</span></span><br></pre></td></tr></table></figure></p>
+<p>找到bbr，确保该行没有被注释掉，应该就是开启了<br><img src="/img/F3259068489205770B52FEFC0731304B.png" width="670px"></p>
+<p><strong>社长的教程</strong><br><img src="/img/87023b2cgy1fiifq4y2ujj20my0izgm4.jpg" width="670px"></p>
+<p><strong>我参照的教程</strong><br><img src="/img/6BEA5C85D2AA2F7C1B6C4C108E13CF63.png" width="670px"></p>
+
+  </section>
+</article>
+
+  <div class="sharing grid">
+  <section class="profile grid-item grid">
+    <img class="avatar" src="/images/chili.png" alt="avatar" />
+    <div class="grid-item">
+      <p class="title"> chilihotpot </p>
+      <p class="subtitle"> You Are The JavaScript In My HTML </p>
+    <div>
+  </section>
+
+  <section class="share-btns">
+    <!-- <p> share it if you like it~ </p> -->
+    <a
+  class="twitter-share-button"
+  data-size="large"
+  data-via="DrakeLeung"
+  href="https://twitter.com/intent/tweet?text=十九大期间，GFW又再次发力，波及到一大"
+>
+  Tweet
+</a>
+
+<script>
+  window.twttr = (function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0],
+    t = window.twttr || {};
+  if (d.getElementById(id)) return t;
+  js = d.createElement(s);
+  js.id = id;
+  js.src = "https://platform.twitter.com/widgets.js";
+  js.async = true;
+  fjs.parentNode.insertBefore(js, fjs);
+
+  t._e = [];
+  t.ready = function(f) {
+    t._e.push(f);
+  };
+
+  return t;
+}(document, "script", "twitter-wjs"));
+</script>
+
+  </section>
+</div>
+
+
+  
+</main>
+
+</body>
+</html>

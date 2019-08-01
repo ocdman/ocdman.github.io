@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>命令行如何走代理 | chilihotpot</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <link rel="shortcut icon" href="/chili.ico">
+  <link rel="stylesheet" href="/css/app.css" type="text/css">
+  <!-- <link rel='stylesheet' href='http://fonts.useso.com/css?family=Source+Code+Pro'> -->
+</head>
+
+<body>
+  <nav class="app-nav">
+  
+    
+      <a href="/.">home</a>
+    
+  
+    
+      <a href="/archives">archive</a>
+    
+  
+    
+      <a href="/tags">tag</a>
+    
+  
+    
+      <a href="/categories">category</a>
+    
+  
+</nav>
+
+  <main class="post">
+  <article>
+  <h1 class="article-title">
+    <a href="/2018/11/06/命令行如何走代理/">命令行如何走代理</a>
+  </h1>
+
+  <section class="article-meta">
+    <p class="article-date">November 06 2018</p>
+  </section>
+
+  <section class="article-entry">
+    <p><a href="https://ocdman.github.io/2018/11/06/GoProxy-VPS%E6%90%AD%E9%85%8DStunnel%E5%AE%A2%E6%88%B7%E7%AB%AF/" target="_blank" rel="external">上一篇</a>我介绍了如何使用Stunnel作为客户端，GoProxy-VPS作为服务端进行全局代理。但所谓的全局代理，并不针对命令行，比如Mac下的Terminal或者Windows下的CMD。很多情况下，命令行的程序更需要更新。</p>
+<p>下面我来介绍一下，在Mac以及Windows环境下如何给命令行设置全局代理。</p>
+<h3 id="Mac_Terminal">Mac Terminal</h3><p>首先，我找了一下Mac下如何安装Stunnel的教程，比较简单的就是使用Homebrew安装，只需要一条命令</p>
+<figure class="highlight armasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">brew </span>install stunnel</span><br></pre></td></tr></table></figure>
+<p>Mac下的Stunnel是没有图形化界面的，不像Windows。但问题是我的Homebrew版本太低的缘故，下载的Stunnel链接已经不存在了，这就很头痛了。而且Homebrew本身又一直更新失败。但是仔细观察会发现，Stunnel官网有源文件包，可以手动编译安装。下载最新的版本，我的是<a href="https://www.stunnel.org/downloads/stunnel-5.49.tar.gz" target="_blank" rel="external">5.49版本</a>。</p>
+<p>下载完成后，解压然后执行命令安装</p>
+<figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">cd</span> stunnel-<span class="number">5.49</span></span><br><span class="line">./configure</span><br><span class="line"><span class="keyword">make</span> &amp;&amp; <span class="keyword">make</span> install</span><br></pre></td></tr></table></figure>
+<p>安装完成后，需要创建<code>stunnel.conf</code>配置文件</p>
+<figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cp <span class="regexp">/usr/</span>local<span class="regexp">/etc/</span>stunnel<span class="regexp">/stunnel.conf-sample /u</span>sr<span class="regexp">/local/</span>etc<span class="regexp">/stunnel/</span>stunnel.conf</span><br></pre></td></tr></table></figure>
+<p>接下来就是新增你自己的配置，比如我的配置</p>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">; HTTP(S) proxy authenticated with a client certificate</span></span><br><span class="line"><span class="title">[https]</span></span><br><span class="line"><span class="setting">client = <span class="value"><span class="keyword">yes</span></span></span></span><br><span class="line"><span class="setting">accept = <span class="value"><span class="number">127.0</span>.<span class="number">0.1</span>:<span class="number">8080</span></span></span></span><br><span class="line"><span class="setting">connect = <span class="value"><span class="number">192.168</span>.<span class="number">80.156</span>:<span class="number">443</span></span></span></span><br><span class="line"><span class="setting">verifyChain = <span class="value"><span class="keyword">yes</span></span></span></span><br><span class="line"><span class="comment">;engineId = capi</span></span><br><span class="line"><span class="setting">CAfile = <span class="value">/usr/local/etc/stunnel/server.pem</span></span></span><br></pre></td></tr></table></figure>
+<p>其中，<code>client=yes</code>代表启用客户端代理，<code>accept=127.0.0.1:8080</code>表示客户端代理的网址和端口，<code>connect=192.168.80.156:443</code>是我的GoProxy-VPS服务运行的网址和端口，<code>verifyChain=yes</code>表示客户端需要验证服务端的证书，<code>CAfile = /usr/local/etc/stunnel/server.pem</code>是我服务端的证书。</p>
+<p>当然把<code>verifyChain</code>以及<code>CAfile</code>都注释了的话，客户端就无须验证服务端证书这一步了，始终认为是通过的。而浏览器就无法跳过这一步，因为对浏览器而言，客户端验证服务器证书，是TLS握手中必须的一步。</p>
+<p>配置完成之后，运行Stunnel进程</p>
+<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="title">sudo</span> stunnel</span><br></pre></td></tr></table></figure>
+<p>至此，Mac下的Stunnel客户端就算运行成功了。那么如何配置Terminal走Stunnel代理呢？</p>
+<p>很简单，只需要在Terminal中输入两行命令，即可实现代理</p>
+<figure class="highlight pf"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">export http_proxy=http://<span class="keyword">user</span>:<span class="built_in">pass</span>@ip:<span class="keyword">port</span></span><br><span class="line">export https_proxy=http://<span class="keyword">user</span>:<span class="built_in">pass</span>@ip:<span class="keyword">port</span></span><br></pre></td></tr></table></figure>
+<p>如果GoProxy-VPS设置了PAM验证机制，命令行设置代理的时候，就需要带上用户名和密码。其中<code>user</code>是用户名，<code>pass</code>是密码，<code>ip:port</code>是Stunnel客户端配置中的<code>accept</code>参数的值，比如我的就是<code>127.0.0.1:8080</code>。</p>
+<p>如果密码带有<code>!@</code>等字符，需要使用转义符号<code>\</code>。下面就可以走代理更新你的命令行程序了。</p>
+<h3 id="Windows_CMD">Windows CMD</h3><p>Windows下安装Stunnel客户端太容易了，配置和Mac下的配置一样，无须更改。主要说说CMD如何实现走代理。其实很简单，打开CMD</p>
+<figure class="highlight pf"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">set</span> http_proxy=http://<span class="keyword">user</span>:<span class="built_in">pass</span>@ip:<span class="keyword">port</span></span><br><span class="line"><span class="built_in">set</span> https_proxy=http://<span class="keyword">user</span>:<span class="built_in">pass</span>@ip:<span class="keyword">port</span></span><br></pre></td></tr></table></figure>
+<p>设置一下就好了，是不是超级简单。</p>
+
+  </section>
+</article>
+
+  <div class="sharing grid">
+  <section class="profile grid-item grid">
+    <img class="avatar" src="/images/chili.png" alt="avatar" />
+    <div class="grid-item">
+      <p class="title"> chilihotpot </p>
+      <p class="subtitle"> You Are The JavaScript In My HTML </p>
+    <div>
+  </section>
+
+  <section class="share-btns">
+    <!-- <p> share it if you like it~ </p> -->
+    <a
+  class="twitter-share-button"
+  data-size="large"
+  data-via="DrakeLeung"
+  href="https://twitter.com/intent/tweet?text=<a href="https://ocd"
+>
+  Tweet
+</a>
+
+<script>
+  window.twttr = (function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0],
+    t = window.twttr || {};
+  if (d.getElementById(id)) return t;
+  js = d.createElement(s);
+  js.id = id;
+  js.src = "https://platform.twitter.com/widgets.js";
+  js.async = true;
+  fjs.parentNode.insertBefore(js, fjs);
+
+  t._e = [];
+  t.ready = function(f) {
+    t._e.push(f);
+  };
+
+  return t;
+}(document, "script", "twitter-wjs"));
+</script>
+
+  </section>
+</div>
+
+
+  
+</main>
+
+</body>
+</html>

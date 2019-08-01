@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Minimal CentOS Docker容器无法使用man | chilihotpot</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <link rel="shortcut icon" href="/chili.ico">
+  <link rel="stylesheet" href="/css/app.css" type="text/css">
+  <!-- <link rel='stylesheet' href='http://fonts.useso.com/css?family=Source+Code+Pro'> -->
+</head>
+
+<body>
+  <nav class="app-nav">
+  
+    
+      <a href="/.">home</a>
+    
+  
+    
+      <a href="/archives">archive</a>
+    
+  
+    
+      <a href="/tags">tag</a>
+    
+  
+    
+      <a href="/categories">category</a>
+    
+  
+</nav>
+
+  <main class="post">
+  <article>
+  <h1 class="article-title">
+    <a href="/2017/10/05/Minimal-CentOS-Docker容器无法使用man/">Minimal CentOS Docker容器无法使用man</a>
+  </h1>
+
+  <section class="article-meta">
+    <p class="article-date">October 05 2017</p>
+  </section>
+
+  <section class="article-entry">
+    <p>使用Docker安装Minimal CentOS镜像后，在容器里无法使用man，报错：</p>
+<blockquote>
+<p>sh: man: command not found</p>
+</blockquote>
+<p>这个帖子，<a href="https://unix.stackexchange.com/questions/259478/cant-install-man-pages-on-minimal-centos-docker-container" target="_blank" rel="external">Can’t install man pages on minimal Centos Docker container</a>可以解决这个问题。</p>
+<p>之所以会无法使用man，估计是Minimal CentOS镜像把man这部分也给剥离了，只留下最核心的部分。如何才能恢复man呢？</p>
+<h3 id="步骤一：">步骤一：</h3><p>找到 <strong>/etc/yum.conf</strong> 文件，将里面的 <strong>tsflags=nodocs</strong> 这一行给注释掉</p>
+<h3 id="步骤二：">步骤二：</h3><p>执行命令：<br><figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="title">yum</span> reinstall shadow-utils</span><br></pre></td></tr></table></figure></p>
+<h3 id="步骤三：">步骤三：</h3><p>最后执行命令：<br><figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum <span class="keyword">install</span> -y man-pages</span><br></pre></td></tr></table></figure></p>
+<p>虽然基础的man命令可以用了，但是和完整操作系统上的man命令比起来，还是会缺一部分，比如说，man vim。</p>
+
+  </section>
+</article>
+
+  <div class="sharing grid">
+  <section class="profile grid-item grid">
+    <img class="avatar" src="/images/chili.png" alt="avatar" />
+    <div class="grid-item">
+      <p class="title"> chilihotpot </p>
+      <p class="subtitle"> You Are The JavaScript In My HTML </p>
+    <div>
+  </section>
+
+  <section class="share-btns">
+    <!-- <p> share it if you like it~ </p> -->
+    <a
+  class="twitter-share-button"
+  data-size="large"
+  data-via="DrakeLeung"
+  href="https://twitter.com/intent/tweet?text=使用Docker安装Minimal Ce"
+>
+  Tweet
+</a>
+
+<script>
+  window.twttr = (function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0],
+    t = window.twttr || {};
+  if (d.getElementById(id)) return t;
+  js = d.createElement(s);
+  js.id = id;
+  js.src = "https://platform.twitter.com/widgets.js";
+  js.async = true;
+  fjs.parentNode.insertBefore(js, fjs);
+
+  t._e = [];
+  t.ready = function(f) {
+    t._e.push(f);
+  };
+
+  return t;
+}(document, "script", "twitter-wjs"));
+</script>
+
+  </section>
+</div>
+
+
+  
+</main>
+
+</body>
+</html>

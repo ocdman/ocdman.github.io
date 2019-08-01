@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>什么是OpenSSL | chilihotpot</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <link rel="shortcut icon" href="/chili.ico">
+  <link rel="stylesheet" href="/css/app.css" type="text/css">
+  <!-- <link rel='stylesheet' href='http://fonts.useso.com/css?family=Source+Code+Pro'> -->
+</head>
+
+<body>
+  <nav class="app-nav">
+  
+    
+      <a href="/.">home</a>
+    
+  
+    
+      <a href="/archives">archive</a>
+    
+  
+    
+      <a href="/tags">tag</a>
+    
+  
+    
+      <a href="/categories">category</a>
+    
+  
+</nav>
+
+  <main class="post">
+  <article>
+  <h1 class="article-title">
+    <a href="/2018/10/08/什么是OpenSSL/">什么是OpenSSL</a>
+  </h1>
+
+  <section class="article-meta">
+    <p class="article-date">October 08 2018</p>
+  </section>
+
+  <section class="article-entry">
+    <p>因为之前在给虚拟机安装Mac Lion系统的时候，升级了OpenSSL，发现我对OpenSSL的理解不够深刻，那么就单独复习一下SSL的知识以及学习一下什么是OpenSSL。主要是参考了<a href="https://www.jianshu.com/p/3665fbfc2243" target="_blank" rel="external">这篇文章</a>。</p>
+<h3 id="SSL">SSL</h3><p>SSL是Netscape公司（火狐的前身），创建的一套网络安全协议，主要是为了防止信息在互联网上传输的时候不被窃听。后来该协议改名为TLS。</p>
+<p>信息泄漏是一件很可怕的事情，比如有些没有认证的免费Wifi，如果你去蹭了，很有就被中间人劫走了你的信息。</p>
+<h3 id="非对称加密">非对称加密</h3><p>在数学上有个现象，给两个质数（即只有1以及本身能除尽的数），很容易算出它们的乘积。但是如果给一个很大的数，却很难分解出两个质数来，使它们的乘积正好等于这个数。</p>
+<p>非对称加密的原理就是基于这个现象，其中私钥就是两个质数，而公钥就是很大的数。它们负责分工不同，<strong>公钥负责加密，而私钥负责解密</strong>，所以叫做非对称。</p>
+<p>公钥和私钥是可以相互推导的，根据私钥，你可以很容易的算出公钥，但是根据公钥，你却很难很难算出私钥，在互联网上，私钥一般由服务器掌握，公钥则由客户端使用。如果想从公钥推导出私钥，理论上需要花费地球上所有的计算机计算数万年才能算出私钥，所以认为是非常安全的。</p>
+<h3 id="数字签名">数字签名</h3><p>数字签名的作用是为了<strong>证明发送者的身份以及防篡改</strong>的功能。</p>
+<p>它的原理是，将报文使用一定的hash算法算出一个固定位数的摘要信息，然后<strong>用私钥对摘要进行签名</strong>，连同原来的报文一起，发送给接收者。而接收者同样通过hash算法算出报文摘要，然后<strong>通过公钥验证签名获取摘要</strong>，如果两个摘要的数据完整，证明发送者持有私钥，也就证明了发送者的身份。</p>
+<h3 id="数字证书">数字证书</h3><p>由CA颁发给网站的身份证书，里面包含了该网站的公钥，有效时间，网站地址以及CA的数字签名等。</p>
+<p>所谓的CA数字签名，实际上就是使用了CA的私钥将网站的公钥等信息进行了签名，当客户端请求服务器的时候，网站会把证书发送给客户端，客户端系统一般内置了CA的公钥，所以可以通过CA的公钥来校验CA数字签名，从而校验了CA的身份。这也是为什么我之前使用CURL，老是提示服务器证书不可信的原因了，因为我没有为CURL指定可信的CA公钥。</p>
+<p>通过CA颁发的网站证书，可以防止中间人攻击。所谓的中间人攻击，它也可以生成一对非对称密钥，然后截获服务器发送的公钥，把它自己的公钥发送给客户端，进行欺骗。而中间人无法做到的是，数字证书的签名。</p>
+<h3 id="对称加密数据">对称加密数据</h3><p>HTTPS的三次握手过程是这样的：</p>
+<p>第一步，首先是客户端发起请求，该请求会携带一个随机数C1</p>
+<p>第二步，服务器返回数字证书，同时会携带一个随机数F</p>
+<p>第三步，客户端获取证书后，校验通过的话，使用证书中的网站公钥加密一个随机数C2，然后发送给服务器。至此，三次握手结束。</p>
+<p>客户端以及服务器都拥有了三个随机数：C1、F、C2，双方使用这些随机数和一个相同的算法生成一个对称密钥，之后所有的通信都使用这个对称密钥来进行。这个队成密钥就是对称加密数据的核心所在了。</p>
+<p>由于随机数C1以及F都是公开的，而C2是经过公钥加密的，只有服务器的私钥才能获取，所以可以保证此后生成的对称密钥的安全性。</p>
+<p>为什么要生成一个对称密钥来进行数据通信呢？因为非对称加密在解密的时候相当耗费性能，换成对称密钥后，会好很多。</p>
+<h3 id="什么是OpenSSL">什么是OpenSSL</h3><p>上面的SSL只是一个协议，OpenSSL则是SSL的实现版，另外OpenSSL还包含了公钥私钥的生成、摘要生成等各种工具。</p>
+<h3 id="OpenSSL的作用">OpenSSL的作用</h3><p>使用HTTPS技术（一般是基于OpenSSL）来对数据进行加密，能保证数据不被篡改。比如可以防止运营商对内容进行篡改。</p>
+<h3 id="总结">总结</h3><p>HTTPS整个通信如下</p>
+<ol>
+<li>操作系统/浏览器 自带了 CA 根证书</li>
+<li>客户端因此可以验证服务器发送的证书签名，从而获取到服务器的公钥</li>
+<li>有了服务器的公钥，客户端就可以把最后一个随机数C2加密传送给服务器；</li>
+<li>服务器通过私钥获取到最后一个随机数C2后，通过后续产生的对称密钥，就可以和客户端进行对称加密通信了。</li>
+</ol>
+
+  </section>
+</article>
+
+  <div class="sharing grid">
+  <section class="profile grid-item grid">
+    <img class="avatar" src="/images/chili.png" alt="avatar" />
+    <div class="grid-item">
+      <p class="title"> chilihotpot </p>
+      <p class="subtitle"> You Are The JavaScript In My HTML </p>
+    <div>
+  </section>
+
+  <section class="share-btns">
+    <!-- <p> share it if you like it~ </p> -->
+    <a
+  class="twitter-share-button"
+  data-size="large"
+  data-via="DrakeLeung"
+  href="https://twitter.com/intent/tweet?text=因为之前在给虚拟机安装Mac Lion系"
+>
+  Tweet
+</a>
+
+<script>
+  window.twttr = (function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0],
+    t = window.twttr || {};
+  if (d.getElementById(id)) return t;
+  js = d.createElement(s);
+  js.id = id;
+  js.src = "https://platform.twitter.com/widgets.js";
+  js.async = true;
+  fjs.parentNode.insertBefore(js, fjs);
+
+  t._e = [];
+  t.ready = function(f) {
+    t._e.push(f);
+  };
+
+  return t;
+}(document, "script", "twitter-wjs"));
+</script>
+
+  </section>
+</div>
+
+
+  
+</main>
+
+</body>
+</html>

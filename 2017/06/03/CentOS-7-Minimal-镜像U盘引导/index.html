@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>CentOS 7 Minimal 镜像U盘引导 | chilihotpot</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <link rel="shortcut icon" href="/chili.ico">
+  <link rel="stylesheet" href="/css/app.css" type="text/css">
+  <!-- <link rel='stylesheet' href='http://fonts.useso.com/css?family=Source+Code+Pro'> -->
+</head>
+
+<body>
+  <nav class="app-nav">
+  
+    
+      <a href="/.">home</a>
+    
+  
+    
+      <a href="/archives">archive</a>
+    
+  
+    
+      <a href="/tags">tag</a>
+    
+  
+    
+      <a href="/categories">category</a>
+    
+  
+</nav>
+
+  <main class="post">
+  <article>
+  <h1 class="article-title">
+    <a href="/2017/06/03/CentOS-7-Minimal-镜像U盘引导/">CentOS 7 Minimal 镜像U盘引导</a>
+  </h1>
+
+  <section class="article-meta">
+    <p class="article-date">June 03 2017</p>
+  </section>
+
+  <section class="article-entry">
+    <p>在使用U盘引导安装CentOS7 Minimal ISO的过程里，遇到了若干个问题。</p>
+<h3 id="前提条件">前提条件</h3><ol>
+<li><p>去CentOS的<a href="https://www.centos.org/" target="_blank" rel="external">官网</a>下载最新的镜像文件，我下载的是最新版的CentOS7 Minimal ISO。</p>
+</li>
+<li><p>使用UltraISO将刚才下载的镜像文件制作成U盘引导。</p>
+</li>
+<li><p>在开机的时候设置引导模式为U盘引导优先。</p>
+</li>
+</ol>
+<h3 id="问题一：Failed_to_start_switch_root">问题一：Failed to start switch root</h3><p>这个问题伴随着我大半天的时间，最终把目标锁定到一个帖子上<a href="http://erperp.cn/wordpress/archives/86" target="_blank" rel="external">centos7 移动硬盘安装</a>。</p>
+<p>原因是没有找到安装文件，虽然启动界面的确是从U盘引导，但是驱动程序要安装的文件本身也得从U盘去读取，默认的安装并没有告诉程序从哪个盘符去读，所以找不到安装文件。</p>
+<p>其解决方法，在启动界面按tab键，修改启动参数</p>
+<blockquote>
+<p>vmlinuz initrd=initrd.img linux dd quiet</p>
+</blockquote>
+<p>这么做的目的是可以列出U盘设备的盘符，我的CentOS为sda4，然后重启修改启动参数</p>
+<blockquote>
+<p>vmlinuz initrd=initrd.img inst.stage2=hd:/dev/sda4 quiet</p>
+</blockquote>
+<p>等待片刻后，会有一连串安装消息，接下来按esc键，直到进入图形安装界面。</p>
+<h3 id="问题二：如何连接网络">问题二：如何连接网络</h3><p>操作系统安装完成之后，默认是没有图形界面的。要安装图形界面，必须先连接网络。参照帖子<a href="https://my.oschina.net/ihanfeng/blog/601853" target="_blank" rel="external">CentOS 7 minimal 版本安装后网络配置</a>来做。</p>
+<p>(1) 使用root权限登录，输入</p>
+<blockquote>
+<p>nmcli d</p>
+</blockquote>
+<p>可以查看到wifi，是disconnected状态。</p>
+<p>(2) 打开网络界面管理器，输入</p>
+<blockquote>
+<p>nmtui</p>
+</blockquote>
+<p>选择<strong>Activate a connection</strong>，选择无线网络后，输入密码。</p>
+<p>(3) 退回到网络界面管理器，选择<strong>Edit a connection</strong>，编辑刚才加入的无线网络，将IPV4选为Automatic，然后勾选<strong>Automatically connect</strong>。</p>
+<p>(4) 确认退出后，重启网络</p>
+<blockquote>
+<p>service network restart </p>
+</blockquote>
+<h3 id="问题三：安装图形界面">问题三：安装图形界面</h3><p>参照帖子<a href="http://www.cnblogs.com/oysmlsy/p/4567903.html#can-not-boot" target="_blank" rel="external">安装完CentOS 7 Minimal之后，从头打造桌面工作环境</a>来完成。</p>
+<p>(1) 安装GNOME桌面环境</p>
+<blockquote>
+<p>yum grouplist<br>yum groupinstall “GNOME Desktop”</p>
+</blockquote>
+<p>(2) 耐心等待安装完成后，启动桌面环境</p>
+<blockquote>
+<p>startx</p>
+</blockquote>
+<h3 id="总结">总结</h3><p>自此，整个CentOS7环境已经搭建完毕，问题一是整个安装过程的核心。</p>
+
+  </section>
+</article>
+
+  <div class="sharing grid">
+  <section class="profile grid-item grid">
+    <img class="avatar" src="/images/chili.png" alt="avatar" />
+    <div class="grid-item">
+      <p class="title"> chilihotpot </p>
+      <p class="subtitle"> You Are The JavaScript In My HTML </p>
+    <div>
+  </section>
+
+  <section class="share-btns">
+    <!-- <p> share it if you like it~ </p> -->
+    <a
+  class="twitter-share-button"
+  data-size="large"
+  data-via="DrakeLeung"
+  href="https://twitter.com/intent/tweet?text=在使用U盘引导安装CentOS7 Min"
+>
+  Tweet
+</a>
+
+<script>
+  window.twttr = (function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0],
+    t = window.twttr || {};
+  if (d.getElementById(id)) return t;
+  js = d.createElement(s);
+  js.id = id;
+  js.src = "https://platform.twitter.com/widgets.js";
+  js.async = true;
+  fjs.parentNode.insertBefore(js, fjs);
+
+  t._e = [];
+  t.ready = function(f) {
+    t._e.push(f);
+  };
+
+  return t;
+}(document, "script", "twitter-wjs"));
+</script>
+
+  </section>
+</div>
+
+
+  
+</main>
+
+</body>
+</html>

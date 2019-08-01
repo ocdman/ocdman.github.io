@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Macbook测试磁盘读写速度 | chilihotpot</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <link rel="shortcut icon" href="/chili.ico">
+  <link rel="stylesheet" href="/css/app.css" type="text/css">
+  <!-- <link rel='stylesheet' href='http://fonts.useso.com/css?family=Source+Code+Pro'> -->
+</head>
+
+<body>
+  <nav class="app-nav">
+  
+    
+      <a href="/.">home</a>
+    
+  
+    
+      <a href="/archives">archive</a>
+    
+  
+    
+      <a href="/tags">tag</a>
+    
+  
+    
+      <a href="/categories">category</a>
+    
+  
+</nav>
+
+  <main class="post">
+  <article>
+  <h1 class="article-title">
+    <a href="/2018/06/19/Macbook测试磁盘读写速度/">Macbook测试磁盘读写速度</a>
+  </h1>
+
+  <section class="article-meta">
+    <p class="article-date">June 19 2018</p>
+  </section>
+
+  <section class="article-entry">
+    <p>网上有很多测试磁盘读写速度的软件，比方说很有名的Disk Speed Test。但是这种软件因为用到了GUI，导致这款软件的安装体积很庞大，动辄上百MB。</p>
+<p>其实我的目的只是想测试一下Mac上的磁盘读写的速度，看看究竟能有多快，那么简单几行代码，就能搞定。</p>
+<p>这种写法的测试速度的单位是bytes/s，也就是B/s</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 磁盘写入速度测试</span></span><br><span class="line"><span class="tag">time</span> <span class="tag">dd</span> <span class="keyword">if</span>=/dev/zero bs=<span class="number">1024</span>k of=tstfile count=<span class="number">1024</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 磁盘读区速度测试</span></span><br><span class="line"><span class="tag">dd</span> <span class="keyword">if</span>=tstfile bs=<span class="number">1024</span>k of=/dev/null count=<span class="number">1024</span></span><br></pre></td></tr></table></figure>
+<p>如果想看得更直观一点的话，可以改为MB/s的单位</p>
+<figure class="highlight stata"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 磁盘写入速度测试</span></span><br><span class="line">time dd <span class="keyword">if</span>=/dev/zero <span class="keyword">bs</span>=1024k of=tstfile <span class="keyword">count</span>=1024 2&gt;&amp;1 | grep sec | awk '&#123;<span class="keyword">print</span> <span class="label">$1</span> / 1024 / 1024 / <span class="label">$5</span>, <span class="string">"MB/sec"</span> &#125;'</span><br><span class="line"></span><br><span class="line"><span class="comment">// 磁盘读区速度测试</span></span><br><span class="line">dd <span class="keyword">if</span>=tstfile <span class="keyword">bs</span>=1024k of=/dev/null <span class="keyword">count</span>=1024 2&gt;&amp;1 | grep sec | awk '&#123;<span class="keyword">print</span> <span class="label">$1</span> / 1024 / 1024 / <span class="label">$5</span>, <span class="string">"MB/sec"</span> &#125;'</span><br></pre></td></tr></table></figure>
+<p>我的rmbp 13’’ early 2015 ，测试下来的结果</p>
+<blockquote>
+<p>write 1123.32 MB/s<br>read 5460.58 MB/s</p>
+</blockquote>
+<p>网上有种说法，说dd测试其实并不准，读取速度其实没那么快，可能一半左右，造成读取速度快的原因可能在于文件内容全是0，SSD主控做了相关优化，如果造一个文件内容比较随机的大文件，读速可能就不一样了。我个人蛮认同这个观点的，至于实际速度到底如何，我也只是测试了一个理论上的标准作为参考，并不强求。</p>
+<h3 id="更新">更新</h3><p>终于找到为什么磁盘读取速度这么高的原因了。生成的tstfile虽然保存在了磁盘上，但是也会缓存在内存RAM中。所以需要将tstfile从内存清空。保证读取只从磁盘进行，可以使用<code>purge</code>命令来实现。下面是更新之后的bash脚本</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="shebang">#!/bin/bash</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">"---------------------"</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">"Write Test Running. Please Wait..."</span></span><br><span class="line">write=$(dd <span class="keyword">if</span>=/dev/zero bs=<span class="number">2048</span>k of=tstfile count=<span class="number">1024</span> <span class="number">2</span>&gt;&amp;<span class="number">1</span> | grep sec | awk <span class="string">'&#123;print $1 / 1024 / 1024 / $5, "MB/sec" &#125;'</span>)</span><br><span class="line">purge</span><br><span class="line"><span class="built_in">echo</span> <span class="string">""</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">"Read Test Running. Please Wait..."</span></span><br><span class="line"><span class="built_in">read</span>=$(dd <span class="keyword">if</span>=tstfile bs=<span class="number">2048</span>k of=/dev/null count=<span class="number">1024</span> <span class="number">2</span>&gt;&amp;<span class="number">1</span> | grep sec | awk <span class="string">'&#123;print $1 / 1024 / 1024 / $5, "MB/sec" &#125;'</span>)</span><br><span class="line">clear</span><br><span class="line"><span class="built_in">echo</span> <span class="string">""</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">"Read Speed is: <span class="variable">$read</span>"</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">"Write Speed is: <span class="variable">$write</span>"</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">"---------------------"</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">"Cleaning up. Please Wait..."</span></span><br><span class="line">purge</span><br><span class="line">rm tstfile</span><br><span class="line"><span class="built_in">echo</span> <span class="string">""</span></span><br><span class="line"><span class="built_in">exit</span> <span class="number">0</span></span><br></pre></td></tr></table></figure>
+<p>将该脚本命名为benchmarkdisks，添加可执行权限，然后放到Mac文件夹<code>/usr/local/bin</code>下，下次就可以直接调用了。<br>晒一下测试下来的结果</p>
+<blockquote>
+<p>Read Speed is: 1151.3 MB/s<br>Write Speed is: 1223.73 MB/s</p>
+</blockquote>
+
+  </section>
+</article>
+
+  <div class="sharing grid">
+  <section class="profile grid-item grid">
+    <img class="avatar" src="/images/chili.png" alt="avatar" />
+    <div class="grid-item">
+      <p class="title"> chilihotpot </p>
+      <p class="subtitle"> You Are The JavaScript In My HTML </p>
+    <div>
+  </section>
+
+  <section class="share-btns">
+    <!-- <p> share it if you like it~ </p> -->
+    <a
+  class="twitter-share-button"
+  data-size="large"
+  data-via="DrakeLeung"
+  href="https://twitter.com/intent/tweet?text=网上有很多测试磁盘读写速度的软件，比方说"
+>
+  Tweet
+</a>
+
+<script>
+  window.twttr = (function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0],
+    t = window.twttr || {};
+  if (d.getElementById(id)) return t;
+  js = d.createElement(s);
+  js.id = id;
+  js.src = "https://platform.twitter.com/widgets.js";
+  js.async = true;
+  fjs.parentNode.insertBefore(js, fjs);
+
+  t._e = [];
+  t.ready = function(f) {
+    t._e.push(f);
+  };
+
+  return t;
+}(document, "script", "twitter-wjs"));
+</script>
+
+  </section>
+</div>
+
+
+  
+</main>
+
+</body>
+</html>

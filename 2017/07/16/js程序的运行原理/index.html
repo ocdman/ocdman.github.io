@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>js程序的运行原理 | chilihotpot</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <link rel="shortcut icon" href="/chili.ico">
+  <link rel="stylesheet" href="/css/app.css" type="text/css">
+  <!-- <link rel='stylesheet' href='http://fonts.useso.com/css?family=Source+Code+Pro'> -->
+</head>
+
+<body>
+  <nav class="app-nav">
+  
+    
+      <a href="/.">home</a>
+    
+  
+    
+      <a href="/archives">archive</a>
+    
+  
+    
+      <a href="/tags">tag</a>
+    
+  
+    
+      <a href="/categories">category</a>
+    
+  
+</nav>
+
+  <main class="post">
+  <article>
+  <h1 class="article-title">
+    <a href="/2017/07/16/js程序的运行原理/">js程序的运行原理</a>
+  </h1>
+
+  <section class="article-meta">
+    <p class="article-date">July 16 2017</p>
+  </section>
+
+  <section class="article-entry">
+    <p>上一篇，我们讲过了js面向对象的原理，讲到了js里一切皆对象，变量、函数、函数的原型一切皆是对象。而对象的概念指的是，一个无序属性的集合。对象通过原型链来实现继承。<br>这一篇，我们讲一讲js程序的运行原理。<br>首先，我们要知道的几个概念是，执行环境（上下文）、执行环境栈、变量对象、作用域链。<br>先来讲讲执行环境和执行环境栈，js程序执行离不开三种情况，分别是全局、函数和eval。只要js运行在以上任何一种情况下，就首先会现创建执行环境，别的书中译为上下文。我们知道js运行的入口是全局函数，当进入全局函数的那一刻起，程序就自动创建了全局执行环境，如果在全局函数中定义并且执行了某个函数，程序就会立马创建属于该函数的执行环境，并且按照栈的结构，将全局执行环境压于栈底，当前执行的函数的执行环境压于栈顶。形成一个执行环境栈的结构，如果当前函数执行完毕的话，环境栈将其弹出，执行指令归还于全局执行环境。<br>下面来说说变量对象和作用域链，要知道一个执行环境其实可以抽象地理解成一个对象。每一个对象都有三个属性，它们分别是变量对象、作用域链和this。<br>变量对象的定义是，标识符的集合。所谓标识符，指的就是var声明的变量，以及函数声明（不包括函数表达式）。在函数中，活动对象用作变量对象，除了拥有var声明的变量和函数声明外，还有特殊的参数arguments和普通参数。变量对象包含了所有这些标识符，而作用域链是包含了变量对象的集合。如果在全局环境中执行了某个函数，当进入该函数的执行环境后，该函数会在当前的变量对象中查找标识符，而该执行环境还有一个属性，作用域链，用于存放父级执行环境里的变量对象，以此类推直到全局执行环境里的变量对象为止。非常类似于原型链，作用域链也是一级一级往上找，直到全局环境里找不到标识符，则报错。它们两个最大的区别就是，原型链讲的是对象，即对象属性的继承。还有就是作用域链讲的是程序如何执行的，如何通过作用域链去进行标识符地查找。当然，像with和catch这种语句，会延长作用域链，它们的标准是，从原型链先去查找标识符，如果没有的话，再去父级变量对象里查找。<br>其实函数在定义的时候，当前的执行环境就给函数增加了一个属性，[[Scope]]，这个属性的内容就是当前执行环境的作用域链。而包含函数定义的作用域，我们又称之为静态作用域。而所谓的闭包的定义，其实指的是函数不在静态作用域里调用，却能访问静态作用域里的变量对象。这样的函数我们称之为闭包。<br>例如：<br>var x = 20;<br>function f(){<br>  console.log(x);<br>}<br>function F(){<br>  var x = 10;<br>  f(); //20<br>}<br>F();<br>以上这个例子我们可以看出，函数f和函数F的静态作用域都是global作用域。这两个函数在定义的时候都给各自增添了一个属性[[Scope]]。指向global。所以当函数f被执行的时候，首先会在当前的变量对象中查找，然后会到[[Scope]]里去找x，如果找不到就报错，恰巧这里的值是20，不是10，因为全局作用域里的x的值为20。<br>再来看一个例子：<br>var x = 20;<br>function F(){<br>  var x = 10;<br>  function f(){<br>    console.log(x);<br>  }<br>  f(); //10<br>}<br>F();<br>这里，当函数F执行后，会创建执行环境。函数f定义在函数F中，函数f的属性[[Scope]]，执向了函数F的作用域，而F.[[Scope]]指向global。所以当函数f执行后，会首先在函数f的执行环境里去找变量对象包含x的吗，没有找到，沿着f.[[Scope]]往上找，在函数F里找到了变量x，于是结果就是10。<br>这两个例子告诉我们，函数如何去查找变量对象，是通过函数在定义时，赋给函数[[Scope]]属性的作用域链来一级一级往上找的，直到global作用域。而定义函数的环境叫做静态作用域，标示符的查找，程序的运行都离不开静态作用域的帮助。<br>以上就是js的运行的原理，利用作用域链和变量对象去查找标识符，用执行环境栈去管理个个函数直接的调用。</p>
+
+  </section>
+</article>
+
+  <div class="sharing grid">
+  <section class="profile grid-item grid">
+    <img class="avatar" src="/images/chili.png" alt="avatar" />
+    <div class="grid-item">
+      <p class="title"> chilihotpot </p>
+      <p class="subtitle"> You Are The JavaScript In My HTML </p>
+    <div>
+  </section>
+
+  <section class="share-btns">
+    <!-- <p> share it if you like it~ </p> -->
+    <a
+  class="twitter-share-button"
+  data-size="large"
+  data-via="DrakeLeung"
+  href="https://twitter.com/intent/tweet?text=上一篇，我们讲过了js面向对象的原理，讲"
+>
+  Tweet
+</a>
+
+<script>
+  window.twttr = (function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0],
+    t = window.twttr || {};
+  if (d.getElementById(id)) return t;
+  js = d.createElement(s);
+  js.id = id;
+  js.src = "https://platform.twitter.com/widgets.js";
+  js.async = true;
+  fjs.parentNode.insertBefore(js, fjs);
+
+  t._e = [];
+  t.ready = function(f) {
+    t._e.push(f);
+  };
+
+  return t;
+}(document, "script", "twitter-wjs"));
+</script>
+
+  </section>
+</div>
+
+
+  
+</main>
+
+</body>
+</html>

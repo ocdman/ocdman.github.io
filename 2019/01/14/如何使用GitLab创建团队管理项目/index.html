@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>如何使用GitLab创建团队管理项目 | chilihotpot</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <link rel="shortcut icon" href="/chili.ico">
+  <link rel="stylesheet" href="/css/app.css" type="text/css">
+  <!-- <link rel='stylesheet' href='http://fonts.useso.com/css?family=Source+Code+Pro'> -->
+</head>
+
+<body>
+  <nav class="app-nav">
+  
+    
+      <a href="/.">home</a>
+    
+  
+    
+      <a href="/archives">archive</a>
+    
+  
+    
+      <a href="/tags">tag</a>
+    
+  
+    
+      <a href="/categories">category</a>
+    
+  
+</nav>
+
+  <main class="post">
+  <article>
+  <h1 class="article-title">
+    <a href="/2019/01/14/如何使用GitLab创建团队管理项目/">如何使用GitLab创建团队管理项目</a>
+  </h1>
+
+  <section class="article-meta">
+    <p class="article-date">January 14 2019</p>
+  </section>
+
+  <section class="article-entry">
+    <p>GitLab是一套开源的项目管理工具，基于Git，可以搭建于自己的服务器之上。不同于Git之处在于，它支持服务器端的可视化操作界面。</p>
+<p>当创建一个内部项目后，页面上会给到基本的命令行指令</p>
+<h6 id="Git全局设置">Git全局设置</h6><figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">git config --global user<span class="class">.name</span> <span class="string">"yourusername"</span></span><br><span class="line">git config --global user<span class="class">.email</span> <span class="string">"youremail"</span></span><br></pre></td></tr></table></figure>
+<h6 id="创建新版本库">创建新版本库</h6><figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">git clone git@yourgitlabdomain:yourusername/yourproject<span class="class">.git</span></span><br><span class="line">cd yourproject</span><br><span class="line">touch README<span class="class">.md</span></span><br><span class="line">git add README<span class="class">.md</span></span><br><span class="line">git commit -m <span class="string">"add README"</span></span><br><span class="line">git push -u origin master</span><br></pre></td></tr></table></figure>
+<h6 id="已存在的文件夹">已存在的文件夹</h6><figure class="highlight elixir"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">cd existing_folder</span><br><span class="line">git init</span><br><span class="line">git remote add origin git<span class="variable">@yourgitlabdomain</span><span class="symbol">:yourusername/yourproject</span>.git</span><br><span class="line">git add .</span><br><span class="line">git commit -m <span class="string">"Initial commit"</span></span><br><span class="line">git push -u origin master</span><br></pre></td></tr></table></figure>
+<h6 id="已存在的_Git_版本库">已存在的 Git 版本库</h6><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">cd existing_repo</span><br><span class="line">git remote <span class="operator"><span class="keyword">rename</span> origin <span class="keyword">old</span>-origin</span><br><span class="line">git remote <span class="keyword">add</span> origin git@yourgitlabdomain:yourusername/yourproject.git</span><br><span class="line">git push -u origin <span class="comment">--all</span></span><br><span class="line">git push -u origin <span class="comment">--tags</span></span></span><br></pre></td></tr></table></figure>
+<p>项目默认情况下，使用ssh来进行拉取和推送。所以要创建ssh密钥。</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh-keygen -t rsa -C <span class="string">"your.email@example.com"</span> -<span class="tag">b</span> <span class="number">4096</span></span><br></pre></td></tr></table></figure>
+<p>系统会提示ssh公钥的路径，找到公钥后，将其内容添加到GitLab上的<strong>用户资料</strong>里的<strong>SSH密钥</strong>中即可。</p>
+<p>如果是主程序员角色在master主分支下进行拉取或推送请求是合法的，但是如果是一般开发人员想要对master分支进行合并和提交，会提示<code>Permission denied, please try again</code>。面对这种情况，只能先现创建一个由大家共同享有的分支来进行项目开发，最后再由主程序员进行分支和master的合并。暂且叫这个分支名为<code>dev</code></p>
+<figure class="highlight q"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//创建dev分支</span></span><br><span class="line">git branch <span class="built_in">dev</span></span><br><span class="line"><span class="comment">//切换到dev分支</span></span><br><span class="line">git checkout <span class="built_in">dev</span></span><br><span class="line"><span class="comment">//查看当前分支</span></span><br><span class="line">git branch -a</span><br><span class="line"><span class="comment">//进行项目上传</span></span><br><span class="line">git add .</span><br><span class="line"><span class="comment">//git commit -m "提交的信息"</span></span><br><span class="line"><span class="comment">//git remote add origin git@yourgitlabdomain:yourusername/yourproject.git</span></span><br><span class="line">git push -u origin <span class="built_in">dev</span></span><br></pre></td></tr></table></figure>
+<p>创建完分支之后，所有人员都必须在dev分支下进行开发。只有管理人员才能进行合并到master分支的操作。这么做是为了保证主线一致。</p>
+<p>如果要把dev分支和master分支进行合并的话，先要切换到master分支</p>
+<figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//切回主分支</span></span><br><span class="line">git checkout master</span><br><span class="line"><span class="comment">//合并分支</span></span><br><span class="line">git merge dev</span><br><span class="line"><span class="comment">//往服务器推送</span></span><br><span class="line">git <span class="keyword">push</span></span><br></pre></td></tr></table></figure>
+<p>这样，dev分支下的数据就会合并到主分支下。</p>
+<p>最后来说说，微信开发者工具中自带的Git管理工具在进行拉取或推送操作时提示错误</p>
+<blockquote>
+<p>Error: callback returned unsupported credentials type</p>
+</blockquote>
+<p>这是因为要在<strong>微信开发者工具</strong>中，<strong>版本管理</strong>，<strong>设置</strong>中找到<strong>网络和认证</strong>，认证方式选择<strong>使用SSH Key（指定密钥）</strong>方式。填写公钥文件路径、私钥文件路径以及密码后，即能进行拉取和推送操作了。</p>
+<p>到此，GitLab的一些简单的初学者知识算是提及了。</p>
+
+  </section>
+</article>
+
+  <div class="sharing grid">
+  <section class="profile grid-item grid">
+    <img class="avatar" src="/images/chili.png" alt="avatar" />
+    <div class="grid-item">
+      <p class="title"> chilihotpot </p>
+      <p class="subtitle"> You Are The JavaScript In My HTML </p>
+    <div>
+  </section>
+
+  <section class="share-btns">
+    <!-- <p> share it if you like it~ </p> -->
+    <a
+  class="twitter-share-button"
+  data-size="large"
+  data-via="DrakeLeung"
+  href="https://twitter.com/intent/tweet?text=GitLab是一套开源的项目管理工具，基"
+>
+  Tweet
+</a>
+
+<script>
+  window.twttr = (function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0],
+    t = window.twttr || {};
+  if (d.getElementById(id)) return t;
+  js = d.createElement(s);
+  js.id = id;
+  js.src = "https://platform.twitter.com/widgets.js";
+  js.async = true;
+  fjs.parentNode.insertBefore(js, fjs);
+
+  t._e = [];
+  t.ready = function(f) {
+    t._e.push(f);
+  };
+
+  return t;
+}(document, "script", "twitter-wjs"));
+</script>
+
+  </section>
+</div>
+
+
+  
+</main>
+
+</body>
+</html>

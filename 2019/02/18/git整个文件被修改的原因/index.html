@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>git整个文件被修改的原因 | chilihotpot</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <link rel="shortcut icon" href="/chili.ico">
+  <link rel="stylesheet" href="/css/app.css" type="text/css">
+  <!-- <link rel='stylesheet' href='http://fonts.useso.com/css?family=Source+Code+Pro'> -->
+</head>
+
+<body>
+  <nav class="app-nav">
+  
+    
+      <a href="/.">home</a>
+    
+  
+    
+      <a href="/archives">archive</a>
+    
+  
+    
+      <a href="/tags">tag</a>
+    
+  
+    
+      <a href="/categories">category</a>
+    
+  
+</nav>
+
+  <main class="post">
+  <article>
+  <h1 class="article-title">
+    <a href="/2019/02/18/git整个文件被修改的原因/">git整个文件被修改的原因</a>
+  </h1>
+
+  <section class="article-meta">
+    <p class="article-date">February 18 2019</p>
+  </section>
+
+  <section class="article-entry">
+    <p>最近在用微信开发者工具的时候，使用内置的Git工具进行版本管理。但问题是，某个文件只要有一处小修改，就是整个文件被牵出的状态，对比差异的时候很麻烦。</p>
+<p>搜寻了原因之后发现，原来是换行符导致的问题。不同操作系统使用的换行符是不一样的。Unix/Linux使用的是LF，Mac后期也改成了LF，只有Windows坚持使用CRLF。而git入库的代码使用的是LF格式，它考虑到跨平台协作的问题，提供了<strong>换行符自动转换</strong>的功能。如果在Windows下使用git，拉取文件时，会自动将LF换行符替换为CRLF换行符；而在提交文件时，又会将CRLF换行符转换回LF换行符。所以就会导致git整个文件被修改的问题出现。</p>
+<p>下面是解决方法</p>
+<h3 id="一、禁用git的自动转换功能">一、禁用git的自动转换功能</h3><p>使用命令行全局修改git配置</p>
+<figure class="highlight autoit"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">git config --<span class="keyword">global</span> core.autocrlf <span class="literal">false</span></span><br><span class="line">git config --<span class="keyword">global</span> core.filemode <span class="literal">false</span></span><br><span class="line">git config --<span class="keyword">global</span> core.safecrlf <span class="literal">true</span></span><br></pre></td></tr></table></figure>
+<h3 id="二、开发环境配置，忽略Windows换行符">二、开发环境配置，忽略Windows换行符</h3><p>可以在微信开发者工具中，设置－&gt;编辑设置－&gt;忽略Windows风格回车符。</p>
+
+  </section>
+</article>
+
+  <div class="sharing grid">
+  <section class="profile grid-item grid">
+    <img class="avatar" src="/images/chili.png" alt="avatar" />
+    <div class="grid-item">
+      <p class="title"> chilihotpot </p>
+      <p class="subtitle"> You Are The JavaScript In My HTML </p>
+    <div>
+  </section>
+
+  <section class="share-btns">
+    <!-- <p> share it if you like it~ </p> -->
+    <a
+  class="twitter-share-button"
+  data-size="large"
+  data-via="DrakeLeung"
+  href="https://twitter.com/intent/tweet?text=最近在用微信开发者工具的时候，使用内置的"
+>
+  Tweet
+</a>
+
+<script>
+  window.twttr = (function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0],
+    t = window.twttr || {};
+  if (d.getElementById(id)) return t;
+  js = d.createElement(s);
+  js.id = id;
+  js.src = "https://platform.twitter.com/widgets.js";
+  js.async = true;
+  fjs.parentNode.insertBefore(js, fjs);
+
+  t._e = [];
+  t.ready = function(f) {
+    t._e.push(f);
+  };
+
+  return t;
+}(document, "script", "twitter-wjs"));
+</script>
+
+  </section>
+</div>
+
+
+  
+</main>
+
+</body>
+</html>

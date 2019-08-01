@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>MSSQL-子查询练习题 | chilihotpot</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <link rel="shortcut icon" href="/chili.ico">
+  <link rel="stylesheet" href="/css/app.css" type="text/css">
+  <!-- <link rel='stylesheet' href='http://fonts.useso.com/css?family=Source+Code+Pro'> -->
+</head>
+
+<body>
+  <nav class="app-nav">
+  
+    
+      <a href="/.">home</a>
+    
+  
+    
+      <a href="/archives">archive</a>
+    
+  
+    
+      <a href="/tags">tag</a>
+    
+  
+    
+      <a href="/categories">category</a>
+    
+  
+</nav>
+
+  <main class="post">
+  <article>
+  <h1 class="article-title">
+    <a href="/2017/12/12/MSSQL-子查询练习题/">MSSQL-子查询练习题</a>
+  </h1>
+
+  <section class="article-meta">
+    <p class="article-date">December 12 2017</p>
+  </section>
+
+  <section class="article-entry">
+    <h3 id="1-_写一条查询语句，返回Orders表中活动的最后一天生成的所有订单。涉及的表：Sales-Orders表。">1. 写一条查询语句，返回Orders表中活动的最后一天生成的所有订单。涉及的表：Sales.Orders表。</h3><figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">select o1<span class="class">.orderid</span>, o1<span class="class">.orderdate</span>, o1<span class="class">.custid</span>, o1<span class="class">.empid</span></span><br><span class="line">from Sales<span class="class">.Orders</span> o1</span><br><span class="line">where o1<span class="class">.orderdate</span> = </span><br><span class="line">(</span><br><span class="line">	select <span class="function"><span class="title">max</span><span class="params">(orderdate)</span></span> orderdate</span><br><span class="line">	from Sales<span class="class">.Orders</span> o2</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+<h3 id="2-_写一条查询语句，返回由拥有订单数量最多的客户下过的所有订单。注意，多个客户可能会拥有相同数量的订单。涉及的表：Sales-Orders表。">2. 写一条查询语句，返回由拥有订单数量最多的客户下过的所有订单。注意，多个客户可能会拥有相同数量的订单。涉及的表：Sales.Orders表。</h3><figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">select custid, orderid, orderdate, empid</span><br><span class="line">from Sales<span class="class">.Orders</span></span><br><span class="line">where custid <span class="keyword">in</span></span><br><span class="line">(</span><br><span class="line">	select o1<span class="class">.custid</span></span><br><span class="line">	from Sales<span class="class">.Orders</span> o1</span><br><span class="line">	group by o1<span class="class">.custid</span></span><br><span class="line">	having <span class="function"><span class="title">count</span><span class="params">(o1.orderid)</span></span> = </span><br><span class="line">	(</span><br><span class="line">		select <span class="function"><span class="title">max</span><span class="params">(ordercount)</span></span></span><br><span class="line">		from </span><br><span class="line">		(</span><br><span class="line">			select <span class="function"><span class="title">count</span><span class="params">(orderid)</span></span> ordercount</span><br><span class="line">			from Sales<span class="class">.Orders</span></span><br><span class="line">			group by custid</span><br><span class="line">		) t </span><br><span class="line">	)</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+<h3 id="3-_写一条查询，返回2008年5月1日（包括这一天）以后没有处理过订单的雇员。涉及的表：HR-Employees表和Sales-Orders表。">3. 写一条查询，返回2008年5月1日（包括这一天）以后没有处理过订单的雇员。涉及的表：HR.Employees表和Sales.Orders表。</h3><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="operator"><span class="keyword">select</span> <span class="keyword">e</span>.empid, <span class="keyword">e</span>.firstname, <span class="keyword">e</span>.lastname</span><br><span class="line"><span class="keyword">from</span> hr.Employees <span class="keyword">e</span></span><br><span class="line"><span class="keyword">where</span> <span class="keyword">not</span> <span class="keyword">exists</span></span><br><span class="line">(</span><br><span class="line">	<span class="keyword">select</span> *</span><br><span class="line">	<span class="keyword">from</span> Sales.Orders o</span><br><span class="line">	<span class="keyword">where</span> orderdate &gt;= <span class="string">'2008-05-01'</span></span><br><span class="line">	<span class="keyword">and</span> o.empid = <span class="keyword">e</span>.empid</span><br><span class="line">)</span></span><br></pre></td></tr></table></figure>
+<p>注意这里EXISTS谓词里的联接条件，不能遗漏，不然就不是相关子查询了。EXISTS谓词只关心是否存在匹配的列，而不考虑SELECT列表里指定的列。所以，指定列通配符(*)和在SELECT列表中指定其他列相比，并没有什么负面影响。</p>
+<p>如何理解这段SQL呢？这其实是一段相关子查询，关于相关子查询的定义，子查询依赖于外部查询，逻辑上，子查询会为每个外部行单独计算一次。所以不管有没有EXISTS谓词，只要是相关子查询就要在内部行里有和外部行相关的联接条件。针对于每一条外部行，内部查询都要计算一次。如果内部查询的结果是NULL，则NOT EXISTS返回为TRUE，如果内部查询结果非NULL，则NOT EXISTS返回为FALSE。</p>
+<h3 id="4-_写一条查询语句，返回在客户表中出现过，但是没有在雇员表中出现过的国家。涉及的表：Sales-Customers表和HR-Employees表。">4. 写一条查询语句，返回在客户表中出现过，但是没有在雇员表中出现过的国家。涉及的表：Sales.Customers表和HR.Employees表。</h3><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="operator"><span class="keyword">select</span> <span class="keyword">distinct</span> <span class="keyword">c</span>.country</span><br><span class="line"><span class="keyword">from</span> Sales.Customers <span class="keyword">c</span></span><br><span class="line"><span class="keyword">where</span> <span class="keyword">not</span> <span class="keyword">exists</span></span><br><span class="line">(</span><br><span class="line">	<span class="keyword">select</span> *</span><br><span class="line">	<span class="keyword">from</span> hr.Employees <span class="keyword">e</span></span><br><span class="line">	<span class="keyword">where</span> <span class="keyword">e</span>.country = <span class="keyword">c</span>.country</span><br><span class="line">)</span></span><br></pre></td></tr></table></figure>
+<p>注意外部查询的表和内部查询的表不要搞错了。</p>
+<h3 id="5-_写一条查询语句，为每个客户返回在他参与活动的最后一天下过的所有订单。涉及的表：Sales-Orders表。">5. 写一条查询语句，为每个客户返回在他参与活动的最后一天下过的所有订单。涉及的表：Sales.Orders表。</h3><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="operator"><span class="keyword">select</span> <span class="keyword">t</span>.*</span><br><span class="line"><span class="keyword">from</span></span><br><span class="line">(</span><br><span class="line">	<span class="keyword">select</span> o1.custid, o1.orderid, o1.empid, </span><br><span class="line">	(</span><br><span class="line">		<span class="keyword">select</span> <span class="keyword">max</span>(o2.orderdate) orderdate</span><br><span class="line">		<span class="keyword">from</span> Sales.Orders o2</span><br><span class="line">		<span class="keyword">where</span> o1.custid = o2.custid </span><br><span class="line">		<span class="keyword">having</span> <span class="keyword">max</span>(o2.orderdate) = o1.orderdate</span><br><span class="line">	) orderdate</span><br><span class="line">	<span class="keyword">from</span> Sales.Orders o1</span><br><span class="line">) <span class="keyword">t</span></span><br><span class="line"><span class="keyword">where</span> <span class="keyword">t</span>.orderdate <span class="keyword">is</span> <span class="keyword">not</span> <span class="literal">null</span></span><br><span class="line"><span class="keyword">order</span> <span class="keyword">by</span> <span class="keyword">t</span>.custid</span></span><br></pre></td></tr></table></figure>
+<p>这道题目最关键的地方在于，having条件需要判断内部行的最后订单日期和外部行的订单日期是否相等。</p>
+<h3 id="6-_写一条查询语句，返回在2007年下过订单，而在2008年没有下过订单的客户。涉及的表：Sales-Customers表和Sales-Orders表。">6. 写一条查询语句，返回在2007年下过订单，而在2008年没有下过订单的客户。涉及的表：Sales.Customers表和Sales.Orders表。</h3><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="operator"><span class="keyword">select</span></span><br><span class="line"><span class="keyword">c</span>.custid,</span><br><span class="line"><span class="keyword">c</span>.companyname</span><br><span class="line"><span class="keyword">from</span> Sales.Customers <span class="keyword">c</span></span><br><span class="line"><span class="keyword">where</span> <span class="keyword">not</span> <span class="keyword">exists</span> </span><br><span class="line">(</span><br><span class="line">	<span class="keyword">select</span> *</span><br><span class="line">	<span class="keyword">from</span> Sales.Orders o</span><br><span class="line">	<span class="keyword">where</span> o.custid = <span class="keyword">c</span>.custid </span><br><span class="line">	<span class="keyword">and</span> o.orderdate &gt;= <span class="string">'2008-01-01'</span> <span class="keyword">and</span> o.orderdate &lt; <span class="string">'2009-01-01'</span></span><br><span class="line">) <span class="keyword">and</span> <span class="keyword">exists</span></span><br><span class="line">(</span><br><span class="line">	 <span class="keyword">select</span> * <span class="keyword">from</span> Sales.Orders o</span><br><span class="line">	 <span class="keyword">where</span> o.custid = <span class="keyword">c</span>.custid</span><br><span class="line">	 <span class="keyword">and</span> o.orderdate &gt;= <span class="string">'2007-01-01'</span> <span class="keyword">and</span> o.orderdate &lt; <span class="string">'2008-01-01'</span></span><br><span class="line">)</span><br><span class="line"><span class="keyword">order</span> <span class="keyword">by</span> <span class="keyword">c</span>.custid</span></span><br></pre></td></tr></table></figure>
+<p>这题有个陷阱，2007年下过单而2008年没有下过单的客户。如果单单一个<code>o.orderdate &gt;= &#39;2007-01-01&#39; and o.orderdate &lt; &#39;2008-01-01&#39;</code>只能确定2007年下过订单的客户，并不能保证2008年该客户没有下过定单。所以需要两个EXISTS谓词来组合判断。</p>
+<h3 id="7-_写一条查询语句，返回订购了第12号产品的客户。涉及的表：Sales-Customers表，Sales-Orders表和Sales-OrderDetails表。">7. 写一条查询语句，返回订购了第12号产品的客户。涉及的表：Sales.Customers表，Sales.Orders表和Sales.OrderDetails表。</h3><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="operator"><span class="keyword">select</span> <span class="keyword">t</span>.custid, <span class="keyword">c</span>.companyname</span><br><span class="line"><span class="keyword">from</span> </span><br><span class="line">(</span><br><span class="line">	<span class="keyword">select</span> <span class="keyword">distinct</span> o.custid</span><br><span class="line">	<span class="keyword">from</span></span><br><span class="line">	Sales.Orders o</span><br><span class="line">	<span class="keyword">where</span> <span class="keyword">exists</span></span><br><span class="line">	(</span><br><span class="line">		<span class="keyword">select</span> *</span><br><span class="line">		<span class="keyword">from</span> [Sales].[OrderDetails] od </span><br><span class="line">		<span class="keyword">where</span> od.productid = <span class="number">12</span></span><br><span class="line">		<span class="keyword">and</span> o.orderid = od.orderid</span><br><span class="line">	)</span><br><span class="line">) <span class="keyword">t</span></span><br><span class="line"><span class="keyword">left</span> <span class="keyword">join</span> Sales.Customers <span class="keyword">c</span></span><br><span class="line"><span class="keyword">on</span> <span class="keyword">t</span>.custid = <span class="keyword">c</span>.custid</span><br><span class="line"><span class="keyword">order</span> <span class="keyword">by</span> <span class="keyword">t</span>.custid</span></span><br></pre></td></tr></table></figure>
+<h3 id="8-_写一条查询语句，计算每个客户在每月的连续总订货量。涉及的表：Sales-CustOrders视图。">8. 写一条查询语句，计算每个客户在每月的连续总订货量。涉及的表：Sales.CustOrders视图。</h3><figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">select co1<span class="class">.custid</span>, co1<span class="class">.ordermonth</span>, co1<span class="class">.qty</span>,</span><br><span class="line">(</span><br><span class="line">	select <span class="function"><span class="title">sum</span><span class="params">(co2.qty)</span></span></span><br><span class="line">	from Sales<span class="class">.CustOrders</span> co2</span><br><span class="line">	where co1<span class="class">.custid</span> = co2<span class="class">.custid</span></span><br><span class="line">	and co2<span class="class">.ordermonth</span> &lt;= co1<span class="class">.ordermonth</span></span><br><span class="line">) runqty</span><br><span class="line">from Sales<span class="class">.CustOrders</span> co1</span><br><span class="line"><span class="attribute">order</span> by co1<span class="class">.custid</span>, co1.ordermonth</span><br></pre></td></tr></table></figure>
+  </section>
+</article>
+
+  <div class="sharing grid">
+  <section class="profile grid-item grid">
+    <img class="avatar" src="/images/chili.png" alt="avatar" />
+    <div class="grid-item">
+      <p class="title"> chilihotpot </p>
+      <p class="subtitle"> You Are The JavaScript In My HTML </p>
+    <div>
+  </section>
+
+  <section class="share-btns">
+    <!-- <p> share it if you like it~ </p> -->
+    <a
+  class="twitter-share-button"
+  data-size="large"
+  data-via="DrakeLeung"
+  href="https://twitter.com/intent/tweet?text= id="1-_写一条查询语句，返回Or"
+>
+  Tweet
+</a>
+
+<script>
+  window.twttr = (function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0],
+    t = window.twttr || {};
+  if (d.getElementById(id)) return t;
+  js = d.createElement(s);
+  js.id = id;
+  js.src = "https://platform.twitter.com/widgets.js";
+  js.async = true;
+  fjs.parentNode.insertBefore(js, fjs);
+
+  t._e = [];
+  t.ready = function(f) {
+    t._e.push(f);
+  };
+
+  return t;
+}(document, "script", "twitter-wjs"));
+</script>
+
+  </section>
+</div>
+
+
+  
+</main>
+
+</body>
+</html>

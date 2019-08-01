@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>使用LycaMobile卡注册Google Voice账号 | chilihotpot</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <link rel="shortcut icon" href="/chili.ico">
+  <link rel="stylesheet" href="/css/app.css" type="text/css">
+  <!-- <link rel='stylesheet' href='http://fonts.useso.com/css?family=Source+Code+Pro'> -->
+</head>
+
+<body>
+  <nav class="app-nav">
+  
+    
+      <a href="/.">home</a>
+    
+  
+    
+      <a href="/archives">archive</a>
+    
+  
+    
+      <a href="/tags">tag</a>
+    
+  
+    
+      <a href="/categories">category</a>
+    
+  
+</nav>
+
+  <main class="post">
+  <article>
+  <h1 class="article-title">
+    <a href="/2019/06/10/使用LycaMobile卡注册Google-Voice账号/">使用LycaMobile卡注册Google Voice账号</a>
+  </h1>
+
+  <section class="article-meta">
+    <p class="article-date">June 10 2019</p>
+  </section>
+
+  <section class="article-entry">
+    <p>最近发现日本的<a href="https://arukas.io/" target="_blank" rel="external">Arukas</a>又上线了免费的Docker（类VPS），之前错过的羊毛，这次我一定要薅（hao）上。具体的价格列表可以查看<a href="https://arukas.io/en/#pricing" target="_blank" rel="external">官网</a>。</p>
+<p>自从Arukas被国人薅多了之后，现在已经没有那么容易再薅了。注册账号后默认免费使用半年时间，问题是在创建容器前多了一步电话语音验证，而国内的手机号又不支持该服务。</p>
+<p>我找了半天，找到美国零月租LycaMobile电话卡这个解决方案，可以在国内使用。问题是LycaMobile被国人也玩坏了，原本几乎是送的卡，现在淘宝也被炒到了35元（我买的时候是这个价格）。等我入手了之后，我才发现，<strong>LycaMobile现在已经不提供零月租服务了，最低消费每月5美元</strong>。这就很凶了，而且没有信用卡的朋友，比如我，只能选择淘宝充值，很被动。所以，前后为了能过Arukas的电话语音，我花了35+39=74元的成本，而且还只能使用半年吧（目前还不清楚），怎么看代价都有点大。</p>
+<p>说回LycaMobile的激活，从正规的淘宝商家上买的卡，正常都可以在<a href="https://www.lycamobile.us/en/" target="_blank" rel="external">官网</a>上激活成功。我激活的时候，碰上了一个比较常见的问题</p>
+<blockquote>
+<p>API is temporarily disabled</p>
+</blockquote>
+<p>言下之意就是目前不能激活，后台在维护中。一般只要等到晚上再试试就能成功，美国的早晨相当于我们这里的晚上，那会儿他们也上班了。</p>
+<p>激活过程需要填写<strong>美国邮编</strong>、<strong>ICCID</strong>（电话卡上的19位数字）、<strong>PUK</strong>码（电话卡上的8位数字）、<strong>邮箱</strong>。邮编我随便填了一个旧金山的邮编94124，号码的分配根据你填写的美国邮编来决定。激活成功后，系统就会给你分配一个真正的手机号码了。页面上也会有提示，显示一行绿色的字，其中就有你的电话号码了。</p>
+<p>接下来就是充值，仍然是淘宝，我选择了5美元，最低的档。然而充值小哥不在线，电话也打不通，无奈之下，我只能先把卡插上手机看看。<strong>之前有教程说，不充值是收不到信号的，这点在我这里不成立，我反正是收到了信号，而且信号还挺强的</strong>。信号默认是中国移动。手机使用的是iPhone6SP。插上去没多久就收到了短信，告诉我本机号码。</p>
+<p>接下来有几个常用的指令可以记一下</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">*<span class="number">611</span><span class="preprocessor"># 查询本机余额</span></span><br><span class="line">*<span class="number">613</span><span class="preprocessor"># 查询本机号码</span></span><br><span class="line">*<span class="preprocessor">#<span class="number">21</span># 临时关闭本机语音信箱</span></span><br></pre></td></tr></table></figure>
+<p>需要注意的是，LycaMobile在国内走的是漫游，拨打以及接听电话每分钟0.49美元，发短信每条0.1美元。如果不关闭LycaMobile的语音信箱，默认每条语音0.49美元，那可是相当贵啊。所以，拿到手第一件事就是先关闭语音信箱，但要长久关闭语音信箱只有官网的客服才能操作。所以可以写一封邮件给他们，大概内容是这样的</p>
+<blockquote>
+<p>根据下面改成自己卡的资料来关闭语音信箱。充值时间不是中国时间要美国时间问充值的人要时间。【重点一定要写标题，不写标题很少回复你】<br>【I need to turn off voicemail(标题)】<br>I need to turn off voicemail service because I have multiple numbers, I think it is a waste to use voicemail service, look forward to your help! I provide you with the following information:<br>19-digit SIM card number:卡片背面19位数字<br>PUK number:卡片上的puk码<br> Any 2 frequently dialed numbers:I have not called any calls yet.(问:最近2个拨打电话号码答:【我没有拨打电话】)<br> top up date:16-01-2019 $5(不要比着我这个日期写上去，是你的充值时间金额) Looking forward to closing voice mail service as soon as possible, thanks!<br>邮件发送到cs@lycamobile.us</p>
+</blockquote>
+<p>如果英文口语好的话，可以直接致电客服让他们帮你关了语音信箱。邮件的回复时间比较长，而且容易可能被忽略。而且<strong>记得一定要充值后才能关闭语音信箱</strong>，不然人家凭啥给你关啊，你都没消费。</p>
+<p>我正好家里还有一台闲置的iPhone4，于是我把LycaMobile卡从6SP移到了4中，解放6SP。可惜的是，我的4越过狱，也有可能是系统版本比较低，导致上面的拨号操作都不能执行，但是接短信是没问题的。<strong>有人说，只要机器长开着，就不会有人给你发语音信箱的消息，我的4在进行Arukas电话语音验证的时候，就接到了语音信箱去了，白白损失0.49美元</strong>。后面用回6SP插LycaMobile卡，然后关闭语音信箱后，能正常接收到来自Arukas的电话验证。可见<strong>语音信箱并不是手机开着就不会被发送消息的，而是取决于手机是否接收得到来电</strong>。</p>
+<p>下面来说说什么是Google Voice，简称GV。</p>
+<p>GV是一个Google提供的虚拟的电话号码，可以免费接收和发送短信，关键是可以免费接听来自全世界的电话。对于拨打美国以及加拿大的号码都是免费的。所以，这也是很多人为什么要薅LycaMobile的原因之一，因为LycaMobile可以注册GV。注册GV，需要以下三个条件：</p>
+<ol>
+<li>一个美国实体号码（这里使用LycaMobile手机号来作为关联的手机号码，用来接收Google的验证短信，收短信不收费）</li>
+<li>一个新的Gmail邮箱</li>
+<li>能FQ，并且保证注册时的IP是美国的（我的VPS正好是美国IP，可以通过<a href="https://www.ipaddress.com/" target="_blank" rel="external">IPAddress</a>来查询自己的IP）</li>
+</ol>
+<p>以上条件貌似缺一不可。注意，<strong>我使用常用的Gmail邮箱注册GV号的时候就没有成功，最后在设置里面没有找到GV号，后来开了一个新的Gmail账号就成功了</strong>。</p>
+<p>注册GV的过程这里就略过了。最后注册成功之后，在自己的<a href="https://voice.google.com/settings" target="_blank" rel="external">GV设置里</a>里就能看到GV号码以及关联的手机号码。<strong>一个实体手机号只能注册一个GV账号，而且一旦注册GV成功，该手机号以后都不能为别的GV账号所绑定了</strong>。</p>
+<p>可惜的是，Arukas发来的电话语音验证，在网页版的GV里接听不到验证码，不知道通过环聊能不能接听。这个等以后再验证好了。<strong>不过需要注意的是，GV号也是会回收的，一旦超过有效期不使用，就会被Google回收回去，只要定期发短信和打电话就行了，这个我会单独再写一篇来叙述的</strong>。</p>
+<p>说回Arukas吧，电话语音验证终于过了，因为iPhone4的问题，原本只需要0.49美元接听一次就够了，我又多接听了一次，都是泪。之前很多网友说，Arukas注册还需要填写信用卡，而且还是国外的才行。但是我发现现在Arukas针对中国用户推出了支付宝绑定，抱着试试看的态度，竟然绑定成功了。Arukas也能创建容器了。至于LycaMobile要不要保这个号我现在有点纠结，原因还是每月5美元的套餐确实有点贵。暂且就这样吧，GV接听电话还需要研究，等研究出来了，就可以放弃LycaMobile卡了。</p>
+
+  </section>
+</article>
+
+  <div class="sharing grid">
+  <section class="profile grid-item grid">
+    <img class="avatar" src="/images/chili.png" alt="avatar" />
+    <div class="grid-item">
+      <p class="title"> chilihotpot </p>
+      <p class="subtitle"> You Are The JavaScript In My HTML </p>
+    <div>
+  </section>
+
+  <section class="share-btns">
+    <!-- <p> share it if you like it~ </p> -->
+    <a
+  class="twitter-share-button"
+  data-size="large"
+  data-via="DrakeLeung"
+  href="https://twitter.com/intent/tweet?text=最近发现日本的<a href="http"
+>
+  Tweet
+</a>
+
+<script>
+  window.twttr = (function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0],
+    t = window.twttr || {};
+  if (d.getElementById(id)) return t;
+  js = d.createElement(s);
+  js.id = id;
+  js.src = "https://platform.twitter.com/widgets.js";
+  js.async = true;
+  fjs.parentNode.insertBefore(js, fjs);
+
+  t._e = [];
+  t.ready = function(f) {
+    t._e.push(f);
+  };
+
+  return t;
+}(document, "script", "twitter-wjs"));
+</script>
+
+  </section>
+</div>
+
+
+  
+</main>
+
+</body>
+</html>

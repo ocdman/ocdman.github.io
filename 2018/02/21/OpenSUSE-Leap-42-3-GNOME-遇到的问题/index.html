@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>OpenSUSE Leap 42.3 GNOME 遇到的问题 | chilihotpot</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <link rel="shortcut icon" href="/chili.ico">
+  <link rel="stylesheet" href="/css/app.css" type="text/css">
+  <!-- <link rel='stylesheet' href='http://fonts.useso.com/css?family=Source+Code+Pro'> -->
+</head>
+
+<body>
+  <nav class="app-nav">
+  
+    
+      <a href="/.">home</a>
+    
+  
+    
+      <a href="/archives">archive</a>
+    
+  
+    
+      <a href="/tags">tag</a>
+    
+  
+    
+      <a href="/categories">category</a>
+    
+  
+</nav>
+
+  <main class="post">
+  <article>
+  <h1 class="article-title">
+    <a href="/2018/02/21/OpenSUSE-Leap-42-3-GNOME-遇到的问题/">OpenSUSE Leap 42.3 GNOME 遇到的问题</a>
+  </h1>
+
+  <section class="article-meta">
+    <p class="article-date">February 21 2018</p>
+  </section>
+
+  <section class="article-entry">
+    <h6 id="1-_无限登录">1. 无限登录</h6><p>OpenSUSE默认安装KDE桌面环境，不过可以自己改为GNOME桌面。怎么做这里不作详述，在调整到GNOME桌面后，或者GNOME调整为KDE后，都有可能会出现无限登录的情况。这个时候只要以命令行模式登录，即Ctrl+Alt+1~6，登录其它tty1~6之中的任意一个，然后修改目录<code>/etc/sysconfig/</code>下的<code>DISPLAYMANAGER</code>以及<code>WINDOWMANAGER</code>文件即可。</p>
+<h6 id="2-_中文输入">2. 中文输入</h6><p>OpenSUSE允许在<code>Region&amp;Language</code>里添加中文输入法。问题是我添加了中文输入法后，使用<code>Super+Space</code>快捷键切换中文输入，依然表现为英文输入，没有起任何效果。解决办法是使用<code>Ctrl+Space</code>来切换中文，千万不要被提示的<code>Super+Space</code>给误导了，原因可能和安装的输入法默认配置有关吧，切记！</p>
+
+  </section>
+</article>
+
+  <div class="sharing grid">
+  <section class="profile grid-item grid">
+    <img class="avatar" src="/images/chili.png" alt="avatar" />
+    <div class="grid-item">
+      <p class="title"> chilihotpot </p>
+      <p class="subtitle"> You Are The JavaScript In My HTML </p>
+    <div>
+  </section>
+
+  <section class="share-btns">
+    <!-- <p> share it if you like it~ </p> -->
+    <a
+  class="twitter-share-button"
+  data-size="large"
+  data-via="DrakeLeung"
+  href="https://twitter.com/intent/tweet?text= id="1-_无限登录">1. 无限登"
+>
+  Tweet
+</a>
+
+<script>
+  window.twttr = (function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0],
+    t = window.twttr || {};
+  if (d.getElementById(id)) return t;
+  js = d.createElement(s);
+  js.id = id;
+  js.src = "https://platform.twitter.com/widgets.js";
+  js.async = true;
+  fjs.parentNode.insertBefore(js, fjs);
+
+  t._e = [];
+  t.ready = function(f) {
+    t._e.push(f);
+  };
+
+  return t;
+}(document, "script", "twitter-wjs"));
+</script>
+
+  </section>
+</div>
+
+
+  
+</main>
+
+</body>
+</html>

@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>树莓派Zero W连接无线网络 | chilihotpot</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <link rel="shortcut icon" href="/chili.ico">
+  <link rel="stylesheet" href="/css/app.css" type="text/css">
+  <!-- <link rel='stylesheet' href='http://fonts.useso.com/css?family=Source+Code+Pro'> -->
+</head>
+
+<body>
+  <nav class="app-nav">
+  
+    
+      <a href="/.">home</a>
+    
+  
+    
+      <a href="/archives">archive</a>
+    
+  
+    
+      <a href="/tags">tag</a>
+    
+  
+    
+      <a href="/categories">category</a>
+    
+  
+</nav>
+
+  <main class="post">
+  <article>
+  <h1 class="article-title">
+    <a href="/2018/08/03/树莓派Zero-W连接无线网络/">树莓派Zero W连接无线网络</a>
+  </h1>
+
+  <section class="article-meta">
+    <p class="article-date">August 03 2018</p>
+  </section>
+
+  <section class="article-entry">
+    <p>树莓派Zero W自带Wifi，这也是我选择它的原因之一，那么如何利用自带的Wifi连上无线网络呢？</p>
+<p>Zero W启动后默认是打开Wifi的，可以用命令测试一下，看看Wifi功能是否正常</p>
+<figure class="highlight fortran"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo iwlist wlan0 <span class="built_in">scan</span></span><br></pre></td></tr></table></figure>
+<p>如果能够扫描出无线网络，说明Wifi功能正常。</p>
+<h3 id="配置Wifi连接">配置Wifi连接</h3><p>打开<code>/etc/network/interfaces</code>文件，为wlan0动态获取IP</p>
+<figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo vi <span class="regexp">/etc/</span>network<span class="regexp">/interfaces</span></span><br></pre></td></tr></table></figure>
+<p>在原内容后面添加</p>
+<figure class="highlight autohotkey"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">auto wlan0</span><br><span class="line">iface wlan0 inet dhcp</span><br><span class="line">wpa-conf /etc/wp<span class="built_in">a_supplicant</span>/wp<span class="built_in">a_supplicant</span>.conf</span><br></pre></td></tr></table></figure>
+<p>保存之后，打开<code>/etc/wpa_supplicant/wpa_supplicant.conf</code>文件</p>
+<p>同样在其内容后添加</p>
+<figure class="highlight makefile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="constant">network</span>=&#123;</span><br><span class="line"><span class="constant">ssid</span>="wpa-ssid"</span><br><span class="line"><span class="constant">psk</span>="password"</span><br><span class="line"><span class="constant">key_mgmt</span>=WPA-PSK</span><br><span class="line"><span class="constant">priority</span>=4</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>其中，<code>key_mgmt</code>是加密方式，我的是<code>WPA2/WPA</code>加密，<code>priority</code>是优先级，可以在多个无线网络的情况下，优秀决定哪个网络，<code>priority</code>越大，优先级越高。这两个是可选的。</p>
+<p>注意，<strong>不要有空格不要有tab</strong>，我就是因为加了空格，导致报错</p>
+<blockquote>
+<p>wpa_supplicant can’t initialize control interface</p>
+</blockquote>
+<p>最后重启网络即可</p>
+<figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo <span class="regexp">/etc/i</span>nit.d<span class="regexp">/networking restart</span></span><br></pre></td></tr></table></figure>
+<p>可以通过命令来查看当前属于哪个网络</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">iwconfig</span><br></pre></td></tr></table></figure>
+<p>或者查看无线设备及模式</p>
+<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="title">iw</span> dev</span><br></pre></td></tr></table></figure>
+<h3 id="总结">总结</h3><p>以上内容主要针对Wifi自动获取IP来写的，以后如果有需要，会补充静态IP设置部分。</p>
+
+  </section>
+</article>
+
+  <div class="sharing grid">
+  <section class="profile grid-item grid">
+    <img class="avatar" src="/images/chili.png" alt="avatar" />
+    <div class="grid-item">
+      <p class="title"> chilihotpot </p>
+      <p class="subtitle"> You Are The JavaScript In My HTML </p>
+    <div>
+  </section>
+
+  <section class="share-btns">
+    <!-- <p> share it if you like it~ </p> -->
+    <a
+  class="twitter-share-button"
+  data-size="large"
+  data-via="DrakeLeung"
+  href="https://twitter.com/intent/tweet?text=树莓派Zero W自带Wifi，这也是我"
+>
+  Tweet
+</a>
+
+<script>
+  window.twttr = (function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0],
+    t = window.twttr || {};
+  if (d.getElementById(id)) return t;
+  js = d.createElement(s);
+  js.id = id;
+  js.src = "https://platform.twitter.com/widgets.js";
+  js.async = true;
+  fjs.parentNode.insertBefore(js, fjs);
+
+  t._e = [];
+  t.ready = function(f) {
+    t._e.push(f);
+  };
+
+  return t;
+}(document, "script", "twitter-wjs"));
+</script>
+
+  </section>
+</div>
+
+
+  
+</main>
+
+</body>
+</html>

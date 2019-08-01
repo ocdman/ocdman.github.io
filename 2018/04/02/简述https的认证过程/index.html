@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>简述https的认证过程 | chilihotpot</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <link rel="shortcut icon" href="/chili.ico">
+  <link rel="stylesheet" href="/css/app.css" type="text/css">
+  <!-- <link rel='stylesheet' href='http://fonts.useso.com/css?family=Source+Code+Pro'> -->
+</head>
+
+<body>
+  <nav class="app-nav">
+  
+    
+      <a href="/.">home</a>
+    
+  
+    
+      <a href="/archives">archive</a>
+    
+  
+    
+      <a href="/tags">tag</a>
+    
+  
+    
+      <a href="/categories">category</a>
+    
+  
+</nav>
+
+  <main class="post">
+  <article>
+  <h1 class="article-title">
+    <a href="/2018/04/02/简述https的认证过程/">简述https的认证过程</a>
+  </h1>
+
+  <section class="article-meta">
+    <p class="article-date">April 02 2018</p>
+  </section>
+
+  <section class="article-entry">
+    <p>由于对goproxy-vps签发了ssl证书，发现自己对https这一块基础知识比较薄弱，现在重新学习一下。</p>
+<h3 id="背景">背景</h3><p>https是建立在http（超文本传输协议）基础之上提出的一种安全的协议。http协议的本质是tcp传输，它建立在tcp基础之上，拥有单独的一层http层，而https提出在http和tcp中间加上一层加密层（SSL层）。我们所说的ssl证书就是建立在这一层的基础之上。</p>
+<h3 id="概念">概念</h3><p><strong>数字证书</strong>：一种文件的名称，好比一个机构或人的签名，能够证明这个机构或人的真实性。</p>
+<p><strong>加密和认证</strong>：加密是指通信双方为了防止敏感信息在信道上被第三方窃听，将明文加密成密文。认证是指通信双方为了确认对方是值得信任的消息发送方或接受方，而不是使用假身份的非法者，采取的确认身份的方式。只有同时进行加密和认证才能保证通信的安全，因此在SSL协议中这两者都被应用。早期使用对称加密，现在一般都是不对称加密，比方说RSA加密算法。</p>
+<p><strong>消息摘要</strong>：消息摘要是把一段信息，通过某种算法，得出一段字符串，这个字符串就是消息的摘要。如果消息被篡改，那么摘要也一定会发生改变。其主要算法有MD5和SHA。在证书领域，一般都是SHA（安全哈希算法）。</p>
+<p><strong>证书（certificate）</strong>：数字证书、加密和解密、消息摘要三者结合起来，就是在https中广泛应用的证书。证书本身携带了加密和解密的信息，并且可以标识自己的身份，也自带消息摘要。</p>
+<h3 id="HTTPS认证过程">HTTPS认证过程</h3><ol>
+<li>浏览器发送一个连接请求给安全服务器</li>
+<li>服务器将自己的证书以及证书相关的信息发送给客户端浏览器</li>
+<li>客户端浏览器检查服务器传送过来的证书是否是由自己信赖的CA中心所签发。如果是，则继续执行协议；如果不是，客户端浏览器给出一个警告，警告客户这个证书不是可以信赖的，询问客户是否继续</li>
+<li>接着客户端浏览器比较证书里的消息和服务器刚才发送的相关信息是否一致，如果一致，客户端浏览器认可这个服务器的合法身份。</li>
+<li>服务器要求客户端发送自己的证书。收到后，服务器验证客户端的证书，如果没有通过验证，则拒绝连接。如果验证通过，服务器获得用户的公钥。</li>
+<li>客户端浏览器高速服务器自己所能支持的通讯对称密码方案。</li>
+<li>服务器从客户端发送过来的密码方案中，选择一种加密程度最高的密码方案，由客户端公钥加密后通知浏览器。</li>
+<li>浏览器针对这个密码方案，选择一个通讯密钥，接着用服务器的公钥加密后发送给服务器</li>
+<li>服务器接收到浏览器传送过来的消息，用自己的私钥解密，获取通信密钥。</li>
+<li>服务器、浏览器接下来的通信都是对称加密方案，对称密钥是加过密的。</li>
+</ol>
+<h3 id="总结">总结</h3><p>上述的认证过程是双向认证SSL协议的具体通讯过程，这种情况要求服务器和用户双方都有证书。单向认证SSL协议不需要客户端拥有CA证书，goproxy-vps默认采用单向认证方式，具体的过程相对于上述步骤，只需将服务器端验证客户端证书的过程去掉，以及在协商对称密码方案、对称通讯密钥时，服务器发送给客户端的是没有加过密的密码方案（并不影响SSL过程的安全性）。只要密钥长度够长，就能保证足够的安全，防止第三方窃听。之前goproxy-vps无法访问谷歌，提示缺少证书，就是挂在了第二步，服务器缺少了SSL证书，导致后续步骤都无法继续下去。</p>
+
+  </section>
+</article>
+
+  <div class="sharing grid">
+  <section class="profile grid-item grid">
+    <img class="avatar" src="/images/chili.png" alt="avatar" />
+    <div class="grid-item">
+      <p class="title"> chilihotpot </p>
+      <p class="subtitle"> You Are The JavaScript In My HTML </p>
+    <div>
+  </section>
+
+  <section class="share-btns">
+    <!-- <p> share it if you like it~ </p> -->
+    <a
+  class="twitter-share-button"
+  data-size="large"
+  data-via="DrakeLeung"
+  href="https://twitter.com/intent/tweet?text=由于对goproxy-vps签发了ssl"
+>
+  Tweet
+</a>
+
+<script>
+  window.twttr = (function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0],
+    t = window.twttr || {};
+  if (d.getElementById(id)) return t;
+  js = d.createElement(s);
+  js.id = id;
+  js.src = "https://platform.twitter.com/widgets.js";
+  js.async = true;
+  fjs.parentNode.insertBefore(js, fjs);
+
+  t._e = [];
+  t.ready = function(f) {
+    t._e.push(f);
+  };
+
+  return t;
+}(document, "script", "twitter-wjs"));
+</script>
+
+  </section>
+</div>
+
+
+  
+</main>
+
+</body>
+</html>

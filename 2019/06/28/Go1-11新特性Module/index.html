@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Go1.11新特性Module | chilihotpot</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <link rel="shortcut icon" href="/chili.ico">
+  <link rel="stylesheet" href="/css/app.css" type="text/css">
+  <!-- <link rel='stylesheet' href='http://fonts.useso.com/css?family=Source+Code+Pro'> -->
+</head>
+
+<body>
+  <nav class="app-nav">
+  
+    
+      <a href="/.">home</a>
+    
+  
+    
+      <a href="/archives">archive</a>
+    
+  
+    
+      <a href="/tags">tag</a>
+    
+  
+    
+      <a href="/categories">category</a>
+    
+  
+</nav>
+
+  <main class="post">
+  <article>
+  <h1 class="article-title">
+    <a href="/2019/06/28/Go1-11新特性Module/">Go1.11新特性Module</a>
+  </h1>
+
+  <section class="article-meta">
+    <p class="article-date">June 28 2019</p>
+  </section>
+
+  <section class="article-entry">
+    <p>我是一个比较懒的人，一旦习惯了某种事物，就不太愿意去尝试新的事情。就比如这次接触<a href="https://github.com/ginuerzh/gost" target="_blank" rel="external">Gost</a>这款Go语言编写的隧道软件的时候，使用到了Go1.11，而其中正好用到了1.11的新特性，Module。</p>
+<p>我之前基本一直停留在Go1.10上，感觉1.10也挺稳定的，没必要往上升。虽然习惯了下载依赖包的时候，经常会遇到编译错误，然后逐个找原因，最后大部分原因都是因为下载的依赖包分支的问题。我对于这种手动式的排查已经习以为常了，直到我遇到了Go1.11的新特性Module，我才知道原来下载以及编译可以这么方便。</p>
+<p>Gost有两个文件，gost.mod以及gost.sum文件，其中gost.mod就是依赖包的合集，官方的解释是</p>
+<blockquote>
+<p>模块是相关Go包的集合。modules是源代码交换和版本控制的单元。 go命令直接支持使用modules，包括记录和解析对其他模块的依赖性。modules替换旧的基于GOPATH的方法来指定在给定构建中使用哪些源文件。</p>
+</blockquote>
+<p>而gost.sum文件则是对gost.mod文件的依赖树。</p>
+<h4 id="什么是GO111MODULE">什么是GO111MODULE</h4><p><code>GO111MODULE</code>是Go1.11的新变量，它有三个值<code>off</code>、<code>on</code>以及<code>auto</code>。</p>
+<p><code>GO111MODULE=off</code>，go命令行将不会支持module功能，寻找依赖包的方式将会沿用旧版本那种通过vendor目录或者GOPATH模式来查找。</p>
+<p><code>GO111MODULE=on</code>，go命令行会使用modules，不会去<code>GOPATH</code>目录下查找。</p>
+<p><code>GO111MODULE=auto</code>，即默认值，go命令行将会根据当前目录来决定是否启用module功能。</p>
+<p>这种情况下可以分为两种情形：<br>（1）当前目录在<code>GOPATH/src</code>之外且该目录包含go.mod文件<br>（2）当前文件在包含<code>go.mod</code>文件的目录下面</p>
+<p><strong>注意，当Module功能启用时，依赖包的存放位置变更为<code>$GOPATH/pkg/mod</code>，允许同一个package多个版本并存，且多个项目可以共享缓存的 module。</strong></p>
+<h4 id="go_mod命令">go mod命令</h4><p>golang 提供了<code>go mod</code>命令来管理包。具体可以使用<code>go mod help</code>来查看。</p>
+<h4 id="如何创建mod文件">如何创建mod文件</h4><p>在你的项目下执行<code>go mod init</code>命令，即可初始化生成<code>go.mod</code>以及<code>go.sum</code>文件。</p>
+<p><strong>注意，<code>go.mod</code>文件一旦创建后，它的内容将会被<code>go toolchain</code>全面掌控。<code>go toolchain</code>会在各类命令执行时，比如<code>go get</code>、<code>go build</code>、<code>go mod</code>等修改和维护<code>go.mod</code>文件。</strong>所以你无需担心维护的问题。</p>
+<h4 id="总结">总结</h4><p>Module特性的好处太多了，它让安装哪个依赖包的哪个版本变得极其容易，编译的时候也是一遍过，一下解决了之前Go语言下载依赖包以及编译的痛点。而且它的自动维护，又无需我们担心。更多的<code>go mod</code>的用法还有待学习中，总之这次学习了<code>go mod</code>让我觉得不亏。</p>
+
+  </section>
+</article>
+
+  <div class="sharing grid">
+  <section class="profile grid-item grid">
+    <img class="avatar" src="/images/chili.png" alt="avatar" />
+    <div class="grid-item">
+      <p class="title"> chilihotpot </p>
+      <p class="subtitle"> You Are The JavaScript In My HTML </p>
+    <div>
+  </section>
+
+  <section class="share-btns">
+    <!-- <p> share it if you like it~ </p> -->
+    <a
+  class="twitter-share-button"
+  data-size="large"
+  data-via="DrakeLeung"
+  href="https://twitter.com/intent/tweet?text=我是一个比较懒的人，一旦习惯了某种事物，"
+>
+  Tweet
+</a>
+
+<script>
+  window.twttr = (function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0],
+    t = window.twttr || {};
+  if (d.getElementById(id)) return t;
+  js = d.createElement(s);
+  js.id = id;
+  js.src = "https://platform.twitter.com/widgets.js";
+  js.async = true;
+  fjs.parentNode.insertBefore(js, fjs);
+
+  t._e = [];
+  t.ready = function(f) {
+    t._e.push(f);
+  };
+
+  return t;
+}(document, "script", "twitter-wjs"));
+</script>
+
+  </section>
+</div>
+
+
+  
+</main>
+
+</body>
+</html>

@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Scrapy自动保存cookie并使用 | chilihotpot</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <link rel="shortcut icon" href="/chili.ico">
+  <link rel="stylesheet" href="/css/app.css" type="text/css">
+  <!-- <link rel='stylesheet' href='http://fonts.useso.com/css?family=Source+Code+Pro'> -->
+</head>
+
+<body>
+  <nav class="app-nav">
+  
+    
+      <a href="/.">home</a>
+    
+  
+    
+      <a href="/archives">archive</a>
+    
+  
+    
+      <a href="/tags">tag</a>
+    
+  
+    
+      <a href="/categories">category</a>
+    
+  
+</nav>
+
+  <main class="post">
+  <article>
+  <h1 class="article-title">
+    <a href="/2017/06/03/Scrapy自动保存cookie并使用/">Scrapy自动保存cookie并使用</a>
+  </h1>
+
+  <section class="article-meta">
+    <p class="article-date">June 03 2017</p>
+  </section>
+
+  <section class="article-entry">
+    <p>每次面对要爬取的网站时，都不可避免地面对一个问题，如何使用自动保存的cookie，而不是使用人为的方式提取cookie？</p>
+<p>所谓人为的方式，其实就是hard code。大致分为三个步骤，<br>（1）注册账号，登录网站。<br>（2）从浏览器后台提取相关cookie，多次尝试后，确定核心的几个cookie值。<br>（3）如果cookie过期，重复第二步。</p>
+<p>这种硬编码的方式最大的不便就是要不停地更新cookie值。所以应该怎样才能自动保存cookie？</p>
+<h4 id="自动保存cookie">自动保存cookie</h4><p>scrapy提供了CookiesMiddleware中间件，来自动保存cookie。原话是这样的</p>
+<blockquote>
+<p>Cookies middleware enables working with sites that require cookies, such as those that use sessions. It keeps track of cookies sent by web servers, and send them back on subsequent requests (from that spider), just like web browsers do.</p>
+</blockquote>
+<p>其中有两个设置和CookiesMiddleware有关，</p>
+<ul>
+<li>COOKIES_ENABLED</li>
+<li>COOKIES_DEBUG</li>
+</ul>
+<h6 id="COOKIES_ENABLED">COOKIES_ENABLED</h6><p>CookiesMiddleware中间件在得到网站响应之后，会自动保存cookie值。如果将COOKIES_ENABLED置为False，表明不再使用cookie，也就是说每次请求，都不会带上cookie值。默认为True。</p>
+<h6 id="COOKIES_DEBUG">COOKIES_DEBUG</h6><p>如果想要观察每次请求以及响应时，使用了哪些cookie，保存了哪些cookie，推荐将该值置为True，CookiesMiddleware中间件会追踪记录cookie的值。默认为False。</p>
+<h4 id="使用自动保存的cookie">使用自动保存的cookie</h4><p>使用<strong>cookiejar</strong>元键(meta key)关键字，可以实现发送请求时，带上之前自动保存的cookie。也分三个步骤，<br>（1）请求登录界面，设置cookiejar的值<br>（2）请求session接口，并带上cookiejar的值。<br>（3）请求具体接口，并带上cookiejar的值。</p>
+<p>以模拟登录github，然后从github上爬取自己的issue列表为例来演示整个过程。</p>
+<h6 id="第一步，请求登录界面，设置cookiejar的值">第一步，请求登录界面，设置cookiejar的值</h6><p>有些网站，比如github，在提交session接口的参数里，有一些隐藏参数，需要在登录界面动态获取。<br>同样地，有些网站在登录界面里还要求输入验证码，这里不讨论验证码的情况，假定只需要提交简单的参数。</p>
+<p>请求登录界面，目的是为了获取隐藏参数。发送请求时带上meta参数，给键为cookiejar的值赋值，这里赋值为1。也可以是其它数字。<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">start_requests</span><span class="params">(self)</span>:</span></span><br><span class="line">	<span class="keyword">return</span> [FormRequest(<span class="string">"https://github.com/login"</span>,</span><br><span class="line">		meta=&#123;<span class="string">'cookiejar'</span>: <span class="number">1</span>&#125;, callback=self.post_login)]</span><br></pre></td></tr></table></figure></p>
+<h6 id="第二步，请求session接口，并带上cookiejar的值">第二步，请求session接口，并带上cookiejar的值</h6><p>获取到隐藏参数值之后，请求session接口，同样要带上meta参数，其键cookiejar的值来自于上一个请求里的meta，也是就是1。从程序的角度来分析，cookiejar的值使用的是上一个请求里的值，其值为1，并不是说cookie的值为1，1指代的只是一个标识符，类似于表里的id，其真正指向的是上一个请求响应之后自动保存的cookie值。<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">post_headers = &#123;</span><br><span class="line">	<span class="string">"Accept"</span>: <span class="string">"text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8"</span>,</span><br><span class="line">    <span class="string">"Accept-Encoding"</span>: <span class="string">"gzip, deflate"</span>,</span><br><span class="line">    <span class="string">"Accept-Language"</span>: <span class="string">"zh-CN,zh;q=0.8,en;q=0.6"</span>,</span><br><span class="line">    <span class="string">"Cache-Control"</span>: <span class="string">"no-cache"</span>,</span><br><span class="line">    <span class="string">"Connection"</span>: <span class="string">"keep-alive"</span>,</span><br><span class="line">    <span class="string">"Content-Type"</span>: <span class="string">"application/x-www-form-urlencoded"</span>,</span><br><span class="line">    <span class="string">"User-Agent"</span>: <span class="string">"Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/49.0.2623.75 Safari/537.36"</span>,</span><br><span class="line">    <span class="string">"Referer"</span>: <span class="string">"https://github.com/"</span>,</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">post_login</span><span class="params">(self, response)</span>:</span></span><br><span class="line">	authenticity_token = response.xpath(</span><br><span class="line">		<span class="string">'//input[@name="authenticity_token"]/@value'</span>).extract_first()</span><br><span class="line">	logging.info(<span class="string">'authenticity_token='</span> + authenticity_token)</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> [FormRequest.from_response(response, </span><br><span class="line">		url=<span class="string">'https://github.com/session'</span>,</span><br><span class="line">		meta=&#123;<span class="string">'cookiejar'</span>: response.meta[<span class="string">'cookiejar'</span>]&#125;,</span><br><span class="line">		headers=self.post_headers,</span><br><span class="line">		formdata=&#123;</span><br><span class="line">			<span class="string">'utf8'</span>: <span class="string">'✓'</span>,</span><br><span class="line">			<span class="string">'login'</span>: <span class="string">'username'</span>,</span><br><span class="line">			<span class="string">'password'</span>: <span class="string">'******'</span>,</span><br><span class="line">			<span class="string">'authenticity_token'</span>: authenticity_token</span><br><span class="line">		&#125;,</span><br><span class="line">		callback=self.after_login,</span><br><span class="line">		dont_filter=<span class="keyword">True</span></span><br><span class="line">		)]</span><br></pre></td></tr></table></figure></p>
+<h6 id="第三步，请求具体接口，并带上cookiejar的值">第三步，请求具体接口，并带上cookiejar的值</h6><p>session接口的响应会重新给cookiejar的标识符指向的cookie值赋值。接下来所有的请求，都基于该cookie，而且必须带上该cookie。<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">start_urls = [</span><br><span class="line">	<span class="string">'https://github.com/issues'</span>,</span><br><span class="line">]</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">after_login</span><span class="params">(self, response)</span>:</span></span><br><span class="line">	<span class="keyword">for</span> url <span class="keyword">in</span> self.start_urls:</span><br><span class="line">		logging.info(<span class="string">'letter url='</span> + url)</span><br><span class="line">		<span class="keyword">yield</span> Request(url, dont_filter=<span class="keyword">True</span>,</span><br><span class="line">			meta=&#123;<span class="string">'dont_redirect'</span>: <span class="keyword">True</span>,</span><br><span class="line">			<span class="string">'cookiejar'</span>: response.meta[<span class="string">'cookiejar'</span>],</span><br><span class="line">			<span class="string">'handle_httpstatus_list'</span>: [<span class="number">302</span>]&#125;,</span><br><span class="line">			callback=self.parse_page, )</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">parse_page</span><span class="params">(self, response)</span>:</span></span><br><span class="line">	<span class="string">"""这个是不使用LinkExtractor我自己手动处理链接以及下一页"""</span></span><br><span class="line">	logging.info(response.url)</span><br><span class="line">	<span class="keyword">for</span> each_msg <span class="keyword">in</span> response.xpath(<span class="string">'//ul[@class="Msgs"]/li'</span>):</span><br><span class="line">		logging.info(<span class="string">'--------------消息分割线-----------------'</span>)</span><br><span class="line">		logging.info(<span class="string">''</span>.join(each_msg.xpath(<span class="string">'.//div[@class="msg"]//*/text()'</span>).extract()))</span><br><span class="line">	next_page = response.xpath(<span class="string">'//li[@class="page next"]/a'</span>)</span><br><span class="line">	<span class="keyword">if</span> next_page:</span><br><span class="line">		logging.info(<span class="string">u'继续处理下一页'</span>)</span><br><span class="line">		<span class="keyword">yield</span> Request(response.url + next_page.xpath(<span class="string">'@href'</span>).extract())</span><br><span class="line">	<span class="keyword">else</span>:</span><br><span class="line">		logging.info(<span class="string">u"已经处理完成，没有下一页了"</span>)</span><br></pre></td></tr></table></figure></p>
+<h4 id="总结">总结</h4><p>Scrapy通过CookiesMiddleware中间件来自动保存响应的cookie，然后通过请求时带上cookiejar元键来使用上一个响应自动保存的cookie。</p>
+
+  </section>
+</article>
+
+  <div class="sharing grid">
+  <section class="profile grid-item grid">
+    <img class="avatar" src="/images/chili.png" alt="avatar" />
+    <div class="grid-item">
+      <p class="title"> chilihotpot </p>
+      <p class="subtitle"> You Are The JavaScript In My HTML </p>
+    <div>
+  </section>
+
+  <section class="share-btns">
+    <!-- <p> share it if you like it~ </p> -->
+    <a
+  class="twitter-share-button"
+  data-size="large"
+  data-via="DrakeLeung"
+  href="https://twitter.com/intent/tweet?text=每次面对要爬取的网站时，都不可避免地面对"
+>
+  Tweet
+</a>
+
+<script>
+  window.twttr = (function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0],
+    t = window.twttr || {};
+  if (d.getElementById(id)) return t;
+  js = d.createElement(s);
+  js.id = id;
+  js.src = "https://platform.twitter.com/widgets.js";
+  js.async = true;
+  fjs.parentNode.insertBefore(js, fjs);
+
+  t._e = [];
+  t.ready = function(f) {
+    t._e.push(f);
+  };
+
+  return t;
+}(document, "script", "twitter-wjs"));
+</script>
+
+  </section>
+</div>
+
+
+  
+</main>
+
+</body>
+</html>

@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>GOLANG如何在不同平台下交叉编译 | chilihotpot</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <link rel="shortcut icon" href="/chili.ico">
+  <link rel="stylesheet" href="/css/app.css" type="text/css">
+  <!-- <link rel='stylesheet' href='http://fonts.useso.com/css?family=Source+Code+Pro'> -->
+</head>
+
+<body>
+  <nav class="app-nav">
+  
+    
+      <a href="/.">home</a>
+    
+  
+    
+      <a href="/archives">archive</a>
+    
+  
+    
+      <a href="/tags">tag</a>
+    
+  
+    
+      <a href="/categories">category</a>
+    
+  
+</nav>
+
+  <main class="post">
+  <article>
+  <h1 class="article-title">
+    <a href="/2018/05/31/GOLANG如何在不同平台下交叉编译/">GOLANG如何在不同平台下交叉编译</a>
+  </h1>
+
+  <section class="article-meta">
+    <p class="article-date">May 31 2018</p>
+  </section>
+
+  <section class="article-entry">
+    <p>Mac平台下的Go编译器编译生成的二进制文件，无法直接在Linux上执行。需要进行一下交叉编译，生成Linux下的可执行文件。下面介绍一下各个平台下的交叉编译代码。</p>
+<h3 id="Mac平台下的交叉编译">Mac平台下的交叉编译</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="preprocessor"># <span class="number">32</span>位的Linux平台</span></span><br><span class="line">CGO_ENABLED=<span class="number">0</span> GOOS=linux GOARCH=<span class="number">386</span> go build</span><br><span class="line"><span class="preprocessor"># <span class="number">64</span>位的Linux平台</span></span><br><span class="line">CGO_ENABLED=<span class="number">0</span> GOOS=linux GOARCH=amd64 go build</span><br><span class="line"><span class="preprocessor"># <span class="number">32</span>位的Windows平台</span></span><br><span class="line">CGO_ENABLED=<span class="number">0</span> GOOS=windows GOARCH=<span class="number">386</span> go build</span><br><span class="line"><span class="preprocessor"># <span class="number">64</span>位的Windows平台</span></span><br><span class="line">CGO_ENABLED=<span class="number">0</span> GOOS=windows GOARCH=amd64 go build</span><br><span class="line"><span class="preprocessor"># ARM V6平台</span></span><br><span class="line">CGO_ENABLED=<span class="number">0</span> GOOS=linux GOARCH=arm GOARM=<span class="number">6</span> go build</span><br></pre></td></tr></table></figure>
+<h3 id="Linux平台下的交叉编译">Linux平台下的交叉编译</h3><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="preprocessor"># <span class="number">64</span>位的Mac平台</span></span><br><span class="line">CGO_ENABLED=<span class="number">0</span> GOOS=darwin GOARCH=amd64 go build</span><br><span class="line"><span class="preprocessor"># <span class="number">64</span>位的Windows平台</span></span><br><span class="line">CGO_ENABLED=<span class="number">0</span> GOOS=windows GOARCH=amd64 go build</span><br></pre></td></tr></table></figure>
+<h3 id="Windows平台下的交叉编译">Windows平台下的交叉编译</h3><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"># 64位的Mac平台</span><br><span class="line"><span class="operator"><span class="keyword">SET</span> CGO_ENABLED=<span class="number">0</span></span><br><span class="line"><span class="keyword">SET</span> GOOS=darwin</span><br><span class="line"><span class="keyword">SET</span> GOARCH=amd64</span><br><span class="line"><span class="keyword">go</span> <span class="keyword">build</span></span><br><span class="line"></span><br><span class="line"># <span class="number">64</span>位的Linux平台</span><br><span class="line"><span class="keyword">SET</span> CGO_ENABLED=<span class="number">0</span></span><br><span class="line"><span class="keyword">SET</span> GOOS=linux</span><br><span class="line"><span class="keyword">SET</span> GOARCH=amd64</span><br><span class="line"><span class="keyword">go</span> <span class="keyword">build</span></span></span><br></pre></td></tr></table></figure>
+<h3 id="总结">总结</h3><p>GOOS：目标平台的操作系统（darwin、freebsd、linux、windows） </p>
+<p>GOARCH：目标平台的体系架构（386、amd64、arm）</p>
+<p>CGO_ENABLED：交叉编译不支持 CGO 所以要禁用它</p>
+
+  </section>
+</article>
+
+  <div class="sharing grid">
+  <section class="profile grid-item grid">
+    <img class="avatar" src="/images/chili.png" alt="avatar" />
+    <div class="grid-item">
+      <p class="title"> chilihotpot </p>
+      <p class="subtitle"> You Are The JavaScript In My HTML </p>
+    <div>
+  </section>
+
+  <section class="share-btns">
+    <!-- <p> share it if you like it~ </p> -->
+    <a
+  class="twitter-share-button"
+  data-size="large"
+  data-via="DrakeLeung"
+  href="https://twitter.com/intent/tweet?text=Mac平台下的Go编译器编译生成的二进制"
+>
+  Tweet
+</a>
+
+<script>
+  window.twttr = (function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0],
+    t = window.twttr || {};
+  if (d.getElementById(id)) return t;
+  js = d.createElement(s);
+  js.id = id;
+  js.src = "https://platform.twitter.com/widgets.js";
+  js.async = true;
+  fjs.parentNode.insertBefore(js, fjs);
+
+  t._e = [];
+  t.ready = function(f) {
+    t._e.push(f);
+  };
+
+  return t;
+}(document, "script", "twitter-wjs"));
+</script>
+
+  </section>
+</div>
+
+
+  
+</main>
+
+</body>
+</html>

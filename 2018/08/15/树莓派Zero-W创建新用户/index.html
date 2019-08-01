@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>树莓派Zero W创建新用户 | chilihotpot</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <link rel="shortcut icon" href="/chili.ico">
+  <link rel="stylesheet" href="/css/app.css" type="text/css">
+  <!-- <link rel='stylesheet' href='http://fonts.useso.com/css?family=Source+Code+Pro'> -->
+</head>
+
+<body>
+  <nav class="app-nav">
+  
+    
+      <a href="/.">home</a>
+    
+  
+    
+      <a href="/archives">archive</a>
+    
+  
+    
+      <a href="/tags">tag</a>
+    
+  
+    
+      <a href="/categories">category</a>
+    
+  
+</nav>
+
+  <main class="post">
+  <article>
+  <h1 class="article-title">
+    <a href="/2018/08/15/树莓派Zero-W创建新用户/">树莓派Zero W创建新用户</a>
+  </h1>
+
+  <section class="article-meta">
+    <p class="article-date">August 15 2018</p>
+  </section>
+
+  <section class="article-entry">
+    <p>因为Zero W有时候会出现ssh无法连接的情况，不得已断电重启容易导致磁盘损坏，修复后pi用户目录会丢失，所以我想新建一个用户，专门备份pi用户下的脚本。</p>
+<p>可以通过命令新增用户</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">//新建<span class="built_in">test</span>用户</span><br><span class="line">sudo useradd <span class="built_in">test</span></span><br><span class="line">//重置<span class="built_in">test</span>用户密码</span><br><span class="line">passwd <span class="built_in">test</span></span><br><span class="line">//将<span class="built_in">test</span>用户加入sudo组</span><br><span class="line">sudo useradd <span class="built_in">test</span> sudo</span><br></pre></td></tr></table></figure>
+<p>这样，一个普通的具有sudo权限的用户就创建了。但是，当你输入一些常用命令，想要获取提示的时候，tab只是tab，并不会补全命令，需要做一些修改</p>
+<figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo vi <span class="regexp">/etc/</span>passwd</span><br></pre></td></tr></table></figure>
+<p>找到新添加的用户test，在后面添加<code>/bin/bash</code></p>
+<figure class="highlight crystal"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="symbol">test:</span><span class="symbol">x:</span><span class="number">1001</span><span class="symbol">:</span><span class="number">1001</span><span class="symbol">:</span><span class="symbol">:/home/test</span><span class="symbol">:/bin/bash</span></span><br></pre></td></tr></table></figure>
+<p>重启后，不光可以获取命令提示了，命令行左边的路径提示也出现了。</p>
+
+  </section>
+</article>
+
+  <div class="sharing grid">
+  <section class="profile grid-item grid">
+    <img class="avatar" src="/images/chili.png" alt="avatar" />
+    <div class="grid-item">
+      <p class="title"> chilihotpot </p>
+      <p class="subtitle"> You Are The JavaScript In My HTML </p>
+    <div>
+  </section>
+
+  <section class="share-btns">
+    <!-- <p> share it if you like it~ </p> -->
+    <a
+  class="twitter-share-button"
+  data-size="large"
+  data-via="DrakeLeung"
+  href="https://twitter.com/intent/tweet?text=因为Zero W有时候会出现ssh无法连"
+>
+  Tweet
+</a>
+
+<script>
+  window.twttr = (function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0],
+    t = window.twttr || {};
+  if (d.getElementById(id)) return t;
+  js = d.createElement(s);
+  js.id = id;
+  js.src = "https://platform.twitter.com/widgets.js";
+  js.async = true;
+  fjs.parentNode.insertBefore(js, fjs);
+
+  t._e = [];
+  t.ready = function(f) {
+    t._e.push(f);
+  };
+
+  return t;
+}(document, "script", "twitter-wjs"));
+</script>
+
+  </section>
+</div>
+
+
+  
+</main>
+
+</body>
+</html>

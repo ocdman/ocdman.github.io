@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Mac OS X Lion 10.7.4 如何安装Homebrew | chilihotpot</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <link rel="shortcut icon" href="/chili.ico">
+  <link rel="stylesheet" href="/css/app.css" type="text/css">
+  <!-- <link rel='stylesheet' href='http://fonts.useso.com/css?family=Source+Code+Pro'> -->
+</head>
+
+<body>
+  <nav class="app-nav">
+  
+    
+      <a href="/.">home</a>
+    
+  
+    
+      <a href="/archives">archive</a>
+    
+  
+    
+      <a href="/tags">tag</a>
+    
+  
+    
+      <a href="/categories">category</a>
+    
+  
+</nav>
+
+  <main class="post">
+  <article>
+  <h1 class="article-title">
+    <a href="/2018/10/08/Mac-OS-X-Lion-10-7-4-如何安装Homebrew/">Mac OS X Lion 10.7.4 如何安装Homebrew</a>
+  </h1>
+
+  <section class="article-meta">
+    <p class="article-date">October 08 2018</p>
+  </section>
+
+  <section class="article-entry">
+    <p>为了研究iPhone4上的越狱插件开发，我开始捣鼓起古老的iOS 6。而iOS 6开发需要使用XCode 4.5以上到XCode 5之间的版本，系统需要Mac OS X 10.7.4以上到Mac OS X 10.8之间的版本，这些条件我都满足了，可以参考<a href="https://ocdman.github.io/2018/09/30/VMWare%E5%AE%89%E8%A3%85Mac-OS-X-10-7-4/" target="_blank" rel="external">VMWare安装Mac OS X 10.7.4</a>。接下来需要解决的是，给Mac安装Homebrew，因为越狱插件需要。然而安装过程并不顺利。</p>
+<h3 id="升级OpenSSL">升级OpenSSL</h3><p>安装Homebrew的命令很简单，只需要命令行</p>
+<figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="regexp">/usr/</span>bin<span class="regexp">/ruby -e "$(curl -fsSL https:/</span><span class="regexp">/raw.githubusercontent.com/</span>Homebrew<span class="regexp">/install/m</span>aster<span class="regexp">/install)"</span></span><br></pre></td></tr></table></figure>
+<p>但是安装过程报错</p>
+<blockquote>
+<p>error:1407742E:SSL routines:SSL23_GET_SERVER_HELLO:tlsv1 alert protocol version</p>
+</blockquote>
+<p>我在网上找到的说法是，Homebrew的安装需要使用CURL工具，需要从GitHub获取源代码，而GitHub 停止了对加密弱 TLS 1.0 和 1.1 协议的支持，并且仅支持与 TLS 1.2 协议以上的连接。而<strong>自带的CURL工具仅支持TLS 1.0协议</strong>。而CURL工具的加密解密部分又依赖于OpenSSL工具，我的Mac Lion上的OpenSSL版本有点低，才0.9.8，可以使用命令行查看</p>
+<figure class="highlight applescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openssl <span class="property">version</span></span><br></pre></td></tr></table></figure>
+<p>索性，我编译安装一个新版的OpenSSL吧。</p>
+<p>因为系统太旧，只能选择从<a href="https://www.openssl.org/source/" target="_blank" rel="external">OpenSSL官网</a>下载源代码，而无法使用CURL工具从GitHub下载。下载完成后，第一步先备份一下原OpenSSL工具。</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 查看openssl命令文件路径，一般位于/usr/bin/openssl</span></span><br><span class="line">which openssl </span><br><span class="line"><span class="comment">// 备份openssl，以防万一</span></span><br><span class="line">sudo mv <span class="regexp">/usr/</span>bin<span class="regexp">/openssl /</span>usr<span class="regexp">/bin/</span>oldopenssl</span><br><span class="line"><span class="comment">// 解压下载的openssl压缩文件，我下载的是最新的1.1.1版本</span></span><br><span class="line">cd ~/Downloads</span><br><span class="line">tar xvf openssl-<span class="number">1.1</span><span class="number">.1</span>.tar</span><br><span class="line"><span class="comment">// 编译安装Mac版本的openssl，如果是64位Mac系统参数是darwin64-x86_64-cc，32位Mac系统参数darwin64-x86-cc，可以使用命令uname -a查看Mac系统是32还是64位</span></span><br><span class="line">cd openssl-<span class="number">1.1</span><span class="number">.1</span></span><br><span class="line">sudo .<span class="regexp">/Configure darwin64-x86_64-cc --prefix=/</span>usr<span class="regexp">/local/</span>openssl</span><br><span class="line">sudo make &amp;&amp; make install</span><br><span class="line"><span class="comment">// 创建/usr/local/openssl/bin/openssl的链接到/usr/bin/openssl，不然使用openssl命令会报找不到/usr/bin/openssl路径</span></span><br><span class="line">sudo ln -s <span class="regexp">/usr/</span>local<span class="regexp">/openssl/</span>bin<span class="regexp">/openssl /</span>usr<span class="regexp">/bin/</span>openssl</span><br></pre></td></tr></table></figure>
+<p>在使用<code>make</code>命令之前有个前提，先给XCode安装<code>Command Line Tools for Xcode</code>，不然没有<code>gcc</code>以及<code>make</code>等命令。可以通过Xcode-&gt;Open Developer Tool-&gt;More Developer Tools，输入苹果开发者账号后（没有的话注册一个），找到Command Line Tools (OS X Lion) for Xcode 2012下载安装即可。</p>
+<p>这样，就拥有了一个最新版本的OpenSSL，再次查看版本，显示1.1.1。记得一定要加上<code>sudo</code>，我之前因为没加上，导致好几次都没安装成功，如果安装失败也没关系，只需要执行命令清理一下就行，然后重新安装</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 进入openssl源代码目录</span></span><br><span class="line">cd ~/Downloads/openssl-<span class="number">1.1</span><span class="number">.1</span></span><br><span class="line"><span class="comment">// 清理make的链接</span></span><br><span class="line">sudo make clean</span><br></pre></td></tr></table></figure>
+<h3 id="升级CURL">升级CURL</h3><p>升级完OpenSSL之后，接下来就是要升级CURL工具了。这个过程比较艰辛，踩了很多坑。首先一样是去<a href="https://curl.haxx.se/download.html" target="_blank" rel="external">CURL官网</a>去下载源代码。我下载的是最新的7.61.1版本。</p>
+<p>有一个问题，我的虚拟机没法安装VMWare Tools，即便安装了成功了，虚拟机和主机之间依然无法互相访问。而Lion自带的Safari浏览器连CURL官网都打不开，我不得不用到自己的VPS来实现中转下载，多一步过程，总是觉得麻烦。</p>
+<p>还有最重要的一点是，<strong>需要从CURL官网上下载<a href="https://curl.haxx.se/docs/caextract.html" target="_blank" rel="external">证书文件</a></strong>，它的内容是一些可以信任的服务器，少了该证书文件，每次使用CURL命令时都会报</p>
+<blockquote>
+<p>curl: (60) SSL certificate problem: self signed certificate in certificate chain More details here: <a href="https://curl.haxx.se/docs/sslcerts.html" target="_blank" rel="external">https://curl.haxx.se/docs/sslcerts.html</a></p>
+</blockquote>
+<p>虽然在使用CURL命令时可以加上<code>-k</code>参数，允许暂时信任访问的服务器，但是在使用brew命令的时候，brew默认调用CURL命令时不会带上<code>-k</code>参数，如果要自己加上还要修改Homebrew源代码进行编译，极其麻烦。</p>
+<p>整个编译CURL的过程是这样的</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 重命名证书文件（为了方便），将其放到一个某个目录下，我放在了~/.ssh隐藏目录下</span></span><br><span class="line">mv <span class="regexp">~/Downloads/</span>cacert-<span class="number">2018</span>-<span class="number">06</span>-<span class="number">20.</span>pem <span class="regexp">~/.ssh/</span>cacert.pem</span><br><span class="line"><span class="comment">// 备份原curl文件</span></span><br><span class="line">sudo mv <span class="regexp">/usr/</span>bin<span class="regexp">/curl /</span>usr<span class="regexp">/bin/</span>oldcurl</span><br><span class="line"><span class="comment">// 解压curl压缩文件</span></span><br><span class="line">cd ~/Downloads</span><br><span class="line">unzip curl-<span class="number">7.61</span><span class="number">.1</span>.zip</span><br><span class="line"><span class="comment">// 编译安装curl</span></span><br><span class="line">cd curl-<span class="number">7.61</span><span class="number">.1</span></span><br><span class="line">sudo .<span class="regexp">/configure --with-ssl=/</span>usr<span class="regexp">/local/</span>openssl --prefix=<span class="regexp">/usr/</span>local<span class="regexp">/curl --with-ca-bundle=~/</span>.ssh/cacert.pem</span><br><span class="line">sudo make &amp;&amp; make install</span><br><span class="line"><span class="comment">// 创建链接</span></span><br><span class="line">sudo ln -s <span class="regexp">/usr/</span>local<span class="regexp">/curl/</span>bin<span class="regexp">/curl /</span>usr<span class="regexp">/bin/</span>curl</span><br></pre></td></tr></table></figure>
+<p>特别要注意的是上面的<code>--with-ssl</code>以及<code>--with-ca-bundle</code>参数，这两个参数很重要，如果不指定<code>--with-ca-bundle</code>就会出现上面的没有信任服务器的问题，使用CURL命令访问无论哪个网站，都无法直接访问，必须带上<code>-k</code>参数才行。这个问题困扰了我很久，可能是我没有好好读CURL官网的文档。</p>
+<p>还有一个就是<code>--with-ssl</code>参数，这个参数也很重要，它告诉CURL命令，使用哪个版本的OpenSSL的关键所在，上一步升级OpenSSL就是为了在这里指定。如果不指定该参数，仍然会报错</p>
+<blockquote>
+<p>error:1407742E:SSL routines:SSL23_GET_SERVER_HELLO:tlsv1 alert protocol version</p>
+</blockquote>
+<p>使用make命令的时候可能会提示</p>
+<blockquote>
+<p>make[1]: Nothing to be done for `all-am’</p>
+</blockquote>
+<p>忽略它就是了，并没有什么影响</p>
+<h3 id="安装Homebrew">安装Homebrew</h3><p>貌似安装完CURL之后，系统就默认给安装上了Homebrew，我是在下载到了Homebrew的源码后才发现，原来已经安装好了，我推算可能和安装CURL有关，但我还是介绍一下下载哪个版本的Homebrew。</p>
+<p>通过查看Homebrew的install文件可以得知，旧版的Homebrew源代码位于<a href="https://github.com/Homebrew/brew/tarball/master。因为我已经安装好了，所以就不需要编译安装了。" target="_blank" rel="external">https://github.com/Homebrew/brew/tarball/master。因为我已经安装好了，所以就不需要编译安装了。</a></p>
+<h3 id="总结">总结</h3><p>终于可以使用brew命令了，深感安装环境的不易。当然我也学到了一点皮毛，但下次还是老老实实先看看官方文档再来安装吧。如果着急想搭环境，效果可能会适得其反。</p>
+
+  </section>
+</article>
+
+  <div class="sharing grid">
+  <section class="profile grid-item grid">
+    <img class="avatar" src="/images/chili.png" alt="avatar" />
+    <div class="grid-item">
+      <p class="title"> chilihotpot </p>
+      <p class="subtitle"> You Are The JavaScript In My HTML </p>
+    <div>
+  </section>
+
+  <section class="share-btns">
+    <!-- <p> share it if you like it~ </p> -->
+    <a
+  class="twitter-share-button"
+  data-size="large"
+  data-via="DrakeLeung"
+  href="https://twitter.com/intent/tweet?text=为了研究iPhone4上的越狱插件开发，"
+>
+  Tweet
+</a>
+
+<script>
+  window.twttr = (function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0],
+    t = window.twttr || {};
+  if (d.getElementById(id)) return t;
+  js = d.createElement(s);
+  js.id = id;
+  js.src = "https://platform.twitter.com/widgets.js";
+  js.async = true;
+  fjs.parentNode.insertBefore(js, fjs);
+
+  t._e = [];
+  t.ready = function(f) {
+    t._e.push(f);
+  };
+
+  return t;
+}(document, "script", "twitter-wjs"));
+</script>
+
+  </section>
+</div>
+
+
+  
+</main>
+
+</body>
+</html>

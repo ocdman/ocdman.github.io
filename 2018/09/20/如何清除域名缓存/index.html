@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>如何清除域名缓存 | chilihotpot</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <link rel="shortcut icon" href="/chili.ico">
+  <link rel="stylesheet" href="/css/app.css" type="text/css">
+  <!-- <link rel='stylesheet' href='http://fonts.useso.com/css?family=Source+Code+Pro'> -->
+</head>
+
+<body>
+  <nav class="app-nav">
+  
+    
+      <a href="/.">home</a>
+    
+  
+    
+      <a href="/archives">archive</a>
+    
+  
+    
+      <a href="/tags">tag</a>
+    
+  
+    
+      <a href="/categories">category</a>
+    
+  
+</nav>
+
+  <main class="post">
+  <article>
+  <h1 class="article-title">
+    <a href="/2018/09/20/如何清除域名缓存/">如何清除域名缓存</a>
+  </h1>
+
+  <section class="article-meta">
+    <p class="article-date">September 20 2018</p>
+  </section>
+
+  <section class="article-entry">
+    <p>之前为家里的树莓派分配了一个域名，由于公网IP是可变的，一旦重启光猫后，公网IP就会发生变化，从而导致域名无法访问。解决办法是使用DDNS，可以借助网上开源的代码来实现。</p>
+<p>问题是重新绑定了新IP地址的域名，在别的电脑上仍旧无法访问，原因是因为DNS缓存的缘故，缓存了之前域名绑定的旧IP地址。清除域名DNS缓存的方法很简单</p>
+<h3 id="Windows平台">Windows平台</h3><p>在命令行中执行</p>
+<figure class="highlight dos"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="winutils">ipconfig</span> /flushdns</span><br></pre></td></tr></table></figure>
+<p>就能刷新域名DNS缓存了。</p>
+<h3 id="Linux平台">Linux平台</h3><p>命令行执行</p>
+<figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo <span class="regexp">/etc/i</span>nit.d<span class="regexp">/nscd restart</span></span><br></pre></td></tr></table></figure>
+<p>重启nscd服务，即能刷新域名缓存了。</p>
+
+  </section>
+</article>
+
+  <div class="sharing grid">
+  <section class="profile grid-item grid">
+    <img class="avatar" src="/images/chili.png" alt="avatar" />
+    <div class="grid-item">
+      <p class="title"> chilihotpot </p>
+      <p class="subtitle"> You Are The JavaScript In My HTML </p>
+    <div>
+  </section>
+
+  <section class="share-btns">
+    <!-- <p> share it if you like it~ </p> -->
+    <a
+  class="twitter-share-button"
+  data-size="large"
+  data-via="DrakeLeung"
+  href="https://twitter.com/intent/tweet?text=之前为家里的树莓派分配了一个域名，由于公"
+>
+  Tweet
+</a>
+
+<script>
+  window.twttr = (function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0],
+    t = window.twttr || {};
+  if (d.getElementById(id)) return t;
+  js = d.createElement(s);
+  js.id = id;
+  js.src = "https://platform.twitter.com/widgets.js";
+  js.async = true;
+  fjs.parentNode.insertBefore(js, fjs);
+
+  t._e = [];
+  t.ready = function(f) {
+    t._e.push(f);
+  };
+
+  return t;
+}(document, "script", "twitter-wjs"));
+</script>
+
+  </section>
+</div>
+
+
+  
+</main>
+
+</body>
+</html>

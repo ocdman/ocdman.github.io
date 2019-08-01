@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>DataVProxy遇到的坑 | chilihotpot</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <link rel="shortcut icon" href="/chili.ico">
+  <link rel="stylesheet" href="/css/app.css" type="text/css">
+  <!-- <link rel='stylesheet' href='http://fonts.useso.com/css?family=Source+Code+Pro'> -->
+</head>
+
+<body>
+  <nav class="app-nav">
+  
+    
+      <a href="/.">home</a>
+    
+  
+    
+      <a href="/archives">archive</a>
+    
+  
+    
+      <a href="/tags">tag</a>
+    
+  
+    
+      <a href="/categories">category</a>
+    
+  
+</nav>
+
+  <main class="post">
+  <article>
+  <h1 class="article-title">
+    <a href="/2018/02/18/DataVProxy遇到的坑/">DataVProxy遇到的坑</a>
+  </h1>
+
+  <section class="article-meta">
+    <p class="article-date">February 18 2018</p>
+  </section>
+
+  <section class="article-entry">
+    <p>在使用阿里云DataV大屏管理的时候，如果想要动态地从数据库中获取数据，可以通过github上的一个开源工具<a href="https://github.com/ericdum/DataVProxy" target="_blank" rel="external">DataVProxy</a>来实现代理。</p>
+<p>所有要配置的操作只要跟着<a href="">教程</a>来就行了，唯独几个月后，再次做一个大屏的时候，却一直报连接错误。数据库的配置没有改变过，密码和密钥都没问题。正一头雾水的时候，后台抓包发现了问题，原来代理服务器配置走的是http协议，但是阿里云做了一次跳转，将其变成了https协议。也就是说代理服务器必须支持https协议，即DataVProxy需要加入https证书。</p>
+<p>因为DataVProxy是基于Node.js创建的，所以得要查看其源码，对其加入https的支持。经过一番倒腾，总算代理服务支持https协议了，但是连接数据库的时候依然报错。因为第一次连接阿里云走的是http协议。而http协议和https协议又不能同时使用同一个端口，这让我一个不太懂服务器知识的人很迷茫。</p>
+<p>但是我又想尝试一下http的协议，于是将其改为了http协议的端口号，结果竟然提示我连接成功。<strong>整个操作和最初的操作相比，我只是将原来域名的部分，由原来的ip地址改为了其对应的域名。</strong>也就是说原来域名的部分我一直用的是ip地址，但是https协议必须要求填写域名，所以我只是把ip改为了域名。</p>
+<p>想一想，其实应该是阿里云，对于域名直接走http跳转，但是如果是ip地址的话，他会将其变成https协议后，再进行跳转。虽然不知道出于什么原因，但解决方法应该也不止这一种，比方说强制使用https协议。时隔几个月没用大屏了，阿里的后台也经过了调整。也记录这DataVProxy使用时遇到的坑。</p>
+
+  </section>
+</article>
+
+  <div class="sharing grid">
+  <section class="profile grid-item grid">
+    <img class="avatar" src="/images/chili.png" alt="avatar" />
+    <div class="grid-item">
+      <p class="title"> chilihotpot </p>
+      <p class="subtitle"> You Are The JavaScript In My HTML </p>
+    <div>
+  </section>
+
+  <section class="share-btns">
+    <!-- <p> share it if you like it~ </p> -->
+    <a
+  class="twitter-share-button"
+  data-size="large"
+  data-via="DrakeLeung"
+  href="https://twitter.com/intent/tweet?text=在使用阿里云DataV大屏管理的时候，如"
+>
+  Tweet
+</a>
+
+<script>
+  window.twttr = (function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0],
+    t = window.twttr || {};
+  if (d.getElementById(id)) return t;
+  js = d.createElement(s);
+  js.id = id;
+  js.src = "https://platform.twitter.com/widgets.js";
+  js.async = true;
+  fjs.parentNode.insertBefore(js, fjs);
+
+  t._e = [];
+  t.ready = function(f) {
+    t._e.push(f);
+  };
+
+  return t;
+}(document, "script", "twitter-wjs"));
+</script>
+
+  </section>
+</div>
+
+
+  
+</main>
+
+</body>
+</html>

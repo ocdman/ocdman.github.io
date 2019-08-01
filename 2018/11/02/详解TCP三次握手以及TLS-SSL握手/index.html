@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>详解TCP三次握手以及TLS/SSL握手 | chilihotpot</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <link rel="shortcut icon" href="/chili.ico">
+  <link rel="stylesheet" href="/css/app.css" type="text/css">
+  <!-- <link rel='stylesheet' href='http://fonts.useso.com/css?family=Source+Code+Pro'> -->
+</head>
+
+<body>
+  <nav class="app-nav">
+  
+    
+      <a href="/.">home</a>
+    
+  
+    
+      <a href="/archives">archive</a>
+    
+  
+    
+      <a href="/tags">tag</a>
+    
+  
+    
+      <a href="/categories">category</a>
+    
+  
+</nav>
+
+  <main class="post">
+  <article>
+  <h1 class="article-title">
+    <a href="/2018/11/02/详解TCP三次握手以及TLS-SSL握手/">详解TCP三次握手以及TLS/SSL握手</a>
+  </h1>
+
+  <section class="article-meta">
+    <p class="article-date">November 02 2018</p>
+  </section>
+
+  <section class="article-entry">
+    <p>最近在研究GoProxy-VPS的时候遇到了一些比较困惑的地方，比如GoProxy-VPS服务端如果运行的是TLS协议，那么客户端使用SwitchOmega+Chrome的话，可以发送TLS协议的报文。但如果客户端使用系统全局代理的话，就无法发送TLS协议的报文，只能够发送HTTP协议的报文。从而导致服务端ServerHello的时候TLS握手失败，报错</p>
+<blockquote>
+<p>http: TLS handshake error from 192.168.80.238:65327: tls: oversized record received with length 20037</p>
+</blockquote>
+<p>这就是典型的协议不对，期待的报文格式不一样。</p>
+<p>但整个TLS握手过程对我来说其实是懵逼的，我甚至搞不清楚TCP握手和TLS握手之间的关系，为此我特地安装了WireShark这款软件来测试。使用WireShark这款软件的好处就是，可以一目了然地分析网络上的数据包。包括TCP协议以及TLS协议的报文。</p>
+<p>先上测试结果。第一种，代理服务端TLS协议，客户端TLS协议。</p>
+<p><img src="/img/2018103101.png"></p>
+<p>第二种，代理服务端HTTP协议，客户端HTTP协议。</p>
+<p><img src="/img/2018103102.png"></p>
+<p>第三种，代理服务端TLS协议，客户端HTTP协议。</p>
+<p><img src="/img/2018103103.png"></p>
+<p>对比这三种测试结果不难发现，不管客户端和服务端的连接走HTTP还是TLS协议，所有连接最初都要经过TCP三次握手。而TLS握手是在TCP建立连接之后进行的。</p>
+<h3 id="TCP三次握手">TCP三次握手</h3><p>学过计算机通信的都知道OSI模型，它是网络标准协议的规范集。但我想介绍的是TCP/IP模型，它是建立在OSI模型之上。</p>
+<p><img src="2018103104.png"></p>
+<p>可以看到TCP协议位于传输层和Internet层之间，而TLS协议则位于应用层和传输层之间。越是底部的协议则越基础，越是表面的协议则越接近用户。所以，TCP握手是TLS握手的前提，只有TCP握手成功了才能进行TLS握手。</p>
+<p>毫无疑问，上面的三种测试结果TCP连接都成功了。整个过程如下</p>
+<h6 id="第一次握手（SYN=1,_Seq=x）">第一次握手（SYN=1, Seq=x）</h6><p>客户端发送一个TCP的SYN标志位为1的包，指明客户端打算连接的服务器的端口，以及初始序号x，保存在包头的序列号Sequence Number字段里。</p>
+<p>发送完毕后，客户端进入SYN_SEND状态。</p>
+<h6 id="第二次握手（SYN=1,_ACK=1,_Seq=y,_ACKnum=x+1）">第二次握手（SYN=1, ACK=1, Seq=y, ACKnum=x+1）</h6><p>服务端发回确认包（ACK）应答，即SYN标志位和ACK标志位均为1。服务端选择自己的ISN序列号放到Seq域里，同时将确认序号Acknowledgement Number设置为为客户端ISN加1，即x+1。</p>
+<p>发送完毕后，服务端进入SYN_RCVD状态。</p>
+<h6 id="第三次握手（ACK=1,_ACKnum=y+1）">第三次握手（ACK=1, ACKnum=y+1）</h6><p>客户端再次发送确认包（ACK），SYN标志位为0，ACK标志位为1，并且把服务端发来的ACK序号字段加1，即y+1，放在确定字段中发送给对方。</p>
+<p>发送完毕后，客户端进入ESTABLISHED状态，当服务端接到这个包时，也进入ESTABLISHED状态，至此TCP握手结束。</p>
+<p><img src="2018103105.png"></p>
+<h3 id="TLS/SSL握手">TLS/SSL握手</h3><p>说完了TCP的三次握手之后，下面来说说TLS握手的过程是怎么样的。</p>
+<h6 id="Client_Hello">Client Hello</h6><p>由客户端发起，主要包含以下信息：</p>
+<ol>
+<li>客户端生成的随机数x，用于之后的密钥生成</li>
+<li>客户端支持的加密算法列表（Cipher Suites）</li>
+<li>TLS版本信息</li>
+<li>客户端支持的压缩算法列表（Compression Methods）</li>
+</ol>
+<h6 id="Server_Hello">Server Hello</h6><p>从Server Hello到Server Hello Done的过程，还会经历、Server Key Exchange等步骤，有些服务端的实现时每条单据发送，而有些服务端实现是合并到一起发。Server Hello和Server Hello Done都是只有头没有内容的数据。</p>
+<p>服务端接收到客户端的Client Hello之后，服务端需要将自己的CA证书发送给客户端，这个步骤叫Server Certificate。证书是对服务端的一种认证，是由专门的数字证书认证机构（CA）审核之后颁发的，所以一般人无法伪造。在颁发证书的同时还会产生两把钥匙，一把私钥，一把公钥。私钥由服务端保管不可泄露，公钥则附带在证书中公开。证书本身还附带了一个证书电子签名，这个签名用来验证证书的完整性和真实性，防止证书被人窜改。</p>
+<p>此外，对于非常重要的保密数据，服务端还需要对客户端进行验证，以保证数据传送给了安全的合法客户端。这个过程叫做Client Certificate Request，是一个可选操作。比如金融机构向用户提供的USB密钥里就包含了一张客户端的证书。</p>
+<p>跟客户端一样，服务端也需要生产一个随机数y发送给客户端，客户端和服务端都需要使用这俩随机数生成通信密钥，这个过程叫Server Key Exchange。</p>
+<p>最后服务端会发送一个Server Hello Done给到客户端，表示Server Hello过程结束。</p>
+<p>综上，由服务端发起的消息内容，主要包含：</p>
+<ol>
+<li>确认使用的加密通信协议版本，比如TLS 1.2版本。如果客户端和服务端支持的版本不一致，服务端关闭加密通信</li>
+<li>服务端生成的随机数y，用于之后的密钥生成</li>
+<li>在客户端发送的加密算法列表里选一个加密算法，比如RSA公钥加密</li>
+<li>服务器CA证书</li>
+</ol>
+<h6 id="Certificate_Verify">Certificate Verify</h6><p>如果服务端需要客户端进行验证，在客户端收到服务端的Server Hello消息之后，首先需要向服务端发送客户端的证书，让服务端验证客户端的合法性。这个过程叫Client Certificate。</p>
+<p>接着，客户端需要对服务端的证书进行检查，如果证书不是可信机构颁布、或证书中的域名与实际域名不符、或者证书已过期，就会向访问者显示一个警告，由其选择是否还要继续通信。如果证书没问题，客户端就会从服务器证书中取出服务端公钥。这个过程叫Certificate Verify。</p>
+<p>客户端用这个服务端的公钥加密一个随机数z，并把这个加密过的随机数发送给服务端，这个过程叫Client Key Exchange。</p>
+<p>由客户端会告诉服务端已经切换到协商好的加密算法的状态了，这个过程叫Change Cipher Spec。</p>
+<p>最后由已经协商好的加密算法和之前的随机数x、y、z，产生的一个密钥就是整个消息加密解密过程的核心所在了。这个过程叫Encrypted Handshake Message。</p>
+<p>综上，由客户端发送给服务端的信息如下</p>
+<ol>
+<li>由服务器公钥加密过的随机数z，用于生成服务器的密钥</li>
+<li>编码改变通知，表示随后的信息都将由双方协商的加密方法和密钥发送</li>
+<li>客户端TLS握手结束通知，这一项也是前面发送所有内容的哈希值，用来供服务器校验</li>
+</ol>
+<h6 id="Server_Finish">Server Finish</h6><p>服务端在接收到客户端传来的加密过的随机数z之后，使用自己的私钥对其进行解密获取随机数z，并对数据进行验证。验证无误，用协商好的加密算法和之前的随机数x、y、z产生服务器密钥，它和客户端生成的密钥是一致的，因为此后的加密都是对称加密了。这个过程叫Encrypted Handshake Message。</p>
+<p>等一切完毕之后，会给客户端发送通知，告知客户端已经切换到协商过的加密算法，这个过程叫Change Cipher Spec。</p>
+<h3 id="总结">总结</h3><p>从第一个测试结果可以分析得出，代理服务端以及客户端走的是TLS协议。TCP连接完成之后，客户端发送的第一条Client Hello就是TLS协议，而服务端回应的第一条Server Hello也是TLS协议，中间穿插的TCP传输，都是保持TCP连接用的，而除了TCP以外剩余的就都是TLS传输了。</p>
+<p>从第二个测试结果可以分析得出，代理服务端以及客户端走的是HTTP协议。在TCP建立连接之后，客户端发送的第一条Connect方法就是HTTP协议，而服务端回应的第一条状态200 OK也是HTTP协议。虽然后面又有TLS握手，加密了对话内容，但是作为中间人的代理服务端而言，可以清清楚楚地看到客户端想要访问的网站。这点就可以被GFW捕获，他们何尝不是扮演一个中间人的角色。</p>
+<p>从第三个测试结果可以分析得出，代理服务端以及客户端走的不是同一个协议。TCP连接完成之后，客户端发送的第一条Connect方法是HTTP协议，并且期待着服务端的200 OK回应，但是收到的却是Continuation，说明服务端没有运行HTTP协议，从而造成连接失败。事实上，服务端运行了TLS协议，收到的HTTP消息头超长，本质上这两个协议就无法匹配上。</p>
+
+  </section>
+</article>
+
+  <div class="sharing grid">
+  <section class="profile grid-item grid">
+    <img class="avatar" src="/images/chili.png" alt="avatar" />
+    <div class="grid-item">
+      <p class="title"> chilihotpot </p>
+      <p class="subtitle"> You Are The JavaScript In My HTML </p>
+    <div>
+  </section>
+
+  <section class="share-btns">
+    <!-- <p> share it if you like it~ </p> -->
+    <a
+  class="twitter-share-button"
+  data-size="large"
+  data-via="DrakeLeung"
+  href="https://twitter.com/intent/tweet?text=最近在研究GoProxy-VPS的时候遇"
+>
+  Tweet
+</a>
+
+<script>
+  window.twttr = (function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0],
+    t = window.twttr || {};
+  if (d.getElementById(id)) return t;
+  js = d.createElement(s);
+  js.id = id;
+  js.src = "https://platform.twitter.com/widgets.js";
+  js.async = true;
+  fjs.parentNode.insertBefore(js, fjs);
+
+  t._e = [];
+  t.ready = function(f) {
+    t._e.push(f);
+  };
+
+  return t;
+}(document, "script", "twitter-wjs"));
+</script>
+
+  </section>
+</div>
+
+
+  
+</main>
+
+</body>
+</html>

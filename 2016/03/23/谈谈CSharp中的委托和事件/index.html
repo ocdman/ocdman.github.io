@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>谈谈CSharp中的委托和事件 | chilihotpot</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <link rel="shortcut icon" href="/chili.ico">
+  <link rel="stylesheet" href="/css/app.css" type="text/css">
+  <!-- <link rel='stylesheet' href='http://fonts.useso.com/css?family=Source+Code+Pro'> -->
+</head>
+
+<body>
+  <nav class="app-nav">
+  
+    
+      <a href="/.">home</a>
+    
+  
+    
+      <a href="/archives">archive</a>
+    
+  
+    
+      <a href="/tags">tag</a>
+    
+  
+    
+      <a href="/categories">category</a>
+    
+  
+</nav>
+
+  <main class="post">
+  <article>
+  <h1 class="article-title">
+    <a href="/2016/03/23/谈谈CSharp中的委托和事件/">谈谈CSharp中的委托和事件</a>
+  </h1>
+
+  <section class="article-meta">
+    <p class="article-date">March 23 2016</p>
+  </section>
+
+  <section class="article-entry">
+    <p>最近公司要求写一个接口程序，纯后端，使用C#开发。虽然使用C#作为开发语言已经两年多了，可是从来都是得过且过，根本就没有深入去思考过。就拿委托和事件为例，至今是一头雾水。刚好借这个机会好好反省反省。</p>
+<h2 id="委托_delegate">委托 delegate</h2><p>对于委托，我们举一个例子去理解。前段时间我的车被人撞了，保险杠上一个窟窿，虽然不是很严重，但作为交通事故受害方的我，理应让肇事者去承担这部分的经济赔偿。对方让我估损的时候，我说我也不知道具体价格，这样，不如我找一家汽修厂，我和他们谈，维修花了多少费用，他们直接找你要，你付钱给他们就行了。而我只负责取车，到时候车修好了，我开走就是了。中间的其它环节，你们去处理，我就不管了。这个例子中汽修厂就是委托人。我需要他们帮我修车，同时他们会收取相应的修理费用。原先的逻辑是车修好之后，我付钱给汽修厂，然后肇事人再把钱给我。而我嫌麻烦，直接让汽修厂找肇事者要钱。<br>用C#代码来表示的话就是:<br><figure class="highlight cs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">delegate</span> Money <span class="title">Garages</span>(<span class="params">Car car</span>)</span>;</span><br></pre></td></tr></table></figure></p>
+<p>其中delegate是关键字，Money是返回值，Garages是方法名，即我们的汽修厂，car是参数。只要是满足这种签名的方法，都可以成为我的委托人，方法名可以不一样，即不管你汽修厂叫什么名字。汽修厂只做两件事，修车和收钱。修车费用要视汽车的损坏程度而定，包括车修得怎么样，都可以在方法的内部实现。</p>
+<h2 id="事件_event">事件 event</h2><p>接下来说说事件。事件这个概念一直很抽象。以前只当一个名词，听过就算了。最近在看node.js，它完全由事件驱动。不由得觉得事件的概念是如此地重要。我们对页面的点击，键盘的操作，鼠标的移动，那是我以前对事件的理解。如果把上面的例子继续拓展下去，那么找汽修厂修车就是一个事件。这个事件要做的事情就是让汽修厂帮我修车。用代码表示的话就是:<br><figure class="highlight cs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">event</span> Garages LookForGarages;</span><br></pre></td></tr></table></figure></p>
+<p>其中event是关键字，Garages是我们的委托，负责帮我们修车。而LookForGarages，则是我们寻找委托帮我们修车这个事件。如果在这个事件之上，我们添加一个具体的汽修厂，具有和委托相同签名的方法，然后在某个时刻去执行这个事件，比方说我明天想修车，那么我执行这个事件之后，那么该具体的汽修厂（具体的注册方法）就会去执行具体的操作。<br><figure class="highlight aspectj"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">LookForGarages += <span class="keyword">new</span> Garages(Shell);</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="function">Money <span class="title">Shell</span><span class="params">(Car car)</span></span>&#123;</span><br><span class="line">	...</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">MyCar car = <span class="keyword">new</span> MyCar();</span><br><span class="line">LookForGarages(car);</span><br></pre></td></tr></table></figure></p>
+<p>以上代码可以看出，我觉得一个叫Shell的汽修厂不错（让Shell作为我的委托人），然后我找到了该汽修厂（执行了事件），接下来就是具体怎么修的问题了。</p>
+<h2 id="总结">总结</h2><p>从上面举得这个例子我们可以看出，<strong>事件其实就是在某一个时刻，去执行某一个操作的过程</strong>。事件不关心操作本身具体怎么做，事件只关心什么时候去做，谁去做。在这个例子当中，事件不关心汽修厂怎么修理汽车，而只关心什么时候去找汽修厂修车，谁去找汽修厂修车，最后汽车能修好就可以了。从代码的角度来看，事件的执行和具体的操作已经解耦了。而这解耦的思路恰恰是利用到了委托的关系。事件和具体的操作仅有一处有关联，就是给事件注册新的委托的时候，具体的操作名称和事件有关联。除此之外，它们再无关系，互不相知。我想修车，我到你Shell汽修店来修，这是我知道的全部，你只要把车给我修好就可以了，你怎么修，修了多少钱，我压根不知道。这就是事件和委托的妙处。令代码不再是臃肿的一块，而是灵活而高内聚的片段。</p>
+<h2 id="补充">补充</h2><p>其实上面这个例子还不是特别的恰当，关于事件、委托和执行者（具体方法）的关系，可以用一张图概括：<br><img src="/img/event-delegate-function.png" alt="事件－委托－方法"><br>当事件在执行时，事件会找到委托，而在委托上注册的具体方法（符合委托人的规范），委托再会去找到具体方法执行。委托承担了一个中间人的角色，让事件和方法互不相知，耦合度极少。但凡我想做一件事情，我就触发一个事件，而我只需要找委托帮我做，具体怎么做是挂靠在委托下面的执行人的事情，事件本身并不关心。<strong>委托其实就是一个接口的规范，事件调用这个接口，接口的实现事件不用关心，只有委托关心你用什么样的方法来实现我这个接口</strong>。<br>其实在学C的时候，有一个名词叫<strong>函数指针，委托的本质就是它</strong>。函数指针允许函数作为参数传递给另一个函数。而事件之所以能精准地找到执行者，就是因为使用了函数指针。事件在执行的时候调用了执行者的函数指针，委托只是对函数指针进行了封装。那么问题来了，为什么js里没有委托的概念？原因就是js支持函数作为参数传递，所以不需要委托。最后，<strong>将函数作为参数传递有什么好处呢？对于调用者来说就不需要知道函数指针指向的函数堆栈里具体是怎么实现的</strong>。这不就是松耦合想要做的事情吗？接口不就是这么一回事吗？</p>
+
+  </section>
+</article>
+
+  <div class="sharing grid">
+  <section class="profile grid-item grid">
+    <img class="avatar" src="/images/chili.png" alt="avatar" />
+    <div class="grid-item">
+      <p class="title"> chilihotpot </p>
+      <p class="subtitle"> You Are The JavaScript In My HTML </p>
+    <div>
+  </section>
+
+  <section class="share-btns">
+    <!-- <p> share it if you like it~ </p> -->
+    <a
+  class="twitter-share-button"
+  data-size="large"
+  data-via="DrakeLeung"
+  href="https://twitter.com/intent/tweet?text=最近公司要求写一个接口程序，纯后端，使用"
+>
+  Tweet
+</a>
+
+<script>
+  window.twttr = (function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0],
+    t = window.twttr || {};
+  if (d.getElementById(id)) return t;
+  js = d.createElement(s);
+  js.id = id;
+  js.src = "https://platform.twitter.com/widgets.js";
+  js.async = true;
+  fjs.parentNode.insertBefore(js, fjs);
+
+  t._e = [];
+  t.ready = function(f) {
+    t._e.push(f);
+  };
+
+  return t;
+}(document, "script", "twitter-wjs"));
+</script>
+
+  </section>
+</div>
+
+
+  
+</main>
+
+</body>
+</html>

@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>github pages 域名绑定 | chilihotpot</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <link rel="shortcut icon" href="/chili.ico">
+  <link rel="stylesheet" href="/css/app.css" type="text/css">
+  <!-- <link rel='stylesheet' href='http://fonts.useso.com/css?family=Source+Code+Pro'> -->
+</head>
+
+<body>
+  <nav class="app-nav">
+  
+    
+      <a href="/.">home</a>
+    
+  
+    
+      <a href="/archives">archive</a>
+    
+  
+    
+      <a href="/tags">tag</a>
+    
+  
+    
+      <a href="/categories">category</a>
+    
+  
+</nav>
+
+  <main class="post">
+  <article>
+  <h1 class="article-title">
+    <a href="/2015/11/05/github-pages-域名绑定/">github pages 域名绑定</a>
+  </h1>
+
+  <section class="article-meta">
+    <p class="article-date">November 05 2015</p>
+  </section>
+
+  <section class="article-entry">
+    <p>hexo的部署也完成了，紧接着就是找一个服务器，将代码放上去。然后绑定一个域名，就可以看到自己写的博客了。</p>
+<p>首先，域名容易搞定。我在GoDaddy，我看网友笑称狗爹，上面花了70多元买了现在这个域名。我也找过一些优惠码，可是每次在支付宝付款的时候，都被残忍地告知，无法进行交易。一气之下，反正也没优惠多少，直接买下。</p>
+<p>接下来就是服务器，正好看到一篇文章讲到hexo部署到github pages上面，免费的。一听免费就来劲了，于是照着教程做，可是始终不是预期的结果。搜过好多资料，都不得人愿，不知道出错在哪里，不知其所以然。最后不得已，只能硬着头皮去看官网的教程（最近英文水平退化地有够烂的）。不看不知道，找那些所谓的教程，无非就是偷懒的心态。能不看英文就不看英文。看了才知道，原来是这么个原理，过程如此之简单。</p>
+<p>先来说说创建自己的github pages。为什么我每次按照教程来，可是最后访问那个地址我都会报github找不到那页。原因就在于我<strong><em>没有验证邮件</em></strong>！这个是我看的那些教程里，没有一个提到过这事的。我想大家都是比较勤奋的人，我这么懒，连邮件都懒得验证的人，最后还是吃了自己的亏。后来我去邮箱看了一下，好几封来自github的来信，我每登陆一次github pages，就收到一份需要验证的邮件，</p>
+<blockquote>
+<p>The page build failed with the following error:<br>You need a verified email address in your GitHub account to publish Pages.<br>You can verify your email addresses from your Settings page:<br>    <a href="https://github.com/settings/emails" target="_blank" rel="external">https://github.com/settings/emails</a><br>If you have any questions you can contact us by replying to this email.</p>
+</blockquote>
+<p>等我验证好了之后，再次登陆github pages，立马就看到了效果。后来我在官网上看到这么一句话</p>
+<blockquote>
+<p>User Pages can be built by any user account with a verified email address. They can also use deploy keys to automate the process.</p>
+</blockquote>
+<p>我才幡然大悟，原来官网上早就告诉我们了，github pages使用的前提是你的账户必须有一个验证好了的邮箱。这样它才能工作。</p>
+<p>再来说说域名绑定，申请域名不在话下，轻轻松松搞定。可是到了github pages重定向自己的域名的时候，无论我怎么尝试，我都没法看到效果。我捶胸顿足，想死的心都有了。不得已，还是按照官网教程一步一步来，重要的是耐心。推荐<a href="https://help.github.com/articles/adding-a-cname-file-to-your-repository/" target="_blank" rel="external">官方教程</a>，看不懂找翻译也要看，最后我竟然成功了。虽然不知道我问题究竟出在哪里，可能是CNAME小写了，可能是我没有创建新的分支，总之我尝试了很多很多种可能。后来我再一次详细地看了一下官方的教程，我才知道我买的是二级域名，什么是子域名，什么是顶级域名。也知道了什么时候要添加A纪录。官方又为什么推荐要使用子域名。所有的一切在官网上都能找到<a href="https://help.github.com/articles/about-custom-domains-for-github-pages-sites/" target="_blank" rel="external">答案</a>。</p>
+<p>以下是我理解的地方。首先什么是多级域名？简单来说，.com .org等网站前，有多少个点，就是几级域名。比方说example.com就是一级域名，也叫顶级域名。而www.example.com就是二级域名了，二级及二级以上也叫子域名。而我们一般去狗爹申请的网站，多半都是二级域名。而网上那么多教程让我们去国内的域名解析商上解析我们自己的域名时，总要让我们带上A纪录。A纪录实际上是给顶级域名使用的，而我们一般申请的网站都是www.example.com或者.org等。我们没有必要去解析A纪录，除非你是顶级域名。</p>
+<h2 id="而我们所要做的就是增加这么一条解析纪录">而我们所要做的就是增加这么一条解析纪录</h2><figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">主机纪录		纪录类型		纪录值</span><br><span class="line">www	        CNAME 	    username<span class="class">.github</span><span class="class">.io</span></span><br></pre></td></tr></table></figure>
+<p>而官方也推荐使用二级域名，原因很简单:<br>> 可以享受分布式网络的好处<br>> 不会因为github服务器变更ip地址时受影响<br>> 加载速度会更快 </p>
+<h2 id="需要说明一点">需要说明一点</h2><p>在创建CNAME文件后，文件名必须大写，里面的内容比方说是www.example.com，我没有采用教程所说的example.com。这是我看下来唯一和教程有出入的地方。当我设置成example.com时，每次都会报dns查找失败。分析原因就在于当我保存成www.example.com时，github服务器会重定向example.com到www.example.com。反之，如果保存example.com的话，服务器会重定向www.example.com到example.com。这就是我之前讲到的一级域名和二级域名的问题了。还是看一下<a href="https://help.github.com/articles/tips-for-configuring-a-cname-record-with-your-dns-provider/" target="_blank" rel="external">教程</a>所说的，有些地方我也没有看懂。<br>最后在项目页面下找到齿轮设置图标点击一下，在github pages下面，你会看到这么一句话，<br><figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Your site <span class="keyword">is</span> publish at http<span class="variable">s:</span>//www.example.<span class="keyword">com</span>.</span><br></pre></td></tr></table></figure></p>
+<p>说明你成功地将你的github pages和你的域名绑定。<strong><em>（本文不涉及教你在你的域名商上使用国内的域名解析服务。相信网上都能找得到，不难。）</em></strong></p>
+
+  </section>
+</article>
+
+  <div class="sharing grid">
+  <section class="profile grid-item grid">
+    <img class="avatar" src="/images/chili.png" alt="avatar" />
+    <div class="grid-item">
+      <p class="title"> chilihotpot </p>
+      <p class="subtitle"> You Are The JavaScript In My HTML </p>
+    <div>
+  </section>
+
+  <section class="share-btns">
+    <!-- <p> share it if you like it~ </p> -->
+    <a
+  class="twitter-share-button"
+  data-size="large"
+  data-via="DrakeLeung"
+  href="https://twitter.com/intent/tweet?text=hexo的部署也完成了，紧接着就是找一个"
+>
+  Tweet
+</a>
+
+<script>
+  window.twttr = (function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0],
+    t = window.twttr || {};
+  if (d.getElementById(id)) return t;
+  js = d.createElement(s);
+  js.id = id;
+  js.src = "https://platform.twitter.com/widgets.js";
+  js.async = true;
+  fjs.parentNode.insertBefore(js, fjs);
+
+  t._e = [];
+  t.ready = function(f) {
+    t._e.push(f);
+  };
+
+  return t;
+}(document, "script", "twitter-wjs"));
+</script>
+
+  </section>
+</div>
+
+
+  
+</main>
+
+</body>
+</html>

@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>RHEL安装PHP | chilihotpot</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <link rel="shortcut icon" href="/chili.ico">
+  <link rel="stylesheet" href="/css/app.css" type="text/css">
+  <!-- <link rel='stylesheet' href='http://fonts.useso.com/css?family=Source+Code+Pro'> -->
+</head>
+
+<body>
+  <nav class="app-nav">
+  
+    
+      <a href="/.">home</a>
+    
+  
+    
+      <a href="/archives">archive</a>
+    
+  
+    
+      <a href="/tags">tag</a>
+    
+  
+    
+      <a href="/categories">category</a>
+    
+  
+</nav>
+
+  <main class="post">
+  <article>
+  <h1 class="article-title">
+    <a href="/2017/05/20/RHEL安装PHP/">RHEL安装PHP</a>
+  </h1>
+
+  <section class="article-meta">
+    <p class="article-date">May 20 2017</p>
+  </section>
+
+  <section class="article-entry">
+    <p>在RHEL7上安装PHP，当运行以下代码<br><figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo yum <span class="keyword">install</span> php-fpm</span><br></pre></td></tr></table></figure></p>
+<p>，会提示说，<strong><em>没有可用的软件包php-fpm</em></strong>。</p>
+<p><strong>什么是php-fpm？</strong><br>简单来说，它就是一个流行的包。这个包提供更好的PHP进程管理器。从字面意思上来看，它就是管理PHP进程的。</p>
+<p><strong>如何安装php-fpm？</strong><br>网上找了一圈发现，之所以报没有可用的软件包php-fpm，其实是我的yum repos缺了一个REMI库。而REMI库里就包含了php-form包。<br>所以我只需要安装REMI库就行了。</p>
+<p>（1）通过yum来安装REMI库<br><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo yum <span class="operator"><span class="keyword">install</span> <span class="keyword">http</span>://rpms.remirepo.net/<span class="keyword">enterprise</span>/remi-<span class="keyword">release</span>-<span class="number">7.</span>rpm</span></span><br></pre></td></tr></table></figure></p>
+<p>，但是问题出在下载的时候进度卡住了，没有网速。</p>
+<p>（2）通过wget下载rpm文件<br><figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wget <span class="string">http:</span><span class="comment">//rpms.famillecollet.com/enterprise/remi-release-7.rpm</span></span><br></pre></td></tr></table></figure></p>
+<p>，虽然该方式下载remi-release-7.rpm文件也不快，但是我还是下载成功了。</p>
+<p>（3）安装rpm文件<br><figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="title">sudo</span> rpm -Uvh remi-release-<span class="number">7</span><span class="regexp">*.rpm</span></span><br></pre></td></tr></table></figure></p>
+<p>，结果报错<strong>headerRead函数执行失败</strong>，于是我又回到了步骤一，用yum来安装REMI库，估计是刚才使用wget下载好了rpm文件，这一次没有进度，直接读取和安装rpm文件，安装REMI库成功。</p>
+<p>（4）安装php-fpm包</p>
+<blockquote>
+<p>默认REMI是禁用的。要安装REMI仓库中的php-fpm包，使用以下命令<br><figure class="highlight applescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo yum <span class="comment">--enablerepo=remi install php-fpm</span></span><br></pre></td></tr></table></figure></p>
+</blockquote>
+<p>，等待安装完成即可。</p>
+<p><strong>遇到的坑</strong><br>在参照这篇<a href="https://www.digitalocean.com/community/tutorials/how-to-install-linux-nginx-mysql-php-lemp-stack-on-centos-7" target="_blank" rel="external">How To Install Linux, Nginx, MySQL, PHP (LEMP) stack On CentOS 7</a>帖子第三步“配置php处理器”以及第四步“使nginx处理php脚步”时，只要在我的配置文件里出现过<strong><em>/var/run/php-fpm/php-fpm.sock</em></strong>的地方，我的nginx服务器就无法打开php脚本。但是当我把它们还原成<strong><em>127.0.0.1:9000</em></strong>后，nginx服务器又能处理php脚本了。可能是帖子里php-fpm没有配置完全，漏了点东西。<br>而且我没有用到<strong><em>/etc/nginx/conf.d/default.conf</em></strong>,这个文件。而是在<strong><em>/etc/nginx/nginx.conf</em></strong>标准文件里，修改了<strong><em>server</em></strong>里的值。这样，不管是外网ip地址还是内网<strong><em>localhost</em></strong>，都可以运行php脚本了。</p>
+
+  </section>
+</article>
+
+  <div class="sharing grid">
+  <section class="profile grid-item grid">
+    <img class="avatar" src="/images/chili.png" alt="avatar" />
+    <div class="grid-item">
+      <p class="title"> chilihotpot </p>
+      <p class="subtitle"> You Are The JavaScript In My HTML </p>
+    <div>
+  </section>
+
+  <section class="share-btns">
+    <!-- <p> share it if you like it~ </p> -->
+    <a
+  class="twitter-share-button"
+  data-size="large"
+  data-via="DrakeLeung"
+  href="https://twitter.com/intent/tweet?text=在RHEL7上安装PHP，当运行以下代码"
+>
+  Tweet
+</a>
+
+<script>
+  window.twttr = (function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0],
+    t = window.twttr || {};
+  if (d.getElementById(id)) return t;
+  js = d.createElement(s);
+  js.id = id;
+  js.src = "https://platform.twitter.com/widgets.js";
+  js.async = true;
+  fjs.parentNode.insertBefore(js, fjs);
+
+  t._e = [];
+  t.ready = function(f) {
+    t._e.push(f);
+  };
+
+  return t;
+}(document, "script", "twitter-wjs"));
+</script>
+
+  </section>
+</div>
+
+
+  
+</main>
+
+</body>
+</html>

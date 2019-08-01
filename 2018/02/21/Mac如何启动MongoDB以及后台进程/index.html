@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Mac如何启动MongoDB以及后台进程 | chilihotpot</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <link rel="shortcut icon" href="/chili.ico">
+  <link rel="stylesheet" href="/css/app.css" type="text/css">
+  <!-- <link rel='stylesheet' href='http://fonts.useso.com/css?family=Source+Code+Pro'> -->
+</head>
+
+<body>
+  <nav class="app-nav">
+  
+    
+      <a href="/.">home</a>
+    
+  
+    
+      <a href="/archives">archive</a>
+    
+  
+    
+      <a href="/tags">tag</a>
+    
+  
+    
+      <a href="/categories">category</a>
+    
+  
+</nav>
+
+  <main class="post">
+  <article>
+  <h1 class="article-title">
+    <a href="/2018/02/21/Mac如何启动MongoDB以及后台进程/">Mac如何启动MongoDB以及后台进程</a>
+  </h1>
+
+  <section class="article-meta">
+    <p class="article-date">February 21 2018</p>
+  </section>
+
+  <section class="article-entry">
+    <p>Mac上启动MongoDB服务命令很简单，如果是安装MongoDB后第一次启动MongoDB的话，运行命令</p>
+<figure class="highlight applescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo mongod <span class="comment">--dbpath=/data/db</span></span><br></pre></td></tr></table></figure>
+<p><code>--dbpath</code>用来指定数据库的存放目录，由自己决定。如果已经执行过上面的命令，下次再执行只需要运行</p>
+<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="title">sudo</span> mongod</span><br></pre></td></tr></table></figure>
+<p>即可，无需再指定新的目录。</p>
+<p>上面的命令只能以前台方式启动MongoDB的进程，一旦会话结束，进程也就随之关闭。不过MongoDB还提供了后台进程启动方式，方法是加上<code>--fork</code>参数，并且要注意的是，当使用<code>--fork</code>参数时必须指定另一个参数<code>--logpath</code>，命令如下</p>
+<figure class="highlight autoit"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo mongod --fork --logpath=/<span class="built_in">log</span>/mongodb.<span class="built_in">log</span></span><br></pre></td></tr></table></figure>
+<p><code>--logpath</code>也就是MongoDB日志的存放路径，同上面的数据库路径一样，由自己决定。</p>
+<p>最后执行命令</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mongo</span><br></pre></td></tr></table></figure>
+<p>就能正常操作MongoDB了。</p>
+
+  </section>
+</article>
+
+  <div class="sharing grid">
+  <section class="profile grid-item grid">
+    <img class="avatar" src="/images/chili.png" alt="avatar" />
+    <div class="grid-item">
+      <p class="title"> chilihotpot </p>
+      <p class="subtitle"> You Are The JavaScript In My HTML </p>
+    <div>
+  </section>
+
+  <section class="share-btns">
+    <!-- <p> share it if you like it~ </p> -->
+    <a
+  class="twitter-share-button"
+  data-size="large"
+  data-via="DrakeLeung"
+  href="https://twitter.com/intent/tweet?text=Mac上启动MongoDB服务命令很简单"
+>
+  Tweet
+</a>
+
+<script>
+  window.twttr = (function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0],
+    t = window.twttr || {};
+  if (d.getElementById(id)) return t;
+  js = d.createElement(s);
+  js.id = id;
+  js.src = "https://platform.twitter.com/widgets.js";
+  js.async = true;
+  fjs.parentNode.insertBefore(js, fjs);
+
+  t._e = [];
+  t.ready = function(f) {
+    t._e.push(f);
+  };
+
+  return t;
+}(document, "script", "twitter-wjs"));
+</script>
+
+  </section>
+</div>
+
+
+  
+</main>
+
+</body>
+</html>

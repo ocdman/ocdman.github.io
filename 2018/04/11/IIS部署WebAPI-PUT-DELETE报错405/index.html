@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>IIS部署WebAPI,PUT/DELETE报错405 | chilihotpot</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <link rel="shortcut icon" href="/chili.ico">
+  <link rel="stylesheet" href="/css/app.css" type="text/css">
+  <!-- <link rel='stylesheet' href='http://fonts.useso.com/css?family=Source+Code+Pro'> -->
+</head>
+
+<body>
+  <nav class="app-nav">
+  
+    
+      <a href="/.">home</a>
+    
+  
+    
+      <a href="/archives">archive</a>
+    
+  
+    
+      <a href="/tags">tag</a>
+    
+  
+    
+      <a href="/categories">category</a>
+    
+  
+</nav>
+
+  <main class="post">
+  <article>
+  <h1 class="article-title">
+    <a href="/2018/04/11/IIS部署WebAPI-PUT-DELETE报错405/">IIS部署WebAPI,PUT/DELETE报错405</a>
+  </h1>
+
+  <section class="article-meta">
+    <p class="article-date">April 11 2018</p>
+  </section>
+
+  <section class="article-entry">
+    <p>在使用IIS部署WebAPI的时候，当请求类型为PUT或者是DELETE的时候，IIS会报错</p>
+<blockquote>
+<p>HTTP Error 405 - Method Not Allowed</p>
+</blockquote>
+<p>其实有很多种解决方法，这里介绍一种移除WebDAV文件的方法来解决这个问题。首先来介绍一下什么是WebDAV</p>
+<blockquote>
+<p>WebDAV是超文本传输协议（HTTP）的一组扩展，为Internet上计算机之间的编辑和文件管理提供了标准，利用这个协议用户可以通过Web进行远程的基本文件操作，如拷贝、移动以及删除等。在IIS 7.0中，WebDAV是作为独立扩展模块，需要单独进行下载，而IIS 7.5中将集成WebDAV，然而WebDAV将PUT和Delete给阉割了。所以在IIS 7.5上部署的RESTful服务（WCF，WebAPI，ASP.NET MVC），当发送PUT或者DELETE请求时，就会出现405的错误。</p>
+</blockquote>
+<p>解决办法很简单，在配置文件中将WebDAV移除了就行了，修改<code>web.config</code>配置文件</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="title">system.webServer</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="title">modules</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="title">remove</span> <span class="attribute">name</span>=<span class="value">"WebDAVModule"</span>/&gt;</span></span><br><span class="line">	<span class="tag">&lt;/<span class="title">modules</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="title">handlers</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="title">remove</span> <span class="attribute">name</span>=<span class="value">"WebDAV"</span>/&gt;</span></span><br><span class="line">	<span class="tag">&lt;/<span class="title">handlers</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="title">system.webServer</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+  </section>
+</article>
+
+  <div class="sharing grid">
+  <section class="profile grid-item grid">
+    <img class="avatar" src="/images/chili.png" alt="avatar" />
+    <div class="grid-item">
+      <p class="title"> chilihotpot </p>
+      <p class="subtitle"> You Are The JavaScript In My HTML </p>
+    <div>
+  </section>
+
+  <section class="share-btns">
+    <!-- <p> share it if you like it~ </p> -->
+    <a
+  class="twitter-share-button"
+  data-size="large"
+  data-via="DrakeLeung"
+  href="https://twitter.com/intent/tweet?text=在使用IIS部署WebAPI的时候，当请"
+>
+  Tweet
+</a>
+
+<script>
+  window.twttr = (function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0],
+    t = window.twttr || {};
+  if (d.getElementById(id)) return t;
+  js = d.createElement(s);
+  js.id = id;
+  js.src = "https://platform.twitter.com/widgets.js";
+  js.async = true;
+  fjs.parentNode.insertBefore(js, fjs);
+
+  t._e = [];
+  t.ready = function(f) {
+    t._e.push(f);
+  };
+
+  return t;
+}(document, "script", "twitter-wjs"));
+</script>
+
+  </section>
+</div>
+
+
+  
+</main>
+
+</body>
+</html>

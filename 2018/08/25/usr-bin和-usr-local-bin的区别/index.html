@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>/usr/bin和/usr/local/bin的区别 | chilihotpot</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <link rel="shortcut icon" href="/chili.ico">
+  <link rel="stylesheet" href="/css/app.css" type="text/css">
+  <!-- <link rel='stylesheet' href='http://fonts.useso.com/css?family=Source+Code+Pro'> -->
+</head>
+
+<body>
+  <nav class="app-nav">
+  
+    
+      <a href="/.">home</a>
+    
+  
+    
+      <a href="/archives">archive</a>
+    
+  
+    
+      <a href="/tags">tag</a>
+    
+  
+    
+      <a href="/categories">category</a>
+    
+  
+</nav>
+
+  <main class="post">
+  <article>
+  <h1 class="article-title">
+    <a href="/2018/08/25/usr-bin和-usr-local-bin的区别/">/usr/bin和/usr/local/bin的区别</a>
+  </h1>
+
+  <section class="article-meta">
+    <p class="article-date">August 25 2018</p>
+  </section>
+
+  <section class="article-entry">
+    <p>类Unix系统根目录下有一个<code>usr</code>文件夹，全称是<code>Unix System Resource</code>，不要和<code>User</code>混淆了。</p>
+<p>通常，<code>/usr/bin</code>目录下都是系统预装的可执行程序，会随着系统的升级而改变。</p>
+<p>而<code>/usr/local/bin</code>目录是给用户放置自己的可执行程序的地方，它不会随着系统的升级而覆盖同名的文件，所以比较适合放自己的脚本，还能够全局执行。</p>
+<p>如果两个目录下有相同的可执行程序，执行的优先级取决于PATH环境变量，排前面的目录会优先被执行。比如</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">echo $PATH</span><br><span class="line"><span class="regexp">/usr/</span>local<span class="regexp">/bin:/</span>usr<span class="regexp">/bin:/</span><span class="string">bin:</span><span class="regexp">/usr/</span><span class="string">sbin:</span>/sbin</span><br></pre></td></tr></table></figure>
+<p><code>/usr/local/bin</code>会优先于<code>/usr/bin</code>执行。</p>
+
+  </section>
+</article>
+
+  <div class="sharing grid">
+  <section class="profile grid-item grid">
+    <img class="avatar" src="/images/chili.png" alt="avatar" />
+    <div class="grid-item">
+      <p class="title"> chilihotpot </p>
+      <p class="subtitle"> You Are The JavaScript In My HTML </p>
+    <div>
+  </section>
+
+  <section class="share-btns">
+    <!-- <p> share it if you like it~ </p> -->
+    <a
+  class="twitter-share-button"
+  data-size="large"
+  data-via="DrakeLeung"
+  href="https://twitter.com/intent/tweet?text=类Unix系统根目录下有一个<code>"
+>
+  Tweet
+</a>
+
+<script>
+  window.twttr = (function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0],
+    t = window.twttr || {};
+  if (d.getElementById(id)) return t;
+  js = d.createElement(s);
+  js.id = id;
+  js.src = "https://platform.twitter.com/widgets.js";
+  js.async = true;
+  fjs.parentNode.insertBefore(js, fjs);
+
+  t._e = [];
+  t.ready = function(f) {
+    t._e.push(f);
+  };
+
+  return t;
+}(document, "script", "twitter-wjs"));
+</script>
+
+  </section>
+</div>
+
+
+  
+</main>
+
+</body>
+</html>

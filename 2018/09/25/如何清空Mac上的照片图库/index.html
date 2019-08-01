@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>如何清空Mac上的照片图库 | chilihotpot</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <link rel="shortcut icon" href="/chili.ico">
+  <link rel="stylesheet" href="/css/app.css" type="text/css">
+  <!-- <link rel='stylesheet' href='http://fonts.useso.com/css?family=Source+Code+Pro'> -->
+</head>
+
+<body>
+  <nav class="app-nav">
+  
+    
+      <a href="/.">home</a>
+    
+  
+    
+      <a href="/archives">archive</a>
+    
+  
+    
+      <a href="/tags">tag</a>
+    
+  
+    
+      <a href="/categories">category</a>
+    
+  
+</nav>
+
+  <main class="post">
+  <article>
+  <h1 class="article-title">
+    <a href="/2018/09/25/如何清空Mac上的照片图库/">如何清空Mac上的照片图库</a>
+  </h1>
+
+  <section class="article-meta">
+    <p class="article-date">September 25 2018</p>
+  </section>
+
+  <section class="article-entry">
+    <p>最近iPhone老是提示容量不够用，一方面是累积了很多的图片和视频。在像素越来越高的今天，一个照片动辄几个MB，稍长点的视频就得几百个MB。另一方面，好多应用为了提升用户体验，肆无忌惮地利用缓存占用硬盘容量，导致一个APP动辄几个G。在这种情况下，再大容量的iPhone都有枯竭的一天。</p>
+<p>APP可以随便删，但是照片和视频都是回忆，需要备份下来。我的Mac是10.10.4 Yosemite系统，而iPhone是6SP，连接后如果用iTunes备份数据的话会提示我升级iTunes。我不想升级iTunes，因为旧的iTunes有它的好处，可以参考<a href="https://ocdman.github.io/2018/07/05/Charles%E6%8A%93%E5%8C%85iTunes%E5%AE%9E%E7%8E%B0%E6%97%A7%E7%89%88IOS%E8%BD%AF%E4%BB%B6%E5%AE%89%E8%A3%85/" target="_blank" rel="external">这篇文章</a>。</p>
+<p>那还有别的办法备份照片和视频吗？答案是有的。将iPhone和Mac连接后，打开<code>照片图库</code>这个应用就可以将iPhone的照片以及视频导入到Mac中。如果像我这种万年不备份的人，一次性把手机里全部的照片和视频导入到Mac的时间还挺长的，大概有30个G的照片和视频。中途几次电脑屏幕变暗，最后一次，我看导入到8002张图片的时候，进度条卡了很久，实在忍不住了，就强制关闭了<code>照片图库</code>。应该也没啥影响，只是没有全部备份完而已。</p>
+<p>一开始我是在<code>照片图库</code>中复制一部分，再导入到硬盘中，这种过程很费时间，而且一次性不能复制很多照片，不然会卡死。还有个问题，视频文件直接复制会生成一个.jpg的截图，而不是复制了视频文件，需要单独导出才行，很麻烦。有些文件在复制粘贴的过程，还会报重命名。最后，我把<code>照片图库</code>中的照片和视频全删除了，打算重来一次，却发现之前导入的照片和视频占用的Mac容量没有被还原。</p>
+<p>原来，通过 Finder &gt; 图片 &gt; 右键照片图库&gt; 显示包内容，这才是视频和照片的物理路径。我刚才通过<code>照片图库</code>删除的照片和视频并没有真正被删除。它们被放到了一个看不到的废纸篓里，系统会在30天后，自动删除这些照片以及视频。而通过 照片图库 &gt; 文件 &gt; 显示最近删除的，可以还原之前被删除的内容。所以，无须自己去纠结删除<code>照片图库.photoslibrary</code>包内容文件夹里的哪个文件了，因为相关的文件太多，误删反而会出现问题，不如让系统来做。</p>
+<p>最后，在<code>照片图库.photoslibaray</code>包内容中有一个<code>Masters</code>文件夹，把这个文件夹备份到硬盘上就行了，这才是我一开始就要找的最核心的文件夹，这个文件夹里包括了你从iPhone上导入的所有视频以及图片。比起从<code>照片图库</code>中手动一份份复制粘贴，简直不要方便太多。</p>
+
+  </section>
+</article>
+
+  <div class="sharing grid">
+  <section class="profile grid-item grid">
+    <img class="avatar" src="/images/chili.png" alt="avatar" />
+    <div class="grid-item">
+      <p class="title"> chilihotpot </p>
+      <p class="subtitle"> You Are The JavaScript In My HTML </p>
+    <div>
+  </section>
+
+  <section class="share-btns">
+    <!-- <p> share it if you like it~ </p> -->
+    <a
+  class="twitter-share-button"
+  data-size="large"
+  data-via="DrakeLeung"
+  href="https://twitter.com/intent/tweet?text=最近iPhone老是提示容量不够用，一方"
+>
+  Tweet
+</a>
+
+<script>
+  window.twttr = (function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0],
+    t = window.twttr || {};
+  if (d.getElementById(id)) return t;
+  js = d.createElement(s);
+  js.id = id;
+  js.src = "https://platform.twitter.com/widgets.js";
+  js.async = true;
+  fjs.parentNode.insertBefore(js, fjs);
+
+  t._e = [];
+  t.ready = function(f) {
+    t._e.push(f);
+  };
+
+  return t;
+}(document, "script", "twitter-wjs"));
+</script>
+
+  </section>
+</div>
+
+
+  
+</main>
+
+</body>
+</html>

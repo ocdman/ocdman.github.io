@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>树莓派如何安全移除移动硬盘 | chilihotpot</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <link rel="shortcut icon" href="/chili.ico">
+  <link rel="stylesheet" href="/css/app.css" type="text/css">
+  <!-- <link rel='stylesheet' href='http://fonts.useso.com/css?family=Source+Code+Pro'> -->
+</head>
+
+<body>
+  <nav class="app-nav">
+  
+    
+      <a href="/.">home</a>
+    
+  
+    
+      <a href="/archives">archive</a>
+    
+  
+    
+      <a href="/tags">tag</a>
+    
+  
+    
+      <a href="/categories">category</a>
+    
+  
+</nav>
+
+  <main class="post">
+  <article>
+  <h1 class="article-title">
+    <a href="/2018/08/29/树莓派如何安全移除移动硬盘/">树莓派如何安全移除移动硬盘</a>
+  </h1>
+
+  <section class="article-meta">
+    <p class="article-date">August 29 2018</p>
+  </section>
+
+  <section class="article-entry">
+    <p>树莓派卸载磁盘的命令为<code>umount</code>，比方说</p>
+<figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo umount <span class="regexp">/dev/</span>sda1</span><br></pre></td></tr></table></figure>
+<p>但是，如果是移动硬盘的话，用上述命令卸载后，移动硬盘还是在运转中，如果我想让磁盘停止转动，也就是安全移除移动硬盘的话，<code>umount</code>是没法实现的，这个时候就需要安装<code>udisks</code>包来实现</p>
+<figure class="highlight q"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-<span class="built_in">get</span> <span class="keyword">update</span></span><br><span class="line">sudo apt-<span class="built_in">get</span> install udisks</span><br></pre></td></tr></table></figure>
+<p>安装完<code>udisks</code>之后，如果想要安全移除移动硬盘的话，只需要执行命令</p>
+<figure class="highlight applescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo udisks <span class="comment">--detach /dev/sda</span></span><br></pre></td></tr></table></figure>
+<p>具体到你的移动硬盘的目录，比方说我的移动硬盘目录为<code>/dev/sda</code>。</p>
+<p>而且还能取代原来<code>umount</code>的命令</p>
+<figure class="highlight applescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo udisks <span class="comment">--unmount /dev/sda1</span></span><br></pre></td></tr></table></figure>
+
+  </section>
+</article>
+
+  <div class="sharing grid">
+  <section class="profile grid-item grid">
+    <img class="avatar" src="/images/chili.png" alt="avatar" />
+    <div class="grid-item">
+      <p class="title"> chilihotpot </p>
+      <p class="subtitle"> You Are The JavaScript In My HTML </p>
+    <div>
+  </section>
+
+  <section class="share-btns">
+    <!-- <p> share it if you like it~ </p> -->
+    <a
+  class="twitter-share-button"
+  data-size="large"
+  data-via="DrakeLeung"
+  href="https://twitter.com/intent/tweet?text=树莓派卸载磁盘的命令为<code>umo"
+>
+  Tweet
+</a>
+
+<script>
+  window.twttr = (function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0],
+    t = window.twttr || {};
+  if (d.getElementById(id)) return t;
+  js = d.createElement(s);
+  js.id = id;
+  js.src = "https://platform.twitter.com/widgets.js";
+  js.async = true;
+  fjs.parentNode.insertBefore(js, fjs);
+
+  t._e = [];
+  t.ready = function(f) {
+    t._e.push(f);
+  };
+
+  return t;
+}(document, "script", "twitter-wjs"));
+</script>
+
+  </section>
+</div>
+
+
+  
+</main>
+
+</body>
+</html>

@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>github加速访问方案 | chilihotpot</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <link rel="shortcut icon" href="/chili.ico">
+  <link rel="stylesheet" href="/css/app.css" type="text/css">
+  <!-- <link rel='stylesheet' href='http://fonts.useso.com/css?family=Source+Code+Pro'> -->
+</head>
+
+<body>
+  <nav class="app-nav">
+  
+    
+      <a href="/.">home</a>
+    
+  
+    
+      <a href="/archives">archive</a>
+    
+  
+    
+      <a href="/tags">tag</a>
+    
+  
+    
+      <a href="/categories">category</a>
+    
+  
+</nav>
+
+  <main class="post">
+  <article>
+  <h1 class="article-title">
+    <a href="/2019/04/24/github加速访问方案/">github加速访问方案</a>
+  </h1>
+
+  <section class="article-meta">
+    <p class="article-date">April 24 2019</p>
+  </section>
+
+  <section class="article-entry">
+    <p>在没有代理的情况下访问github.com的朋友应该都知道，一个网页打开的速度堪比蜗牛。之前我使用的方案是走代理，但是今天我找到了一个更好的方案，<a href="https://github.com/chenxuhua/issues-blog/issues/3" target="_blank" rel="external">原文链接</a>。</p>
+<h3 id="为什么Github的访问速度会变慢">为什么Github的访问速度会变慢</h3><p>Github的CDN域名<code>assets-cdn.github.com</code>遭到DNS污染，导致无法连接Github的加速分发服务器。至于是谁干的，答案不言而喻。</p>
+<h3 id="如何解决DNS污染">如何解决DNS污染</h3><p>可以通过修改Hosts文件来解决，将域名直接指向IP地址来绕过DNS的解析。</p>
+<h3 id="如何修改Hosts文件">如何修改Hosts文件</h3><p>首先访问<a href="https://IPAddress.com这个网址，然后在IP" target="_blank" rel="external">https://IPAddress.com这个网址，然后在IP</a> Lookup输入框中输入<code>github.com</code>，就会得到对应的CDN域名的IP地址，比如：<code>192.30.253.112</code>。然后将这个地址加入到系统的Hosts文件中去，这样就可以绕过DNS污染，直接访问CDN服务了。</p>
+<p>还有一个<a href="http://github.global.ssl.fastly.net.ipaddress.com也是提供IP" target="_blank" rel="external">http://github.global.ssl.fastly.net.ipaddress.com也是提供IP</a> Lookup服务的，跟上面的功能是一样的。</p>
+<p>以此类推，既然<code>assets-cdn.github.com</code>遭遇了DNS污染，那么我们只要在IP Lookup中输入<code>assets-cdn.github.com</code>获取对应的IP地址，并把它加入到hosts文件中，即可解决DNS污染的问题。</p>
+<h3 id="总结">总结</h3><p>这种通过Hosts文件解决DNS污染的问题，不仅使用于Github，其它一些访问慢的国外网站，如果是遇到了DNS污染的问题，都可以用此法来得到加速。</p>
+
+  </section>
+</article>
+
+  <div class="sharing grid">
+  <section class="profile grid-item grid">
+    <img class="avatar" src="/images/chili.png" alt="avatar" />
+    <div class="grid-item">
+      <p class="title"> chilihotpot </p>
+      <p class="subtitle"> You Are The JavaScript In My HTML </p>
+    <div>
+  </section>
+
+  <section class="share-btns">
+    <!-- <p> share it if you like it~ </p> -->
+    <a
+  class="twitter-share-button"
+  data-size="large"
+  data-via="DrakeLeung"
+  href="https://twitter.com/intent/tweet?text=在没有代理的情况下访问github.co"
+>
+  Tweet
+</a>
+
+<script>
+  window.twttr = (function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0],
+    t = window.twttr || {};
+  if (d.getElementById(id)) return t;
+  js = d.createElement(s);
+  js.id = id;
+  js.src = "https://platform.twitter.com/widgets.js";
+  js.async = true;
+  fjs.parentNode.insertBefore(js, fjs);
+
+  t._e = [];
+  t.ready = function(f) {
+    t._e.push(f);
+  };
+
+  return t;
+}(document, "script", "twitter-wjs"));
+</script>
+
+  </section>
+</div>
+
+
+  
+</main>
+
+</body>
+</html>

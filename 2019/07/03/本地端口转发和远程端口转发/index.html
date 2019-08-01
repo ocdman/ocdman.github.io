@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>本地端口转发和远程端口转发 | chilihotpot</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <link rel="shortcut icon" href="/chili.ico">
+  <link rel="stylesheet" href="/css/app.css" type="text/css">
+  <!-- <link rel='stylesheet' href='http://fonts.useso.com/css?family=Source+Code+Pro'> -->
+</head>
+
+<body>
+  <nav class="app-nav">
+  
+    
+      <a href="/.">home</a>
+    
+  
+    
+      <a href="/archives">archive</a>
+    
+  
+    
+      <a href="/tags">tag</a>
+    
+  
+    
+      <a href="/categories">category</a>
+    
+  
+</nav>
+
+  <main class="post">
+  <article>
+  <h1 class="article-title">
+    <a href="/2019/07/03/本地端口转发和远程端口转发/">本地端口转发和远程端口转发</a>
+  </h1>
+
+  <section class="article-meta">
+    <p class="article-date">July 03 2019</p>
+  </section>
+
+  <section class="article-entry">
+    <p>最近在研究<a href="https://github.com/ginuerzh/gost" target="_blank" rel="external">gost</a>源码，看到端口转发这一块表示一头雾水，遂研究了一下。</p>
+<h4 id="为什么要端口转发">为什么要端口转发</h4><p>百度的解释是</p>
+<blockquote>
+<p>端口转发（Port forwarding），有时被叫做隧道，是安全壳(SSH) 为网络安全通信使用的一种方法。端口转发是转发一个网络端口从一个网络节点到另一个网络节点的行为，其使一个外部用户从外部经过一个被激活的NAT路由器到达一个在私有内部IP地址（局域网内部）上的一个端口。</p>
+</blockquote>
+<p>端口转发的意义在于，在客户端和目标服务器中间建立一条安全隧道，使得原本因某些原因而无法访问的服务，得以访问。最常用的端口转发模式分为<strong>本地端口转发</strong>以及<strong>远程端口转发</strong>两种。</p>
+<h4 id="本地端口转发（Local_forwarding）">本地端口转发（Local forwarding）</h4><p>假设现在有三台主机，local_host是本机，proxy_host是代理主机，remote_host是我们要访问的服务器。因为某些原因，local_host无法直接访问remote_host，而proxy_host和local_host以及remote_host之间可以两两互相访问。以下是它们的访问关系</p>
+<p>local_host &lt;-&gt; proxy_host &lt;-&gt; remote_host</p>
+<p>注意，<strong>这三台主机访问关系要么全在内网，要么全在公网</strong></p>
+<p>使用SSH命令的话，我们就可以利用proxy_host创建一条代理链，通过指定<strong>-L</strong>参数，即可连上remote_host服务。在本机local_host上执行命令</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh -L 2222:remote_host:22 username@proxy_host</span><br></pre></td></tr></table></figure>
+<p>解释一下，2222为本机端口，通过指定SSH绑定本机的2222端口，然后将proxy_host接收到的所有数据转发到目标主机remote_host的22端口。</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh -p 2222 username@local_host</span><br></pre></td></tr></table></figure>
+<p>然后，SSH访问本机2222端口，就相当于访问remote_host的22端口了。这样就实现了本地端口的转发。</p>
+<h5 id="什么是_本地端口转发">什么是 本地端口转发</h5><p>所谓本地端口转发，就是<strong>将发送到本地端口的请求，转发到目标端口</strong>。这样，就可以通过访问本地端口，来访问目标端口的服务。使用<strong>-L</strong>属性（Local的意思），就可以指定需要转发的端口。</p>
+<p>-L的语法如下</p>
+<figure class="highlight diff"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="deletion">-L 本机地址:本地端口:目标地址:目标端口</span></span><br></pre></td></tr></table></figure>
+<p>其中<strong>本机地址可以省略</strong>。即localhost。</p>
+<h5 id="gost的本地端口转发">gost的本地端口转发</h5><p>gost的本地端口转发功能类似于ssh中 -L参数的功能，而与ssh的区别在于：</p>
+<ol>
+<li>gost不仅支持TCP端口的转发（上面的例子就是），还支持UDP端口的转发。</li>
+<li>gost支持通过转发链进行端口转发。</li>
+</ol>
+<h6 id="TCP端口转发">TCP端口转发</h6><p>仍然是上面的例子，假设proxy_host已经部署了http代理并监听在8080端口上</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gost -L :8080</span><br></pre></td></tr></table></figure>
+<p>我们只需要下面一段命令，就能进行本地TCP端口转发了</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gost -L=tcp://:2222/remote_host:22 -F=proxy_host:8080</span><br></pre></td></tr></table></figure>
+<p>然后ssh访问本地2222端口就能访问目标主机了。</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh -p 2222 username@local_host</span><br></pre></td></tr></table></figure>
+<h6 id="UDP端口转发">UDP端口转发</h6><p>仍旧上面的例子，假设proxy_host已经部署了socks5代理并监听在8080端口上</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gost -L socks5://:8080</span><br></pre></td></tr></table></figure>
+<p>现在想访问remote_host上的UDP 53端口，也就是DNS服务</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gost -L udp://:5353/remote_host:53 -F proxy_host:8080</span><br></pre></td></tr></table></figure>
+<p>然后在local_host上执行</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">dig @localhost -p 5353 www.google.com</span><br></pre></td></tr></table></figure>
+<p>此时就相当于访问到remote_host的UDP 53端口。</p>
+<p>注意: <strong>UDP的端口转发使用了UDP-over-TCP，所以转发链的末端(最后一个-F参数)一定要是gost socks5类型</strong>。</p>
+<h5 id="本地端口转发的其它场景">本地端口转发的其它场景</h5><p>上面的例子是本地端口转发的一种场景，为了加深理解，再举例一个可能的场景。</p>
+<p>假设现在上面的场景换了换，只有两台主机local_host以及remote_host。local_host可以访问remote_host，但只能访问remote_host的22端口。因为remote_host主机的防火墙默认只打开了22端口，如果要访问remote_host的3000端口的话就要修改防火墙。为了保证安全，防火墙需要配置允许访问的IP地址。但是，本机公网IP通常是网络运营商动态分配的，是不断变化的。这样的话，防火墙配置需要经常修改，就会很麻烦。</p>
+<p>通过本地端口转发，可以将发送到本机local_host端口2000的请求，转发到remote_host主机的3000端口。</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh -L 2000:localhost:3000 username@remote_host</span><br></pre></td></tr></table></figure>
+<p>上面的<strong>localhost</strong>指的是remote_host，并不是本机local_host，要区分开来，因为目标主机是相对remote_host而言的。</p>
+<p>这样，在本机local_host上可以通过访问<a href="http://localhost:2000来访问目标主机remote_host上的3000端口服务了。" target="_blank" rel="external">http://localhost:2000来访问目标主机remote_host上的3000端口服务了。</a></p>
+<h4 id="远程端口转发（Remote_forwarding）">远程端口转发（Remote forwarding）</h4><p>借着本地端口转发的假设，local_host是本机，proxy_host是代理主机，remote_host是我们要访问的服务器。但这次情况有所不同，proxy_host可以访问local_host，proxy_host和remote_host之间可以互相访问，local_host无法访问proxy_host以及remote_host，以下是它们的访问关系</p>
+<p>local_host &lt;- proxy_host &lt;-&gt; remote_host</p>
+<p>注意，proxy_host到local_host是单通的，换句话说，local_host在公网，proxy_host和remote_host在内网。</p>
+<p>现在我们想通过proxy_host来访问remote_host上的服务该怎么做呢？</p>
+<p>在proxy_host主机上执行命令</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh -R 2222:remote_host:22 username@local_host</span><br></pre></td></tr></table></figure>
+<p>然后在local_host本机上就能ssh访问remote_host的22端口了</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh -p 2222 username@localhost</span><br></pre></td></tr></table></figure>
+<p>解释一下，上面的命令让local_host主机监听自己的2222端口，然后所有数据经proxy_host主机转发到remote_host目标主机的22端口。<strong>对于proxy_host来说，要远程绑定local_host的2222端口，所以被称为远程端口转发。而本地端口转发绑定的是它本机自己的端口，所以被称为本机端口转发。</strong></p>
+<h5 id="什么是远程端口转发">什么是远程端口转发</h5><p>所谓远程端口转发，就是<strong>将发送到远程端口的请求，转发到目标端口</strong>。这样，就可以通过访问远程端口，来访问目标端口的服务。使用<strong>-R</strong>属性，就可以指定需要转发的端口，语法是这样的:</p>
+<figure class="highlight diff"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="deletion">-R 远程地址:远程端口:目标地址:目标端口</span></span><br></pre></td></tr></table></figure>
+<p>其中<strong>远程地址可以省略</strong>。也就是上面例子中的local_host的公网地址。</p>
+<h5 id="如何区分本地端口转发还是远程端口转发">如何区分本地端口转发还是远程端口转发</h5><table>
+<thead>
+<tr>
+<th>本地端口转发</th>
+<th>远程端口转发</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>使用<strong>-L</strong>参数</td>
+<td>使用<strong>-R</strong>参数</td>
+</tr>
+<tr>
+<td><strong>ssh -L</strong> 命令执行在本机上</td>
+<td><strong>ssh -R</strong> 命令执行在代理服务器上</td>
+</tr>
+<tr>
+<td>绑定的是本机端口</td>
+<td>绑定的是远程（公网）端口</td>
+</tr>
+</tbody>
+</table>
+<h5 id="gost的远程端口转发">gost的远程端口转发</h5><p>gost远程端口转发的功能类似于ssh中-R参数的功能，与本地端口转发一样，也支持UDP和转发链。</p>
+<h6 id="TCP端口转发-1">TCP端口转发</h6><p>假设在local_host上部署了gost socks5代理并监听在1080端口上</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gost -L socks5://:1080</span><br></pre></td></tr></table></figure>
+<p>然后在proxy_host上执行命令</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gost -L=rtcp://:2222/remote_host:22 -F=socks5://local_host:1080</span><br></pre></td></tr></table></figure>
+<p>这样gost就会(通过转发链)连接到local_host，并让local_host监听TCP 2222端口，当我们使用ssh连接local_host的2222端口时，就相当于连接到了remote_host的22端口了</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh -p 2222 username@localhost</span><br></pre></td></tr></table></figure>
+<h6 id="UDP端口转发-1">UDP端口转发</h6><p>假设local_host上部署了gost socks5代理并监听在1080端口上</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gost -L socks5://:8080</span><br></pre></td></tr></table></figure>
+<p>现在想在local_host上访问remote_host上的DNS服务，在proxy_host上执行</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gost -L=rudp://:5353/remote_host:53 -F=socks5://local_host:1080</span><br></pre></td></tr></table></figure>
+<p>这样gost就会(通过转发链)连接到local_host，在local_host上监听UDP 5353端口，当我们向local_host:5353发送UDP数据</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">dig @localhost -p 5353 www.google.com</span><br></pre></td></tr></table></figure>
+<p>就相当于发送到了remote_host:53上了</p>
+<p>注意: <strong>TCP远程端口转发使用了socks5 bind协议，所以转发链的末端(最后一个-F参数)一定要是socks5类型；</strong><br><strong>UDP远程端口转发使用了UDP-over-TCP，所以转发链的末端(最后一个-F参数)一定要是gost socks5类型</strong>。</p>
+<h4 id="总结">总结</h4><p>简单地介绍了一下关于本地端口转发以及远程端口转发的基本概念以及应用场景。顺便也学习了gost下关于端口转发的使用。</p>
+
+  </section>
+</article>
+
+  <div class="sharing grid">
+  <section class="profile grid-item grid">
+    <img class="avatar" src="/images/chili.png" alt="avatar" />
+    <div class="grid-item">
+      <p class="title"> chilihotpot </p>
+      <p class="subtitle"> You Are The JavaScript In My HTML </p>
+    <div>
+  </section>
+
+  <section class="share-btns">
+    <!-- <p> share it if you like it~ </p> -->
+    <a
+  class="twitter-share-button"
+  data-size="large"
+  data-via="DrakeLeung"
+  href="https://twitter.com/intent/tweet?text=最近在研究<a href="https:"
+>
+  Tweet
+</a>
+
+<script>
+  window.twttr = (function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0],
+    t = window.twttr || {};
+  if (d.getElementById(id)) return t;
+  js = d.createElement(s);
+  js.id = id;
+  js.src = "https://platform.twitter.com/widgets.js";
+  js.async = true;
+  fjs.parentNode.insertBefore(js, fjs);
+
+  t._e = [];
+  t.ready = function(f) {
+    t._e.push(f);
+  };
+
+  return t;
+}(document, "script", "twitter-wjs"));
+</script>
+
+  </section>
+</div>
+
+
+  
+</main>
+
+</body>
+</html>

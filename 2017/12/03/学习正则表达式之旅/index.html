@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>学习正则表达式之旅 | chilihotpot</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <link rel="shortcut icon" href="/chili.ico">
+  <link rel="stylesheet" href="/css/app.css" type="text/css">
+  <!-- <link rel='stylesheet' href='http://fonts.useso.com/css?family=Source+Code+Pro'> -->
+</head>
+
+<body>
+  <nav class="app-nav">
+  
+    
+      <a href="/.">home</a>
+    
+  
+    
+      <a href="/archives">archive</a>
+    
+  
+    
+      <a href="/tags">tag</a>
+    
+  
+    
+      <a href="/categories">category</a>
+    
+  
+</nav>
+
+  <main class="post">
+  <article>
+  <h1 class="article-title">
+    <a href="/2017/12/03/学习正则表达式之旅/">学习正则表达式之旅</a>
+  </h1>
+
+  <section class="article-meta">
+    <p class="article-date">December 03 2017</p>
+  </section>
+
+  <section class="article-entry">
+    <p>厌倦了Ctrl-C，Ctrl-V？不妨试试正则表达式，它可以极大地减少某些情况下的机械劳动量，是懒人癌的福音，不过学习曲线也很陡，这也是为什么大部分人望而却步的原因。</p>
+<p>正则别看它一段很复杂的英文和符号，其实细细分析总能抽丝剥茧，理清头绪。对于初学者，建议看一看这篇<a href="https://deerchao.net/tutorials/regex/regex.htm" target="_blank" rel="external">正则表达式30分钟入门教程</a>，不过也仅仅只是入门级别而已，别想着看完之后就能写出牛逼闪闪的正则来。同样身为门外汉的我，也来谈一谈看完之后自己的心得。</p>
+<h3 id="什么是正则表达式">什么是正则表达式</h3><blockquote>
+<p>在编写处理字符串的程序或网页时，经常会有查找符合某些复杂规则的字符串的需要。正则表达式就是用于描述这些规则的工具。换句话说，正则表达式就是记录文本规则的代码。</p>
+</blockquote>
+<h3 id="如何测试正则表达式">如何测试正则表达式</h3><p>网上有很多测试正则表达式的工具，在线的网站或者下载安装程序都可以。我使用的是<a href="http://www.regexbuddy.com/" target="_blank" rel="external">RegexBuddy</a>。</p>
+<h3 id="常用的元字符">常用的元字符</h3><p>元字符在正则里有特殊含义，常用的有：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">代码</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">.</td>
+<td>匹配除换行符以外的任意字符</td>
+</tr>
+<tr>
+<td style="text-align:center">\w</td>
+<td>匹配字母或数字或下划线或汉字</td>
+</tr>
+<tr>
+<td style="text-align:center">\s</td>
+<td>匹配任意的空白符（空格、换行符、Tab）</td>
+</tr>
+<tr>
+<td style="text-align:center">\d</td>
+<td>匹配数字</td>
+</tr>
+<tr>
+<td style="text-align:center">\b</td>
+<td>匹配单词的开始或结束</td>
+</tr>
+<tr>
+<td style="text-align:center">^</td>
+<td>匹配字符串的开始</td>
+</tr>
+<tr>
+<td style="text-align:center">$</td>
+<td>匹配字符串的结束</td>
+</tr>
+</tbody>
+</table>
+<h3 id="转义字符">转义字符</h3><p>写程序的都知道，一些特殊字符的转义需要使用转义字符<code>\</code>。比方说我只想要输出字符<code>.</code>，而<code>.</code>在正则里有特殊含义，这个时候就要使用转义字符<code>\.</code>来达到目的。</p>
+<h3 id="常用的限定符">常用的限定符</h3><p>限定符用于限定匹配重复的方式，常用的有：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">代码</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">*</td>
+<td>重复零次或更多次</td>
+</tr>
+<tr>
+<td style="text-align:center">+</td>
+<td>重复一次或更多次</td>
+</tr>
+<tr>
+<td style="text-align:center">?</td>
+<td>重复零次或一次</td>
+</tr>
+<tr>
+<td style="text-align:center">{n}</td>
+<td>重复n次</td>
+</tr>
+<tr>
+<td style="text-align:center">{n,}</td>
+<td>重复n次或更多次</td>
+</tr>
+<tr>
+<td style="text-align:center">{n,m}</td>
+<td>重复n到m次</td>
+</tr>
+</tbody>
+</table>
+<h3 id="字符类">字符类</h3><p>如果想匹配没有预定义元字符的字符集合，就要使用字符类，只需要把它们列在方括号里就行了。比方说，<code>[aeiou]</code>就匹配任何一个英文元音字母，<code>[.?!]</code>匹配标点符号(.或?或!)，<code>[0-9]</code>代表的含意与<code>\d</code>是完全一致的：代表一位数字，<code>[a-z0-9A-Z_]</code>也完全等同于<code>\w</code>（如果只考虑英文的话）。</p>
+<h3 id="分枝条件">分枝条件</h3><blockquote>
+<p>正则表达式里的分枝条件指的是有几种规则，如果满足其中任意一种规则都应该当成匹配，具体方法是用<code>|</code>把不同的规则分隔开。</p>
+</blockquote>
+<p>举个例子，<code>\d{5}-\d{4}|\d{5}</code>这个表达式用于匹配美国的邮政编码。美国邮编的规则是5位数字，或者用连字号间隔的9位数字。</p>
+<p><strong>使用分枝条件时，要注意各个条件的顺序</strong>。如果你把它改成<code>\d{5}|\d{5}-\d{4}</code>的话，那么就只会匹配5位的邮编(以及9位邮编的前5位)。原因是<strong>匹配分枝条件时，将会从左到右地测试每个条件，如果满足了某个分枝的话，就不会去再管其它的条件了。</strong></p>
+<h3 id="分组">分组</h3><blockquote>
+<p> 如果想要重复多个字符，此时就要用到小括号来指定<strong>子表达式</strong>(也叫做<strong>分组</strong>)。</p>
+</blockquote>
+<p><code>(\d{1,3}\.){3}\d{1,3}</code>是一个简单的IP地址匹配表达式，但是这个表达式还不算规范的IP地址，一个正确的IP地址为<code>((2[0-4]\d|25[0-5]|[01]?\d\d?)\.){3}(2[0-4]\d|25[0-5]|[01]?\d\d?)</code>。由于正则表达式中并不提供关于数学的任何功能，所以只能使用冗长的分组，这也造成了给新手对正则的认知觉得复杂的一个原因。</p>
+<h3 id="反义">反义</h3><p>有时需要查找不属于某个能简单定义的字符类的字符。比如想查找除了数字以外，其它任意字符都行的情况，这时需要用到<strong>反义</strong>。常用的反义有：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">代码</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">\W</td>
+<td>匹配任意不是字母、数字、下划线、汉字的字符</td>
+</tr>
+<tr>
+<td style="text-align:center">\S</td>
+<td>匹配任意不是空白符的字符</td>
+</tr>
+<tr>
+<td style="text-align:center">\D</td>
+<td>匹配任意非数字的字符</td>
+</tr>
+<tr>
+<td style="text-align:center">\B</td>
+<td>匹配不是单词开头或结束的位置</td>
+</tr>
+<tr>
+<td style="text-align:center">[^aeiou]</td>
+<td>匹配除了aeiou以外的任意字符</td>
+</tr>
+</tbody>
+</table>
+<h3 id="后向引用">后向引用</h3><blockquote>
+<p>使用小括号指定一个子表达式后，<strong>匹配这个子表达式的文本</strong>(也就是此分组捕获的内容)可以在表达式或其它程序中作进一步的处理。默认情况下，每个分组会自动拥有一个组号，规则是：从左向右，以分组的左括号为标志，第一个出现的分组的组号为1，第二个为2，以此类推。</p>
+</blockquote>
+<p>请看示例，<code>\b(\w+)\b\s+\1\b</code>可以用来匹配重复的单词，像go go, 或者kitty kitty，<code>\1</code>代表分组1匹配的文本。</p>
+<p>你也可以自己指定子表达式的组名。要指定一个子表达式的组名，请使用这样的语法：<code>(?&lt;Word&gt;\w+)</code>(或者把尖括号换成’也行<code>(?&#39;Word&#39;\w+)</code>)。要反向引用这个分组捕获的内容，你可以使用<code>\k&lt;Word&gt;</code>,所以上一个例子也可以写成这样：<code>\b(?&lt;Word&gt;\w+)\b\s+\k&lt;Word&gt;\b</code>。</p>
+<p>补充：</p>
+<ul>
+<li>分组0对应整个正则表达式</li>
+<li>实际上组号分配过程是要从左向右扫描两遍的：第一遍只给未命名组分配，第二遍只给命名组分配－－因此所有命名组的组号都大于未命名的组号</li>
+<li>你可以使用<code>(?:exp)</code>这样的语法来剥夺一个分组对组号分配的参与权</li>
+</ul>
+<p>下面是捕获分组的语法：</p>
+<table>
+<thead>
+<tr>
+<th>代码</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>(exp)</td>
+<td>匹配exp，并捕获文本到自动命名的组里</td>
+</tr>
+<tr>
+<td>(?<name>exp)</name></td>
+<td>匹配exp，并捕获文本到名称为name的组里，也可以写成(?’name’exp)</td>
+</tr>
+<tr>
+<td>(?:exp)</td>
+<td>匹配exp，不捕获匹配的文本，也不给此分组分配组号</td>
+</tr>
+</tbody>
+</table>
+<h3 id="零宽断言">零宽断言</h3><blockquote>
+<p><strong>零宽断言</strong>用于查找在某些内容(但并不包括这些内容)之前或之后的东西，也就是说它们像\b,^,$那样用于指定一个位置，这个位置应该满足一定的条件(即断言)</p>
+</blockquote>
+<p><code>(?=exp)</code>也叫零宽度正预测先行断言（名字很长），它断言自身出现的位置的后面能匹配表达式exp，即匹配exp前面的位置。比如<code>\b\w+(?=ing\b)</code>，匹配以ing结尾的单词的前面部分(除了ing以外的部分)。</p>
+<p><code>(?&lt;=exp)</code>也叫零宽度正回顾后发断言，它断言自身出现的位置的前面能匹配表达式exp，即匹配exp后面的位置。比如<code>(?&lt;=\bre)\w+\b</code>会匹配以re开头的单词的后半部分(除了re以外的部分)。</p>
+<p>之前提到过<code>(?:exp)</code>会剥夺分组对组号的分配，现在知道为什么了吧，在零宽断言里，组号没有任何用处。</p>
+<blockquote>
+<p>断言用来声明一个应该为真的事实。正则表达式中只有当断言为真时才会继续进行匹配。</p>
+</blockquote>
+<p>表达式<code>(?&lt;=&lt;(\w+)&gt;).*(?=&lt;\/\1&gt;)</code>最能表现零宽断言的真正用途，它匹配不包含属性的简单HTML标签内里的内容。。</p>
+<p>下面是零宽断言的语法：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">代码</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">(?=exp)</td>
+<td>匹配exp前面的位置</td>
+</tr>
+<tr>
+<td style="text-align:center">(?&lt;=exp)</td>
+<td>匹配exp后面的位置</td>
+</tr>
+</tbody>
+</table>
+<h3 id="负向零宽断言">负向零宽断言</h3><blockquote>
+<p>负向零宽断言只匹配一个位置，并不<strong>消费</strong>任何字符。</p>
+</blockquote>
+<p>零宽度负预测先行断言<code>(?!exp)</code>，断言此位置的后面不能匹配表达式exp。比如<code>\d{3}(?!\d)</code>匹配三位数字，而且这三位数字的后面不能是数字；再比如，<code>\b((?!abc)\w)+\b</code>匹配不包含连续字符串abc的单词。</p>
+<p>零宽度负回顾后发断言<code>(?&lt;!exp)</code>，断言此位置的前面不能匹配表达式exp。比如，<code>(?&lt;![a-z])\d{7}</code>匹配前面不是小写字母的七位数字。</p>
+<p>下面是负向零宽断言的语法：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">代码</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">(?!exp)</td>
+<td>匹配后面跟的不是exp的位置</td>
+</tr>
+<tr>
+<td style="text-align:center">(?&lt;!exp)</td>
+<td>匹配前面不是exp的位置</td>
+</tr>
+</tbody>
+</table>
+<h3 id="注释">注释</h3><blockquote>
+<p>小括号的另一种用途是通过语法<code>(?#comment)</code>来包含注释。</p>
+<p>要包含注释的话，最好是启用“忽略模式里的空白符”选项，这样在编写表达式时能任意的添加空格，Tab，换行，而实际使用时这些都将被忽略。启用这个选项后，在#后面到这一行结束的所有文本都将被当成注释忽略掉。</p>
+</blockquote>
+<h3 id="贪婪与懒惰">贪婪与懒惰</h3><blockquote>
+<p>当正则表达式中包含能接受重复的限定符时，通常的行为是（在使整个表达式能得到匹配的前提下）匹配<strong>尽可能多</strong>的字符。这被称为<strong>贪婪</strong>匹配。</p>
+</blockquote>
+<p>举个例子，<code>a.*b</code>，它将会匹配最长的以a开始，以b结束的字符串。如果用它来搜索aabab的话，它会匹配整个字符串aabab。</p>
+<blockquote>
+<p>懒惰匹配，也就是匹配<strong>尽可能少</strong>的字符。只要在限定符后面加上一个问号?</p>
+</blockquote>
+<p>举个例子，<code>a.*?b</code>匹配最短的，以a开始，以b结束的字符串。如果把它应用于aabab的话，它会匹配aab（第一到第三个字符）和ab（第四到第五个字符）。为什么第一个匹配是aab（第一到第三个字符）而不是ab（第二到第三个字符）？简单地说，因为正则表达式有另一条规则，比懒惰／贪婪规则的优先级更高：最先开始的匹配拥有最高的优先权——The match that begins earliest wins。</p>
+<p>常用的懒惰限定符有</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">代码</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">*?</td>
+<td>重复任意次，但尽可能少重复</td>
+</tr>
+<tr>
+<td style="text-align:center">+?</td>
+<td>重复1次或更多次，但尽可能少重复</td>
+</tr>
+<tr>
+<td style="text-align:center">??</td>
+<td>重复0次或1次，但尽可能少重复</td>
+</tr>
+<tr>
+<td style="text-align:center">{n,m}?</td>
+<td>重复n到m次，但尽可能少重复</td>
+</tr>
+<tr>
+<td style="text-align:center">{n,}?</td>
+<td>重复n次以上，但尽可能少重复</td>
+</tr>
+</tbody>
+</table>
+<h3 id="处理选项">处理选项</h3><p>常用的正则表达式选项有：</p>
+<table>
+<thead>
+<tr>
+<th>名称</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>IgnoreCase(忽略大小写)</td>
+<td>匹配时不区分大小写</td>
+</tr>
+<tr>
+<td>Multiline(多行模式)</td>
+<td>更改<code>^</code>和<code>$</code>的含义，使它们分别在任意一行的行首和行尾匹配，而不仅仅在整个字符串的开头和结尾匹配。(在此模式下，<code>$</code>的精确含义是：匹配\n之前的位置及字符串结束前的位置)</td>
+</tr>
+<tr>
+<td>Singleline(单行模式)</td>
+<td>更改<code>.</code>的含义，使它与每一个字符匹配(包括换行符\n)。它和多行模式没有任何关系，二者不能同时使用。</td>
+</tr>
+<tr>
+<td>IgnorePatternWhitespace(忽略空白)</td>
+<td>忽略表达式中的非转义空白并启用由<code>#</code>标记的注释</td>
+</tr>
+<tr>
+<td>ExplicitCapture(显示捕获)</td>
+<td>仅捕获已被显示命名的组</td>
+</tr>
+</tbody>
+</table>
+<h3 id="平衡组/递归匹配">平衡组/递归匹配</h3><p>想象一下，平衡组的一个最常见的应用就是匹配HTML，即匹配可嵌套的层次性结构。假如字符串里的左括号和右括号出现的次数不相等，比如( 5 / ( 3 + 2 ) ) )那么如何才能做到正确的匹配呢？下面是需要用到的语法结构：</p>
+<blockquote>
+<ul>
+<li><p>(?’group’) 把捕获的内容命名为group,并压入堆栈(Stack)</p>
+</li>
+<li><p>(?’-group’) 从堆栈上弹出最后压入堆栈的名为group的捕获内容，如果堆栈本来为空，则本分组的匹配失败</p>
+</li>
+<li><p>(?(group)yes|no) 如果堆栈上存在以名为group的捕获内容的话，继续匹配yes部分的表达式，否则继续匹配no部分</p>
+</li>
+<li><p>(?!) 零宽负向先行断言，由于没有后缀表达式，试图匹配总是失败</p>
+</li>
+</ul>
+<p>我们需要做的是每碰到了左括号，就在压入一个”Open”,每碰到一个右括号，就弹出一个，到了最后就看看堆栈是否为空－－如果不为空那就证明左括号比右括号多，那匹配就应该失败。正则表达式引擎会进行回溯(放弃最前面或最后面的一些字符)，尽量使整个表达式得到匹配。</p>
+</blockquote>
+<figure class="highlight livescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">\(</span>                         <span class="comment">#最外层的左括号</span></span><br><span class="line">    [^()]*                <span class="comment">#最外层的左括号后面的不是括号的内容</span></span><br><span class="line">    (</span><br><span class="line">        (</span><br><span class="line">            (?<span class="string">'Open'</span><span class="string">\()</span>    <span class="comment">#碰到了左括号，在黑板上写一个"Open"</span></span><br><span class="line">            [^()]*       <span class="comment">#匹配左括号后面的不是括号的内容</span></span><br><span class="line">        )+</span><br><span class="line">        (</span><br><span class="line">            (?<span class="string">'-Open'</span><span class="string">\))</span>   <span class="comment">#碰到了右括号，擦掉一个"Open"</span></span><br><span class="line">            [^()]*        <span class="comment">#匹配右括号后面不是括号的内容</span></span><br><span class="line">        )+</span><br><span class="line">    )*</span><br><span class="line">    (?(Open)(?!))         <span class="comment">#在遇到最外层的右括号前面，判断黑板上还有没有没擦掉的"Open"；如果还有，则匹配失败</span></span><br><span class="line"></span><br><span class="line"><span class="string">\)</span>                         <span class="comment">#最外层的右括号</span></span><br></pre></td></tr></table></figure>
+<p>老实讲，要理解这个例子还是有点难度的。容我再消化一会儿。</p>
+<h3 id="总结">总结</h3><p>好了，正则的入门之旅到这里也就基本结束了。有复杂的也有不复杂的，都要花时间理解，最好的方式就是多写正则。正则是一把利器，用得好就像一把匕首一样，直指要害。</p>
+
+  </section>
+</article>
+
+  <div class="sharing grid">
+  <section class="profile grid-item grid">
+    <img class="avatar" src="/images/chili.png" alt="avatar" />
+    <div class="grid-item">
+      <p class="title"> chilihotpot </p>
+      <p class="subtitle"> You Are The JavaScript In My HTML </p>
+    <div>
+  </section>
+
+  <section class="share-btns">
+    <!-- <p> share it if you like it~ </p> -->
+    <a
+  class="twitter-share-button"
+  data-size="large"
+  data-via="DrakeLeung"
+  href="https://twitter.com/intent/tweet?text=厌倦了Ctrl-C，Ctrl-V？不妨试"
+>
+  Tweet
+</a>
+
+<script>
+  window.twttr = (function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0],
+    t = window.twttr || {};
+  if (d.getElementById(id)) return t;
+  js = d.createElement(s);
+  js.id = id;
+  js.src = "https://platform.twitter.com/widgets.js";
+  js.async = true;
+  fjs.parentNode.insertBefore(js, fjs);
+
+  t._e = [];
+  t.ready = function(f) {
+    t._e.push(f);
+  };
+
+  return t;
+}(document, "script", "twitter-wjs"));
+</script>
+
+  </section>
+</div>
+
+
+  
+</main>
+
+</body>
+</html>

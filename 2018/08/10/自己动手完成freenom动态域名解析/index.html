@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>自己动手完成freenom动态域名解析 | chilihotpot</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <link rel="shortcut icon" href="/chili.ico">
+  <link rel="stylesheet" href="/css/app.css" type="text/css">
+  <!-- <link rel='stylesheet' href='http://fonts.useso.com/css?family=Source+Code+Pro'> -->
+</head>
+
+<body>
+  <nav class="app-nav">
+  
+    
+      <a href="/.">home</a>
+    
+  
+    
+      <a href="/archives">archive</a>
+    
+  
+    
+      <a href="/tags">tag</a>
+    
+  
+    
+      <a href="/categories">category</a>
+    
+  
+</nav>
+
+  <main class="post">
+  <article>
+  <h1 class="article-title">
+    <a href="/2018/08/10/自己动手完成freenom动态域名解析/">自己动手完成freenom动态域名解析</a>
+  </h1>
+
+  <section class="article-meta">
+    <p class="article-date">August 10 2018</p>
+  </section>
+
+  <section class="article-entry">
+    <p>freenom.com是一个免费的顶级域名注册商，包括了像.tk，.ml，.ga等域名。但是除了网站以外，freenom并没有提供更新DNS记录的API接口供开发者使用。因此，我到网上参考很多关于实现freenom更新DNS记录的代码。</p>
+<p>由于freenom加入了token验证机制，导致以前一部分代码无法完成登录功能。我个人比较推荐<a href="https://github.com/dabendan2/freenom-dns" target="_blank" rel="external">freenom-dns</a>这个NodeJS项目，不仅功能完备，命令行的交互也很友好。</p>
+<p>之前说过默认的光猫没有DDNS服务，为了让树莓派能调用一个DDNS服务，绑定动态外网IP和域名，我也是煞费苦心。要说为什么不选择dnspod，一来懒得再注册一个号，二来貌似freenom的延迟也还可以，虽然没有dnspod表现得好，总体还能接受。</p>
+<h3 id="安装Node">安装Node</h3><p>既然是NodeJS项目，首先需要给树莓派安装NodeJS。首先查看一下自己的树莓派是ARM V6还是V7的CPU架构。</p>
+<figure class="highlight autohotkey"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">uname -<span class="literal">a</span></span><br></pre></td></tr></table></figure>
+<p>我的是<code>armv6l</code>，说明我是ARM V6架构的CPU，所以下载ARM V6版本的NodeJS。</p>
+<figure class="highlight armasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="label">wget</span> https://nodejs.org/dist/<span class="literal">v8</span>.<span class="number">11</span>.<span class="number">3</span>/node-<span class="literal">v8</span>.<span class="number">11</span>.<span class="number">3</span>-linux-armv6l.tar.xz</span><br></pre></td></tr></table></figure>
+<p>我下的是稳定版本，不会频繁更新。</p>
+<p>解压文件</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">tar</span> <span class="tag">-xvf</span> <span class="tag">node-v8</span><span class="class">.11</span><span class="class">.3-linux-armv6l</span><span class="class">.tar</span><span class="class">.xz</span></span><br></pre></td></tr></table></figure>
+<p>验证node是否能正常运行</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">cd node-v8<span class="number">.11</span><span class="number">.3</span>-linux-armv6l/bin/</span><br><span class="line">./node -v</span><br><span class="line">v8<span class="number">.11</span><span class="number">.3</span></span><br></pre></td></tr></table></figure>
+<p>node运行正常，下面看看npm命令</p>
+<figure class="highlight gams"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">./npm -v</span><br><span class="line">/usr/bin/env: node: <span class="keyword">No</span> such <span class="keyword">file</span> <span class="keyword">or</span> directory</span><br></pre></td></tr></table></figure>
+<p>输入以下命令即可解决</p>
+<figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">mv node-v8.<span class="number">11.3</span>-linux-armv6l<span class="regexp">/ /u</span>sr<span class="regexp">/local/</span>node</span><br><span class="line">sudo ln -s <span class="regexp">/usr/</span>local<span class="regexp">/node/</span>bin<span class="regexp">/node /u</span>sr<span class="regexp">/bin/</span>node</span><br><span class="line">sudo ln -s <span class="regexp">/usr/</span>local<span class="regexp">/node/</span>bin<span class="regexp">/npm /u</span>sr<span class="regexp">/bin/</span>npm</span><br></pre></td></tr></table></figure>
+<p>现在是不是能正常运行node以及npm命令了呢？单独执行npm命令，可能会受到警告</p>
+<blockquote>
+<p>npm update check failed</p>
+</blockquote>
+<p>这也没什么大不了的，只是说npm无法更新，并不影响正常使用。</p>
+<h3 id="下载freenom-dns程序">下载freenom-dns程序</h3><p>下面安装freenom-dns程序</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm <span class="operator"><span class="keyword">install</span> -<span class="keyword">g</span> freenom-dns</span></span><br></pre></td></tr></table></figure>
+<p>安装完毕后，既可以通过命令来操作freenom上的网站。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 登录</span></span><br><span class="line">freenom-dns login</span><br><span class="line">email: your@email.com</span><br><span class="line">password: ********</span><br><span class="line"></span><br><span class="line"><span class="comment">//查看域名</span></span><br><span class="line">freenom-dns <span class="built_in">list</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//查看二级域名</span></span><br><span class="line">freenom=dns <span class="built_in">list</span> subdomain</span><br><span class="line"></span><br><span class="line"><span class="comment">//新增或更新DNS记录</span></span><br><span class="line">freenom-dns <span class="built_in">set</span> www.domain1.tk <span class="number">2.3</span><span class="number">.4</span><span class="number">.5</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//清除某条DNS记录</span></span><br><span class="line">freenom-dns clear www.domain1.tk</span><br></pre></td></tr></table></figure>
+<h3 id="调用freenom-dns的API">调用freenom-dns的API</h3><p>调用API之前，先执行命令</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm <span class="operator"><span class="keyword">install</span> <span class="comment">--save freenom-dns</span></span></span><br></pre></td></tr></table></figure>
+<p>这行命令会下载freenom-dns依赖的包。通过freenom-dns这个项目提供的API，可以写一个js脚本，方便树莓派调用，创建一个freenom.com.ddns.js文件，内容如下</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> user = <span class="string">"[your email]"</span>;</span><br><span class="line"><span class="keyword">var</span> pass = <span class="string">"[your password]"</span>;</span><br><span class="line"><span class="keyword">var</span> freenom = <span class="built_in">require</span>(<span class="string">"freenom-dns"</span>).init(user, pass);</span><br><span class="line"><span class="keyword">var</span> http = <span class="built_in">require</span>(<span class="string">'http'</span>);</span><br><span class="line"></span><br><span class="line">http.get(&#123;<span class="string">'host'</span>: <span class="string">'api.ipify.org'</span>, <span class="string">'port'</span>: <span class="number">80</span>, <span class="string">'path'</span>: <span class="string">'/'</span>&#125;, <span class="function"><span class="keyword">function</span>(<span class="params">resp</span>) </span>&#123;</span><br><span class="line">  resp.on(<span class="string">'data'</span>, <span class="function"><span class="keyword">function</span>(<span class="params">ip</span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="keyword">new</span> <span class="built_in">Date</span>().toUTCString());</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="string">"My public IP address is: "</span> + ip);</span><br><span class="line">    freenom.dns.listRecords(<span class="string">"[your domain]"</span>)</span><br><span class="line">    .then(<span class="function"><span class="keyword">function</span>(<span class="params">ret</span>)</span>&#123;</span><br><span class="line">        <span class="built_in">console</span>.log(ret);</span><br><span class="line">        ret.forEach(<span class="function"><span class="keyword">function</span>(<span class="params">record</span>)</span>&#123;</span><br><span class="line">          <span class="keyword">if</span>(record.name.toLowerCase() === <span class="string">'www'</span>) &#123;</span><br><span class="line">            <span class="keyword">if</span>(record.value == ip) &#123;</span><br><span class="line">              <span class="built_in">console</span>.log(<span class="string">"nothing to do."</span>);</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">              <span class="built_in">console</span>.log(<span class="string">"update DNS record."</span>);</span><br><span class="line">              freenom.dns.setRecord(<span class="string">"[your.subdomain.xyz]"</span>, <span class="string">"A"</span>, ip)</span><br><span class="line">              .then((ret) =&gt; <span class="built_in">console</span>.log(ret))</span><br><span class="line">              .catch((err) =&gt; &#123;</span><br><span class="line">                  <span class="built_in">console</span>.log(err);</span><br><span class="line">              &#125;);</span><br><span class="line">            &#125;</span><br><span class="line">          &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;)</span><br><span class="line">    .catch((err) =&gt; &#123;</span><br><span class="line">        <span class="built_in">console</span>.log(err);</span><br><span class="line">    &#125;);</span><br><span class="line">  &#125;);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+<p>然后创建一个freenom.com.ddns.sh的脚本文件</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="shebang">#!/bin/sh</span></span><br><span class="line">node /home/pi/freenom.com.ddns.js &gt;&gt;/home/pi/log.txt <span class="number">2</span>&gt;&amp;<span class="number">1</span></span><br></pre></td></tr></table></figure>
+<p>日志存储在log.txt文件中。最后使用crontab计划任务，每小时执行一次freenom.com.ddns.sh</p>
+<figure class="highlight gherkin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">crontab -e</span><br><span class="line"></span><br><span class="line">// 新增一条每个整点检查ddns的脚本</span><br><span class="line">0 <span class="keyword">*</span> <span class="keyword">*</span> <span class="keyword">*</span> <span class="keyword">*</span> /bin/sh /home/pi/freenom.com.ddns.sh</span><br></pre></td></tr></table></figure>
+<h3 id="总结">总结</h3><p>freenom不提供DNS更新API，确实不方便。我的树莓派上会定时检查外网IP变化了没有，一旦发生变化，在下一个整点到来之时，更新DNS记录。这样的话，我就可以保持对家里网络的远程连接了。</p>
+
+  </section>
+</article>
+
+  <div class="sharing grid">
+  <section class="profile grid-item grid">
+    <img class="avatar" src="/images/chili.png" alt="avatar" />
+    <div class="grid-item">
+      <p class="title"> chilihotpot </p>
+      <p class="subtitle"> You Are The JavaScript In My HTML </p>
+    <div>
+  </section>
+
+  <section class="share-btns">
+    <!-- <p> share it if you like it~ </p> -->
+    <a
+  class="twitter-share-button"
+  data-size="large"
+  data-via="DrakeLeung"
+  href="https://twitter.com/intent/tweet?text=freenom.com是一个免费的顶级域"
+>
+  Tweet
+</a>
+
+<script>
+  window.twttr = (function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0],
+    t = window.twttr || {};
+  if (d.getElementById(id)) return t;
+  js = d.createElement(s);
+  js.id = id;
+  js.src = "https://platform.twitter.com/widgets.js";
+  js.async = true;
+  fjs.parentNode.insertBefore(js, fjs);
+
+  t._e = [];
+  t.ready = function(f) {
+    t._e.push(f);
+  };
+
+  return t;
+}(document, "script", "twitter-wjs"));
+</script>
+
+  </section>
+</div>
+
+
+  
+</main>
+
+</body>
+</html>

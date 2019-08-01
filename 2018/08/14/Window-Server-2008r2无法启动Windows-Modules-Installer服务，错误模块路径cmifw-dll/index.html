@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Window Server 2008r2无法启动Windows Modules Installer服务，错误模块路径cmifw.dll | chilihotpot</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <link rel="shortcut icon" href="/chili.ico">
+  <link rel="stylesheet" href="/css/app.css" type="text/css">
+  <!-- <link rel='stylesheet' href='http://fonts.useso.com/css?family=Source+Code+Pro'> -->
+</head>
+
+<body>
+  <nav class="app-nav">
+  
+    
+      <a href="/.">home</a>
+    
+  
+    
+      <a href="/archives">archive</a>
+    
+  
+    
+      <a href="/tags">tag</a>
+    
+  
+    
+      <a href="/categories">category</a>
+    
+  
+</nav>
+
+  <main class="post">
+  <article>
+  <h1 class="article-title">
+    <a href="/2018/08/14/Window-Server-2008r2无法启动Windows-Modules-Installer服务，错误模块路径cmifw-dll/">Window Server 2008r2无法启动Windows Modules Installer服务，错误模块路径cmifw.dll</a>
+  </h1>
+
+  <section class="article-meta">
+    <p class="article-date">August 14 2018</p>
+  </section>
+
+  <section class="article-entry">
+    <p>Windows Server 2008r2系统的服务器上需要升级SQL Server数据库从2008到 2014。但是在最后升级快完成的时候失败了，查看Windows日志后发现，报错内容</p>
+<blockquote>
+<p>错误应用程序名称: TrustedInstaller.exe，版本: 6.1.7601.17514，时间戳: 0x4ce7989b<br>错误模块名称: cmifw.dll，版本: 6.1.7600.16385，时间戳: 0x4a5bdec6<br>异常代码: 0xc0000005<br>错误偏移量: 0x000000000000a8b5<br>错误进程 ID: 0x18c<br>错误应用程序启动时间: 0x01d433ab6e783bec<br>错误应用程序路径: C:\Windows\servicing\TrustedInstaller.exe<br>错误模块路径: C:\Windows\WinSxS\amd64_microsoft-windows-f..allconfig-installer_31bf3856ad364e35_6.1.7600.16385_none_731e1fe6187914ea\cmifw.dll</p>
+</blockquote>
+<p>经过查询资料后发现，TrustedInstaller.exe进程属于Windows Modules Installer服务。打开服务，找到Windows Modules Installer服务，发现状态为未启动。右键启动后，刷新服务，状态又变成未启动。查看Windows日志，报错内容和SQL Server升级失败的内容一样。</p>
+<p>网上找了一大堆资料，但都不是针对我这种情况的，最后突发奇想，拿错误模块路径cmifw.dll搜搜看，竟然还真被我找到了解决方法，具体可以参考这篇，<a href="https://www.techieshelp.com/faulting-application-name-trustedinstaller-exe-version-6-1-server-2008r2/" target="_blank" rel="external">Faulting application name TrustedInstaller.exe version: 6.1 Server 2008r2 and Windows 7</a>。</p>
+<p>解决方法是，打开<code>C:\Windows\WinSxS</code>目录，找到该目录下的<code>pending.xml</code>文件，先将其备份一个到你的备份盘，以备不时之需，然后将这个xml文件删除即可。但需要注意的是，这个文件的所有者属于SYSTEM用户，而SYSTEM用户是系统最高权限，比你的Administrator权限还要高。所以，需要先修改<code>WinSxS</code>这个文件夹的权限，将其从TrustedInstaller用户修改成Administrator用户。修改过程中，系统会询问你，是否将<code>pending.xml</code>文件的所有者从SYSTEM用户改成Administrator，你点是就可以了。最后，给Administrator对于<code>pending.xml</code>文件的所有控制权。接下来就可以删除该文件了。</p>
+<p>整个修改过程中，服务器自动重启了一次，启动后系统变成了Windows Server 2008r2，原来的SP1补丁没有了。去网上下一个，重新打上SP1补丁。然后升级你的数据库吧。</p>
+
+  </section>
+</article>
+
+  <div class="sharing grid">
+  <section class="profile grid-item grid">
+    <img class="avatar" src="/images/chili.png" alt="avatar" />
+    <div class="grid-item">
+      <p class="title"> chilihotpot </p>
+      <p class="subtitle"> You Are The JavaScript In My HTML </p>
+    <div>
+  </section>
+
+  <section class="share-btns">
+    <!-- <p> share it if you like it~ </p> -->
+    <a
+  class="twitter-share-button"
+  data-size="large"
+  data-via="DrakeLeung"
+  href="https://twitter.com/intent/tweet?text=Windows Server 2008r"
+>
+  Tweet
+</a>
+
+<script>
+  window.twttr = (function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0],
+    t = window.twttr || {};
+  if (d.getElementById(id)) return t;
+  js = d.createElement(s);
+  js.id = id;
+  js.src = "https://platform.twitter.com/widgets.js";
+  js.async = true;
+  fjs.parentNode.insertBefore(js, fjs);
+
+  t._e = [];
+  t.ready = function(f) {
+    t._e.push(f);
+  };
+
+  return t;
+}(document, "script", "twitter-wjs"));
+</script>
+
+  </section>
+</div>
+
+
+  
+</main>
+
+</body>
+</html>

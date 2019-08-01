@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Log4net to SQL Server 经常莫名地日志停止记录 | chilihotpot</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <link rel="shortcut icon" href="/chili.ico">
+  <link rel="stylesheet" href="/css/app.css" type="text/css">
+  <!-- <link rel='stylesheet' href='http://fonts.useso.com/css?family=Source+Code+Pro'> -->
+</head>
+
+<body>
+  <nav class="app-nav">
+  
+    
+      <a href="/.">home</a>
+    
+  
+    
+      <a href="/archives">archive</a>
+    
+  
+    
+      <a href="/tags">tag</a>
+    
+  
+    
+      <a href="/categories">category</a>
+    
+  
+</nav>
+
+  <main class="post">
+  <article>
+  <h1 class="article-title">
+    <a href="/2017/05/02/Log4net-to-SQL-Server-经常莫名地日志停止记录/">Log4net to SQL Server 经常莫名地日志停止记录</a>
+  </h1>
+
+  <section class="article-meta">
+    <p class="article-date">May 02 2017</p>
+  </section>
+
+  <section class="article-entry">
+    <p>最近在做一个Web Service的项目中发现，使用log4net往SQL Server数据库表里插入日志，隔一段时间后，不能再插入日志的情况。</p>
+<p>Google了一下发现，原来log4net的ADONetAppender模块，默认情况下，当数据库连接断开后，就无法再往数据库表里写入日志，哪怕数据库连接恢复。那么有什么办法，使得数据库连接恢复之后，依然还能继续写入日志呢？</p>
+<p>(1) 在appender节点下，添加以下这段xml<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="title">reconnectonerror</span> <span class="attribute">value</span>=<span class="value">"True"</span> /&gt;</span></span><br></pre></td></tr></table></figure></p>
+<p>(2) 在connectionString里，加入连接超时，超时时间设置为1<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Connect Timeout=<span class="number">1</span></span><br></pre></td></tr></table></figure></p>
+<p>在添加以上两点之后，我的log4net日志功能又恢复了往常 ^_^</p>
+
+  </section>
+</article>
+
+  <div class="sharing grid">
+  <section class="profile grid-item grid">
+    <img class="avatar" src="/images/chili.png" alt="avatar" />
+    <div class="grid-item">
+      <p class="title"> chilihotpot </p>
+      <p class="subtitle"> You Are The JavaScript In My HTML </p>
+    <div>
+  </section>
+
+  <section class="share-btns">
+    <!-- <p> share it if you like it~ </p> -->
+    <a
+  class="twitter-share-button"
+  data-size="large"
+  data-via="DrakeLeung"
+  href="https://twitter.com/intent/tweet?text=最近在做一个Web Service的项目"
+>
+  Tweet
+</a>
+
+<script>
+  window.twttr = (function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0],
+    t = window.twttr || {};
+  if (d.getElementById(id)) return t;
+  js = d.createElement(s);
+  js.id = id;
+  js.src = "https://platform.twitter.com/widgets.js";
+  js.async = true;
+  fjs.parentNode.insertBefore(js, fjs);
+
+  t._e = [];
+  t.ready = function(f) {
+    t._e.push(f);
+  };
+
+  return t;
+}(document, "script", "twitter-wjs"));
+</script>
+
+  </section>
+</div>
+
+
+  
+</main>
+
+</body>
+</html>

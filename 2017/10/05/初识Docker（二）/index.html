@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>初识Docker（二） | chilihotpot</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <link rel="shortcut icon" href="/chili.ico">
+  <link rel="stylesheet" href="/css/app.css" type="text/css">
+  <!-- <link rel='stylesheet' href='http://fonts.useso.com/css?family=Source+Code+Pro'> -->
+</head>
+
+<body>
+  <nav class="app-nav">
+  
+    
+      <a href="/.">home</a>
+    
+  
+    
+      <a href="/archives">archive</a>
+    
+  
+    
+      <a href="/tags">tag</a>
+    
+  
+    
+      <a href="/categories">category</a>
+    
+  
+</nav>
+
+  <main class="post">
+  <article>
+  <h1 class="article-title">
+    <a href="/2017/10/05/初识Docker（二）/">初识Docker（二）</a>
+  </h1>
+
+  <section class="article-meta">
+    <p class="article-date">October 05 2017</p>
+  </section>
+
+  <section class="article-entry">
+    <p>在<a href="http://www.chilihotpot.xyz/2017/07/14/%E5%88%9D%E8%AF%86Docker/" target="_blank" rel="external">初识Docker（一）</a>里，主要介绍了Docker的基本概念。这一节记录Docker的安装和一些基本命令。</p>
+<p>我的操作系统是MacOS X Yosemite，版本是10.10.4，最新的Docker Community Edition for Mac(Docker CE)只支持10.11以上的版本。据说Docker CE之前的版本可以支持10.10.3以上，但是因为在10.11以下CPU占用率过高，后来索性就放弃了。官方的方案是10.11以下版本，可以安装Docker Toolbox for Mac来代替。Docker Toolbox和Docker CE的区别在于，Docker Toolbox需要运行一个Linux虚拟机，而Docker CE则直接运行在MacOS最新的Hypervisor框架下（Win10貌似也支持该框架，需要开启）。</p>
+<h3 id="Docker_Toolbox的组成">Docker Toolbox的组成</h3><p>Docker Toolbox由以下部分组成：</p>
+<ul>
+<li>Docker 客户端命令</li>
+<li>Docker Machine 命令</li>
+<li>Docker Compose 命令</li>
+<li>Kitematic 图形操作界面</li>
+<li>Docker 终端</li>
+<li>Oracle Virtual Box 虚拟机</li>
+</ul>
+<h3 id="Docker_Machine_命令">Docker Machine 命令</h3><p>Docker Machine用来管理Linux虚拟机。主要命令有：<br><figure class="highlight livecodeserver"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">docker-machine <span class="built_in">start</span><span class="comment">	//启动一个Linux虚拟机</span></span><br><span class="line">docker-machine <span class="built_in">stop</span>	<span class="comment">	//停止一个Linux虚拟机</span></span><br><span class="line">docker-machine status<span class="comment">	//Linux虚拟机的状态</span></span><br><span class="line">docker-machine ls	<span class="comment">	//罗列Linux虚拟机的个数和信息</span></span><br><span class="line">docker-machine env	<span class="comment">	//获取Docker Machine环境变量</span></span><br></pre></td></tr></table></figure></p>
+<p>我在终端执行docker命令的时候，会遇到提示：</p>
+<blockquote>
+<p>Cannot connect to the Docker daemon. Is the docker daemon running on this host?</p>
+</blockquote>
+<p>网上有一堆解决方案，但只有一个是切中要点的。因为我操作的是MacOS X系统下的Docker，所以只需要在终端里执行：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">eval</span> <span class="string">"<span class="variable">$(docker-machine env default)</span>"</span></span><br></pre></td></tr></table></figure></p>
+<p>，接下来就可以执行docker命令了。</p>
+<h3 id="Docker_命令">Docker 命令</h3><p>在执行docker命令之前，必须先启动docker-machine，然后才能执行docker的命令。docker主要命令有：<br><figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">docker images			<span class="comment">//查看有哪些本地的镜像文件</span></span><br><span class="line">docker ps				<span class="comment">//查看运行了哪些容器，容器是镜像运行时的实例</span></span><br><span class="line">docker run -t -<span class="tag">i</span> 镜像名	<span class="comment">//运行镜像文件</span></span><br></pre></td></tr></table></figure></p>
+
+  </section>
+</article>
+
+  <div class="sharing grid">
+  <section class="profile grid-item grid">
+    <img class="avatar" src="/images/chili.png" alt="avatar" />
+    <div class="grid-item">
+      <p class="title"> chilihotpot </p>
+      <p class="subtitle"> You Are The JavaScript In My HTML </p>
+    <div>
+  </section>
+
+  <section class="share-btns">
+    <!-- <p> share it if you like it~ </p> -->
+    <a
+  class="twitter-share-button"
+  data-size="large"
+  data-via="DrakeLeung"
+  href="https://twitter.com/intent/tweet?text=在<a href="http://www"
+>
+  Tweet
+</a>
+
+<script>
+  window.twttr = (function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0],
+    t = window.twttr || {};
+  if (d.getElementById(id)) return t;
+  js = d.createElement(s);
+  js.id = id;
+  js.src = "https://platform.twitter.com/widgets.js";
+  js.async = true;
+  fjs.parentNode.insertBefore(js, fjs);
+
+  t._e = [];
+  t.ready = function(f) {
+    t._e.push(f);
+  };
+
+  return t;
+}(document, "script", "twitter-wjs"));
+</script>
+
+  </section>
+</div>
+
+
+  
+</main>
+
+</body>
+</html>

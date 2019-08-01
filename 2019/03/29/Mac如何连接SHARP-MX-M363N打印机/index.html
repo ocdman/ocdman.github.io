@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Mac如何连接SHARP MX-M363N打印机 | chilihotpot</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <link rel="shortcut icon" href="/chili.ico">
+  <link rel="stylesheet" href="/css/app.css" type="text/css">
+  <!-- <link rel='stylesheet' href='http://fonts.useso.com/css?family=Source+Code+Pro'> -->
+</head>
+
+<body>
+  <nav class="app-nav">
+  
+    
+      <a href="/.">home</a>
+    
+  
+    
+      <a href="/archives">archive</a>
+    
+  
+    
+      <a href="/tags">tag</a>
+    
+  
+    
+      <a href="/categories">category</a>
+    
+  
+</nav>
+
+  <main class="post">
+  <article>
+  <h1 class="article-title">
+    <a href="/2019/03/29/Mac如何连接SHARP-MX-M363N打印机/">Mac如何连接SHARP MX-M363N打印机</a>
+  </h1>
+
+  <section class="article-meta">
+    <p class="article-date">March 29 2019</p>
+  </section>
+
+  <section class="article-entry">
+    <p>虽然平时没有什么打印文件需求（说明我的业务还不够重要），但是如何在Mac上通过打印机打印文件我倒从来没研究过。正好公司引进了一台旧式的SHARP MX-M363N打印机，有同事问起这个问题，就顺便研究一下好了。</p>
+<p>这台老式的打印机运维已经绑定好了IP，假设为192.168.1.254。那么首先第一部要做的事情就是要安装驱动。可以在网上搜到SHARP MX-M363N型号的<a href="https://www.printerdriverforwindows.com/sharp-mx-m363n-driver" target="_blank" rel="external">驱动</a>。根据Mac系统来选择对应的版本，我的系统是10.10，所以我选择下载Driver for Mac OS X 10.10 to 10.14.zip这个压缩包。</p>
+<p>安装完驱动之后，在系统偏好设置里，打开打印机与扫描仪。根据IP来添加一个打印机，把打印机的IP地址输入之后即可看到打印机的型号，协议选择行式打印机监控程序－LPD。最最重要的是，<strong>不要让系统自动给你选择对应型号的驱动，而是应该在选择下拉框中，选择普通PCL打印机</strong>。</p>
+<p>一开始以为选择对应的型号驱动就可以了，结果怎么打都打印不出来。无意中在YOUTUBE上，看到老式打印机应该选择普通PCL打印机的驱动，这才能正常打印文件。虽然打印完后，状态会显示为缺纸，但是可以忽略不管它。</p>
+
+  </section>
+</article>
+
+  <div class="sharing grid">
+  <section class="profile grid-item grid">
+    <img class="avatar" src="/images/chili.png" alt="avatar" />
+    <div class="grid-item">
+      <p class="title"> chilihotpot </p>
+      <p class="subtitle"> You Are The JavaScript In My HTML </p>
+    <div>
+  </section>
+
+  <section class="share-btns">
+    <!-- <p> share it if you like it~ </p> -->
+    <a
+  class="twitter-share-button"
+  data-size="large"
+  data-via="DrakeLeung"
+  href="https://twitter.com/intent/tweet?text=虽然平时没有什么打印文件需求（说明我的业"
+>
+  Tweet
+</a>
+
+<script>
+  window.twttr = (function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0],
+    t = window.twttr || {};
+  if (d.getElementById(id)) return t;
+  js = d.createElement(s);
+  js.id = id;
+  js.src = "https://platform.twitter.com/widgets.js";
+  js.async = true;
+  fjs.parentNode.insertBefore(js, fjs);
+
+  t._e = [];
+  t.ready = function(f) {
+    t._e.push(f);
+  };
+
+  return t;
+}(document, "script", "twitter-wjs"));
+</script>
+
+  </section>
+</div>
+
+
+  
+</main>
+
+</body>
+</html>

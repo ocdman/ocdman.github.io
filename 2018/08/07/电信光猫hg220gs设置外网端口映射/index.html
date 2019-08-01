@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>电信光猫hg220gs设置外网端口映射 | chilihotpot</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <link rel="shortcut icon" href="/chili.ico">
+  <link rel="stylesheet" href="/css/app.css" type="text/css">
+  <!-- <link rel='stylesheet' href='http://fonts.useso.com/css?family=Source+Code+Pro'> -->
+</head>
+
+<body>
+  <nav class="app-nav">
+  
+    
+      <a href="/.">home</a>
+    
+  
+    
+      <a href="/archives">archive</a>
+    
+  
+    
+      <a href="/tags">tag</a>
+    
+  
+    
+      <a href="/categories">category</a>
+    
+  
+</nav>
+
+  <main class="post">
+  <article>
+  <h1 class="article-title">
+    <a href="/2018/08/07/电信光猫hg220gs设置外网端口映射/">电信光猫hg220gs设置外网端口映射</a>
+  </h1>
+
+  <section class="article-meta">
+    <p class="article-date">August 07 2018</p>
+  </section>
+
+  <section class="article-entry">
+    <p>电信送的光猫hg220gs，普通账户下是没有桥接以及DDNS等服务的。要做外网端口映射的我，需要NAT端口映射。最好能够破解光猫，获取所有权限。光猫上虽然有个虚拟主机配置，可以映射端口，但是我映射了80端口之后发现只能内网访问，依然无法通过外网来访问，而且也没有办法ping通电信的外网。</p>
+<p>我一度以为是电信对我的外网做了一层NAT，导致我无法ping通外网，电信不是没有这么做过。但是经过查询后发现，只有100开头的网段才是，我的不在这个范围，应该是排除了这种可能。</p>
+<p>于是我又了解一下怎么才能ping通电信外网，网上说要ping通电信的外网端口，需要将光猫设为桥接模式，关闭DHCP，由二级路由，也就是自己的路由器负责PPPoE拨号，并开启DHCP。</p>
+<p>我以家里要装摄像头监控为由，向电信客服投诉了一下，公网无法ping通的问题。随后电信维修人员给我打了电话，向我确认情况。他说要公网能访问的话，需要光猫设为桥接模式，而桥接需要超级用户账号，拿到这个账号的前提要向电信维修部去签署风险承担。而且光猫一旦桥接后，IPTV就无法收看。</p>
+<p>虽然电信维修人员说得很斩钉截铁，但是我个人认为光猫桥接后，并不是一定就无法收看IPTV，一定有别的解决办法。</p>
+<p>我又尝试了网上破解hg220gs的教程，但是发现以前成功的案例，现在都已经失效了。包括telnet、隐藏用户、fiberhomehg2x0账户等等，就差用TTL线连接来破解了。</p>
+<p>由于无法破解光猫，又不想因为桥接光猫导致不能收看IPTV，感觉有点走投无路。经过同事的提醒，电信外网无法访问可能是电信封锁了80以及8080等基础端口。于是我又设置了一下虚拟主机配置，这次映射了12345端口，没想到竟然可以。</p>
+<h3 id="总结">总结</h3><ol>
+<li>电信的光猫hg220gs肯定是可以破解的，目前只剩TTL线破解了，但是使用TTL线破解的教程并不多也不全，参考起来很费劲。</li>
+<li>听说，hg220gs只要断电重启，后台的超级用户密码就会自动更改。所以去电信索要该账号变得没有那么必要了，当然我还是想要去确认一下的。</li>
+<li>不是说嫌光猫桥接麻烦，而是没有找到很好的方法，使得桥接后的光猫能够收看IPTV。我需要时间去研究。</li>
+<li>光猫自带的虚拟主机配置功能目前可以满足我的外网端口映射的需求。只是需要注意不要映射80以及8080等常用端口。</li>
+<li>未来如果桥接了光猫，并且能收看IPTV的话，我的二级路由就会变为主路由，这样的话，如果想要外网访问的话，就需要保持两台路由器同时供电，电费会上去。这可能是唯一不完美的地方。</li>
+</ol>
+
+  </section>
+</article>
+
+  <div class="sharing grid">
+  <section class="profile grid-item grid">
+    <img class="avatar" src="/images/chili.png" alt="avatar" />
+    <div class="grid-item">
+      <p class="title"> chilihotpot </p>
+      <p class="subtitle"> You Are The JavaScript In My HTML </p>
+    <div>
+  </section>
+
+  <section class="share-btns">
+    <!-- <p> share it if you like it~ </p> -->
+    <a
+  class="twitter-share-button"
+  data-size="large"
+  data-via="DrakeLeung"
+  href="https://twitter.com/intent/tweet?text=电信送的光猫hg220gs，普通账户下是"
+>
+  Tweet
+</a>
+
+<script>
+  window.twttr = (function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0],
+    t = window.twttr || {};
+  if (d.getElementById(id)) return t;
+  js = d.createElement(s);
+  js.id = id;
+  js.src = "https://platform.twitter.com/widgets.js";
+  js.async = true;
+  fjs.parentNode.insertBefore(js, fjs);
+
+  t._e = [];
+  t.ready = function(f) {
+    t._e.push(f);
+  };
+
+  return t;
+}(document, "script", "twitter-wjs"));
+</script>
+
+  </section>
+</div>
+
+
+  
+</main>
+
+</body>
+</html>

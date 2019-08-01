@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>且论函数中的this对象 | chilihotpot</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <link rel="shortcut icon" href="/chili.ico">
+  <link rel="stylesheet" href="/css/app.css" type="text/css">
+  <!-- <link rel='stylesheet' href='http://fonts.useso.com/css?family=Source+Code+Pro'> -->
+</head>
+
+<body>
+  <nav class="app-nav">
+  
+    
+      <a href="/.">home</a>
+    
+  
+    
+      <a href="/archives">archive</a>
+    
+  
+    
+      <a href="/tags">tag</a>
+    
+  
+    
+      <a href="/categories">category</a>
+    
+  
+</nav>
+
+  <main class="post">
+  <article>
+  <h1 class="article-title">
+    <a href="/2016/10/03/且论函数中的this对象/">且论函数中的this对象</a>
+  </h1>
+
+  <section class="article-meta">
+    <p class="article-date">October 03 2016</p>
+  </section>
+
+  <section class="article-entry">
+    <p>我们知道函数是对象，而对象又是Object类型的实例，所以函数是Object类型的实例。同样，函数也是Function类型的实例。而Function又是Object类型的实例，因为一切引用类型都继承自Object，所以Function instanceof Object的值为true。但是很奇怪的一点是Object instanceof Function，Function instanceof Function, Object instanceof Object，这些值都为true。可见，Object类型和Function类型可以等价，但并不代表它们相同。因为Function === Object的值为false。这是题外话。下面进入正题。<br>还是那个例子，var name = ‘the window’; function F(){return this.name;}。函数名F是指向函数F的指针，F拥有Object的属性和方法，而当一个函数被执行时，它一定是属于某个对象的，换句话说，它一定有自己的执行环境对象。如果直接执行F()的话，这个执行环境的对象指向window，而如果在F的函数体内有this对象的话，该this指向window对象。变量name是在全局环境中定义的，所以它是window对象的属性，this.name相当于window.name，结果就是‘the window’。但是，如果是以下这种情况的话，结果又不同了。<br>var object = {<br>    name: ‘object name’,<br>    sayName: function(){<br>        return this.name;<br>    }<br>}<br>对象object是Object类型的实例，当执行object.sayName()时，函数会创建一个执行环境，该环境指向object对象，因为它的执行环境对象就是object。所以，匿名函数sayName中的this指向object对象。但是有一种方法，可以改变object.sayName中this的值。<br>var object2 = {<br>    name: ‘object2 name’<br>}，<br>创建一个object2对象，其中有一个name属性，然后调用object.sayName.apply(object2)，结果就是‘object2 name’。为什么会这样呢？<br>原因很简单，每一个函数都有apply方法，该方法接受的第一个参数，是函数执行的环境对象，如果什么都不传的话，默认就是object对象，但是如果指定了object2对象的话，函数的指向环境对象就变成了object2，this也就自然指向了object2。可见利用apply方法或者call方法，可以实现函数跟对象之间松耦合的关系。<br>最后我们得出的结论就是，this对象永远不会是固定的，它视执行环境的不同而不同。而函数的执行环境它一定是在某个对象中创建的。而this就执向这个执行环境对象。它可以是全局的，也可以是局部的，this只是一个指针，就像object一样，只是个指针名字而已。this只会搜索到执行环境对象为止，不会去查询包含函数的执行环境对象，不同于变量的遍历，这一点需要注意。同样需要注意的就是，匿名函数的this具有全局性，默认指向window。可以参考js高级编程中的那个例子。<br>函数的执行环境，是在函数被调用的情况下而创建的。怎么调用函数？通常方法是，对象名.函数名(参数)。也就是说，函数它只要被执行，就一定需要有一个对象去调用它，至于这个对象是谁，也就决定了函数的执行环境的对象。但函数的执行，并不一定强制要求该函数是某个对象的方法。别忘了我们前面说的，利用函数的apply方法，可以随意指定执行环境对象。但是别忘了，函数要执行，它一定得要有一个宿主，也就是一定要有一个对象。函数需要在该对象下去创建执行环境。这里有一个容易搞混淆的点，就是函数的作用域它是在函数定义的时候创建的。首先从全局环境开始到局部环境。函数中的变量，和函数中的this对象，它们的行为方式，是不一样的。变量会沿着函数的作用域链一级一级地查询，this只是找到执行环境对象就停止了。</p>
+
+  </section>
+</article>
+
+  <div class="sharing grid">
+  <section class="profile grid-item grid">
+    <img class="avatar" src="/images/chili.png" alt="avatar" />
+    <div class="grid-item">
+      <p class="title"> chilihotpot </p>
+      <p class="subtitle"> You Are The JavaScript In My HTML </p>
+    <div>
+  </section>
+
+  <section class="share-btns">
+    <!-- <p> share it if you like it~ </p> -->
+    <a
+  class="twitter-share-button"
+  data-size="large"
+  data-via="DrakeLeung"
+  href="https://twitter.com/intent/tweet?text=我们知道函数是对象，而对象又是Objec"
+>
+  Tweet
+</a>
+
+<script>
+  window.twttr = (function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0],
+    t = window.twttr || {};
+  if (d.getElementById(id)) return t;
+  js = d.createElement(s);
+  js.id = id;
+  js.src = "https://platform.twitter.com/widgets.js";
+  js.async = true;
+  fjs.parentNode.insertBefore(js, fjs);
+
+  t._e = [];
+  t.ready = function(f) {
+    t._e.push(f);
+  };
+
+  return t;
+}(document, "script", "twitter-wjs"));
+</script>
+
+  </section>
+</div>
+
+
+  
+</main>
+
+</body>
+</html>

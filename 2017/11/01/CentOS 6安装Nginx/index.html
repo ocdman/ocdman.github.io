@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>CentOS 6安装Nginx | chilihotpot</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <link rel="shortcut icon" href="/chili.ico">
+  <link rel="stylesheet" href="/css/app.css" type="text/css">
+  <!-- <link rel='stylesheet' href='http://fonts.useso.com/css?family=Source+Code+Pro'> -->
+</head>
+
+<body>
+  <nav class="app-nav">
+  
+    
+      <a href="/.">home</a>
+    
+  
+    
+      <a href="/archives">archive</a>
+    
+  
+    
+      <a href="/tags">tag</a>
+    
+  
+    
+      <a href="/categories">category</a>
+    
+  
+</nav>
+
+  <main class="post">
+  <article>
+  <h1 class="article-title">
+    <a href="/2017/11/01/CentOS 6安装Nginx/">CentOS 6安装Nginx</a>
+  </h1>
+
+  <section class="article-meta">
+    <p class="article-date">November 01 2017</p>
+  </section>
+
+  <section class="article-entry">
+    <p>在CentOS 6上安装Nginx时，遇到了一些困难，在这里记录一下。</p>
+<p>已知我的操作系统是Linux，版本是CentOS 6。已经安装了EPEL源，可是在执行命令<br><figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo yum <span class="keyword">install</span> nginx</span><br></pre></td></tr></table></figure></p>
+<p>后，仍旧提示找不到nginx包。网上的很多解决方案都是说，先去下载安装EPEL源，再执行刚才的命令就行了。问题是我已经下载安装EPEL源了，还是提示报错，最后<a href="https://gist.github.com/ifels/c8cfdfe249e27ffa9ba1" target="_blank" rel="external">centos 6.5 nginx安装与配置</a>这个帖子解决了我的问题。</p>
+<p>总结一下，大概分为几个步骤：</p>
+<p>1. 首先执行命令<br><figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rpm -<span class="tag">q</span> epel-release</span><br></pre></td></tr></table></figure></p>
+<p>确认已经安装了epel-release源。<br><img src="/img/213FDB74A2BD6FC3DD0C8DA67477B18A.png" width="670px"></p>
+<p>2. 在/etc/yum.repos.d/目录下创建一个源配置文件nginx.repo，执行命令<br><figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cd /etc/yum<span class="class">.repos</span><span class="class">.d</span>/</span><br><span class="line">vi nginx.repo</span><br></pre></td></tr></table></figure></p>
+<p>3. 在新建的nginx.repo文件里，填写以下内容</p>
+<blockquote>
+<p>[nginx]<br>name=nginx repo<br>baseurl=<a href="http://nginx.org/packages/centos/$releasever/$basearch/" target="_blank" rel="external">http://nginx.org/packages/centos/$releasever/$basearch/</a><br>gpgcheck=0<br>enabled=1</p>
+</blockquote>
+<p>4. 保存，产生一个/etc/yum.repos.d/nginx.repo文件。</p>
+<p>5. 执行命令即可安装nginx了。<br><figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo yum <span class="keyword">install</span> nginx</span><br></pre></td></tr></table></figure></p>
+<p>6. 最后，执行命令来启动nginx。<br><figure class="highlight dos"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo /etc/init.d/nginx <span class="built_in">start</span></span><br></pre></td></tr></table></figure></p>
+<p><img src="/img/9767D1046D3F5A39D29A7133B85D34CF.png" width="670px"></p>
+
+  </section>
+</article>
+
+  <div class="sharing grid">
+  <section class="profile grid-item grid">
+    <img class="avatar" src="/images/chili.png" alt="avatar" />
+    <div class="grid-item">
+      <p class="title"> chilihotpot </p>
+      <p class="subtitle"> You Are The JavaScript In My HTML </p>
+    <div>
+  </section>
+
+  <section class="share-btns">
+    <!-- <p> share it if you like it~ </p> -->
+    <a
+  class="twitter-share-button"
+  data-size="large"
+  data-via="DrakeLeung"
+  href="https://twitter.com/intent/tweet?text=在CentOS 6上安装Nginx时，遇"
+>
+  Tweet
+</a>
+
+<script>
+  window.twttr = (function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0],
+    t = window.twttr || {};
+  if (d.getElementById(id)) return t;
+  js = d.createElement(s);
+  js.id = id;
+  js.src = "https://platform.twitter.com/widgets.js";
+  js.async = true;
+  fjs.parentNode.insertBefore(js, fjs);
+
+  t._e = [];
+  t.ready = function(f) {
+    t._e.push(f);
+  };
+
+  return t;
+}(document, "script", "twitter-wjs"));
+</script>
+
+  </section>
+</div>
+
+
+  
+</main>
+
+</body>
+</html>

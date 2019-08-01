@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>论textarea引起的一个小失误 | chilihotpot</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <link rel="shortcut icon" href="/chili.ico">
+  <link rel="stylesheet" href="/css/app.css" type="text/css">
+  <!-- <link rel='stylesheet' href='http://fonts.useso.com/css?family=Source+Code+Pro'> -->
+</head>
+
+<body>
+  <nav class="app-nav">
+  
+    
+      <a href="/.">home</a>
+    
+  
+    
+      <a href="/archives">archive</a>
+    
+  
+    
+      <a href="/tags">tag</a>
+    
+  
+    
+      <a href="/categories">category</a>
+    
+  
+</nav>
+
+  <main class="post">
+  <article>
+  <h1 class="article-title">
+    <a href="/2017/09/29/论textarea引起的一个小失误/">论textarea引起的一个小失误</a>
+  </h1>
+
+  <section class="article-meta">
+    <p class="article-date">September 29 2017</p>
+  </section>
+
+  <section class="article-entry">
+    <p>前几天，在开发一个网页的时候，使用到了textarea元素控件。本来很正常的一个页面，突然之间js也不加载了（我的那个页面里有js脚本）。百思不得其解，Web开发这么久，从来没碰到过这么稀奇的事情，光加载html结构，不加载js，活这么久我也是第一次见。</p>
+<p>后来，我在textarea的输入框里看到了一部分的html代码，以及js脚本，我也没在意就是觉得很奇怪，为什么textarea里会有内容，没往深处想。</p>
+<p>再到后面我不得不一句一句扒，终于让我找到无法加载js的原因了。问题就出在我的textarea控件，并不是正常关闭的。我的错误代码：</p>
+<figure class="highlight cs"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;textarea <span class="keyword">class</span>=<span class="string">"..."</span>/&gt;</span><br></pre></td></tr></table></figure>
+<p>发现没有，当textarea控件未正常关闭的时候，它后面的所有html和js或者css都将作为textarea里的内容。所以才会导致js无法运行，以及为什么textarea里有其后的html代码和js脚本了。</p>
+<p>正常的关闭如下：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="title">textarea</span> <span class="attribute">class</span>=<span class="value">"..."</span>&gt;</span><span class="tag">&lt;/<span class="title">textarea</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>记一下，这个曾让我怀疑html的坑。</p>
+
+  </section>
+</article>
+
+  <div class="sharing grid">
+  <section class="profile grid-item grid">
+    <img class="avatar" src="/images/chili.png" alt="avatar" />
+    <div class="grid-item">
+      <p class="title"> chilihotpot </p>
+      <p class="subtitle"> You Are The JavaScript In My HTML </p>
+    <div>
+  </section>
+
+  <section class="share-btns">
+    <!-- <p> share it if you like it~ </p> -->
+    <a
+  class="twitter-share-button"
+  data-size="large"
+  data-via="DrakeLeung"
+  href="https://twitter.com/intent/tweet?text=前几天，在开发一个网页的时候，使用到了t"
+>
+  Tweet
+</a>
+
+<script>
+  window.twttr = (function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0],
+    t = window.twttr || {};
+  if (d.getElementById(id)) return t;
+  js = d.createElement(s);
+  js.id = id;
+  js.src = "https://platform.twitter.com/widgets.js";
+  js.async = true;
+  fjs.parentNode.insertBefore(js, fjs);
+
+  t._e = [];
+  t.ready = function(f) {
+    t._e.push(f);
+  };
+
+  return t;
+}(document, "script", "twitter-wjs"));
+</script>
+
+  </section>
+</div>
+
+
+  
+</main>
+
+</body>
+</html>

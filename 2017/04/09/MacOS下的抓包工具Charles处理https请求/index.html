@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>MacOS下的抓包工具Charles处理https请求 | chilihotpot</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <link rel="shortcut icon" href="/chili.ico">
+  <link rel="stylesheet" href="/css/app.css" type="text/css">
+  <!-- <link rel='stylesheet' href='http://fonts.useso.com/css?family=Source+Code+Pro'> -->
+</head>
+
+<body>
+  <nav class="app-nav">
+  
+    
+      <a href="/.">home</a>
+    
+  
+    
+      <a href="/archives">archive</a>
+    
+  
+    
+      <a href="/tags">tag</a>
+    
+  
+    
+      <a href="/categories">category</a>
+    
+  
+</nav>
+
+  <main class="post">
+  <article>
+  <h1 class="article-title">
+    <a href="/2017/04/09/MacOS下的抓包工具Charles处理https请求/">MacOS下的抓包工具Charles处理https请求</a>
+  </h1>
+
+  <section class="article-meta">
+    <p class="article-date">April 09 2017</p>
+  </section>
+
+  <section class="article-entry">
+    <p>谈到抓包工具，大名鼎鼎的有Fiddler，不过这款软件在MacOS下的兼容性不是很好，还要安装一个很大的Mono Framework。所以不考虑。最后搜索了一圈，找到了<em>Charles（青花瓷）</em>这款软件。<br>现实的场景是我要对Android手机里的软件进行抓包。拿到http请求以及响应。一开始我没弄明白为什么抓到的请求返回的都是乱码，一通搜索之后才弄明白原来我抓到的请求有部分是https请求，并不全是http。<strong><em>Charles在处理https请求的时候，需要一些设置</em></strong>。</p>
+<h2 id="什么是https请求？">什么是https请求？</h2><p>简单来讲，https请求就是更安全的http请求。搜了一下<a href="http://www.guokr.com/post/114121/" target="_blank" rel="external">https的描述</a>说：</p>
+<blockquote>
+<p>http是我们平时浏览网页时候使用的一种协议。http协议传输数据时都是未加密的，也就是所谓的明文，因此使用http协议传输数据时对隐私信息相当不安全。所以这也是为什么会出现https协议的原因，因为它足够安全。https协议是基于ssl(secure sockets layer)协议，对http协议传输的数据进行了加密。后来IETF组织对ssl协议进行了升级，于是出现了tls(transport layer security)协议。实际上我们现在的https协议都是基于tls协议之上，但由于ssl出现地较早，并且依旧被现在地浏览器所支持，因此ssl协议依然是https的代名词。</p>
+</blockquote>
+<h2 id="https的工作原理">https的工作原理</h2><blockquote>
+<p>https在传输数据之前需要客户端(浏览器)和服务器端(网站)之间进行一次握手。在握手的过程中确立双方加密传输数据的密码信息。tls/ssl协议使用了非对称加密，对称加密以及哈希算法。握手的过程如下：<br>1.浏览器将自己支持的一套加密规则发送给网站。<br>2.网站从中选出一组加密算法和哈希算法，并将自己的信息以证书的形式发回给浏览器。证书里包含了网站地址，加密公钥以及证书的颁发机构等信息。<br>3.获得网站证书的浏览器要做以下事情：</p>
+<ul>
+<li>验证证书的合法性(颁发证书的机构是否合法，证书中包含的网站地址是否与正在访问的地址一致等)</li>
+<li>如果证书受信任，或者用户接受了不受信任的证书，浏览器会生成一串随机数的密码，并用证书中提供的公钥加密。</li>
+<li>使用约定好的哈希计算握手消息，并使用生成的随机数对消息进行加密，最后将之前生成的所有信息发送给网站。</li>
+</ul>
+<p>4.网站接收浏览器发送来的数据之后要做以下的事情：</p>
+<ul>
+<li>使用自己的私钥将信息解密取出密码，使用密码解密浏览器发送来的握手消息，并验证哈希是否和浏览器发来的一致。</li>
+<li>使用密码加密一段握手消息，发送给浏览器</li>
+</ul>
+<p>5.浏览器解密并计算握手消息的哈希，如果与服务器端发送来的哈希一致，此时握手过程结束，之后所有的通信数据将由之前的浏览器生成的随机密码并利用对称加密算法进行加密。<br>这里浏览器和网站互相发送加密的握手消息并验证，目的是为了保证双方都获得了一致的密码，并且可以正常地加密解密数据，为后续真正的数据传输做一次测试。另外，https一般使用的加密和哈希算法如下：<br>非对称加密算法：rsa, dsa/dss<br>对称加密算法：aes, rc4, 3des<br>哈希算法：md5, sha1, sha256<br>其中，非对称加密算法用于在握手过程中加密生成的密码，对称加密算法用于对真正传输的数据进行加密，而哈希算法用于验证数据的完整性。由于<strong>浏览器生成的密码是整个数据加密的关键</strong>，因此在传输的时候使用了非对称加密算法对其加密。非对称加密算法会生成公钥和私钥，公钥只能用来加密数据，因此可以随意传输，而网站的私钥用于对数据进行解密，所以网站都会非常小心地保管自己的私钥，防止泄漏。</p>
+</blockquote>
+<p>tls握手过程中如果有任何错误，都会使加密连接断开，从而阻止隐私信息的传输。正是由于https非常的安全，攻击者无法从中找到下手的地方，于是更多的是采用假证书的手法来欺骗客户端，从而获取明文的信息。而Charles恰恰就是使用了这种方法来实现抓包。</p>
+<h2 id="Charles的工作原理">Charles的工作原理</h2><blockquote>
+<p><a href="https://www.zhihu.com/question/26600336" target="_blank" rel="external">原文链接</a>, Charles实现https抓包，使用的原理就是中间人技术(man-in-the-middle)，也叫中间人攻击。中间人攻击先是伪装成服务器向浏览器发送自己的证书从而获取浏览器生成的随机数密码，然后再伪装成客户端获取服务器端的证书，使用服务器证书的公钥加密获取到的客户端的随机数密码，发送给服务器，从而实现消息窃取。<strong>整个过程最核心的关键就在于获取客户端随机生成的密码，而中间人技术恰恰就是利用了自己伪造的证书，获取到了该密码</strong>。<br>然而，https协议之所以安全，是因为伪造的证书浏览器会给出警告，只要不去浏览就不会泄露信息。但是我们<strong>利用Charles进行抓包的前提必须添加Charles根证书为信任证书</strong>，这样浏览器就不会给出警告。</p>
+</blockquote>
+<hr>
+<p>MacOS下如何进行抓包我只提一点，其余可以参照<a href="http://yuanfentiank789.github.io/2016/10/24/charles/" target="_blank" rel="external">该篇文章</a>。</p>
+<h2 id="开启ssl代理功能">开启ssl代理功能</h2><p>在Menu选择Proxy-&gt;SSL Proxying Setting，选中Enable SSL Proxying，在Locations里面添加要使用SSL代理的网站，端口号输入443，如果需要匹配所有的HTTPS网站则输入 * 号即可。现在即可拦截Https的数据包。<br>如果未进行该设置，https的请求都会是unknown结果，查看下来都是乱码。</p>
+<p>以上就是我对Charles的初步研究。</p>
+
+  </section>
+</article>
+
+  <div class="sharing grid">
+  <section class="profile grid-item grid">
+    <img class="avatar" src="/images/chili.png" alt="avatar" />
+    <div class="grid-item">
+      <p class="title"> chilihotpot </p>
+      <p class="subtitle"> You Are The JavaScript In My HTML </p>
+    <div>
+  </section>
+
+  <section class="share-btns">
+    <!-- <p> share it if you like it~ </p> -->
+    <a
+  class="twitter-share-button"
+  data-size="large"
+  data-via="DrakeLeung"
+  href="https://twitter.com/intent/tweet?text=谈到抓包工具，大名鼎鼎的有Fiddler"
+>
+  Tweet
+</a>
+
+<script>
+  window.twttr = (function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0],
+    t = window.twttr || {};
+  if (d.getElementById(id)) return t;
+  js = d.createElement(s);
+  js.id = id;
+  js.src = "https://platform.twitter.com/widgets.js";
+  js.async = true;
+  fjs.parentNode.insertBefore(js, fjs);
+
+  t._e = [];
+  t.ready = function(f) {
+    t._e.push(f);
+  };
+
+  return t;
+}(document, "script", "twitter-wjs"));
+</script>
+
+  </section>
+</div>
+
+
+  
+</main>
+
+</body>
+</html>

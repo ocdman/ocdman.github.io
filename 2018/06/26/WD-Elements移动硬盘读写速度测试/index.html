@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>WD Elements移动硬盘读写速度测试 | chilihotpot</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <link rel="shortcut icon" href="/chili.ico">
+  <link rel="stylesheet" href="/css/app.css" type="text/css">
+  <!-- <link rel='stylesheet' href='http://fonts.useso.com/css?family=Source+Code+Pro'> -->
+</head>
+
+<body>
+  <nav class="app-nav">
+  
+    
+      <a href="/.">home</a>
+    
+  
+    
+      <a href="/archives">archive</a>
+    
+  
+    
+      <a href="/tags">tag</a>
+    
+  
+    
+      <a href="/categories">category</a>
+    
+  
+</nav>
+
+  <main class="post">
+  <article>
+  <h1 class="article-title">
+    <a href="/2018/06/26/WD-Elements移动硬盘读写速度测试/">WD Elements移动硬盘读写速度测试</a>
+  </h1>
+
+  <section class="article-meta">
+    <p class="article-date">June 26 2018</p>
+  </section>
+
+  <section class="article-entry">
+    <p>这两天一直在研究磁盘的读写速度，以我的Macbook Pro为例，得益于Apple SSD，磁盘的读写速度达到了</p>
+<blockquote>
+<p>Read Speed is: 1151.3 MB/s<br>Write Speed is: 1223.73 MB/s</p>
+</blockquote>
+<p>于是想到了我手头还有一块WD的移动硬盘，但每次写入文件的时候都感觉不快，顺便也测试一下。</p>
+<p>测试命令还是之前在<a href="http://ocdman.github.io/2018/06/19/Macbook%E6%B5%8B%E8%AF%95%E7%A3%81%E7%9B%98%E8%AF%BB%E5%86%99%E9%80%9F%E5%BA%A6/" target="_blank" rel="external">Macbook测试磁盘读写速度</a>一文里介绍的，只不过需要<code>cd</code>到你的移动硬盘目录下去执行命令。测试之后的结果如下</p>
+<blockquote>
+<p>Read Speed is: 41.589 MB/s<br>Write Speed is: 28.8925 MB/s</p>
+</blockquote>
+<p>和mbp一对比就发现了，读写速度完全不在一个级别上。但是为什么会差这么多呢？好歹我的移动硬盘支持USB 3.0协议啊。我的mbp的USB接口类型是3.0，WD移动硬盘的接口类型也是3.0，而且USB连接线确认过是3.0接口无误，那么理论上移动硬盘的读写速度可以达到500MB/s，为什么差了这么多呢？</p>
+<p>问题就出在我这块移动硬盘是机械硬盘的缘故。机械硬盘的瓶颈在于磁头的读写速度，理论上的极限在60MB/s左右。所以不管我的USB连接线的接口是2.0还是3.0，还是我的mbp的USB接口是2.0还是3.0，读写速度都不会得到太大的提升，可以说几乎没差别。这就是为什么要买SSD固态硬盘的原因，它可以最大限度地释放USB 3.0的传输效率。</p>
+<p>所以，不用奇怪为什么买回来的移动硬盘明明支持USB 3.0的传输速率，可是实际却远远不及，问题就在于你的硬盘是机械硬盘。</p>
+
+  </section>
+</article>
+
+  <div class="sharing grid">
+  <section class="profile grid-item grid">
+    <img class="avatar" src="/images/chili.png" alt="avatar" />
+    <div class="grid-item">
+      <p class="title"> chilihotpot </p>
+      <p class="subtitle"> You Are The JavaScript In My HTML </p>
+    <div>
+  </section>
+
+  <section class="share-btns">
+    <!-- <p> share it if you like it~ </p> -->
+    <a
+  class="twitter-share-button"
+  data-size="large"
+  data-via="DrakeLeung"
+  href="https://twitter.com/intent/tweet?text=这两天一直在研究磁盘的读写速度，以我的M"
+>
+  Tweet
+</a>
+
+<script>
+  window.twttr = (function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0],
+    t = window.twttr || {};
+  if (d.getElementById(id)) return t;
+  js = d.createElement(s);
+  js.id = id;
+  js.src = "https://platform.twitter.com/widgets.js";
+  js.async = true;
+  fjs.parentNode.insertBefore(js, fjs);
+
+  t._e = [];
+  t.ready = function(f) {
+    t._e.push(f);
+  };
+
+  return t;
+}(document, "script", "twitter-wjs"));
+</script>
+
+  </section>
+</div>
+
+
+  
+</main>
+
+</body>
+</html>

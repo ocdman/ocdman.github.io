@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>树莓派Zero W没有屏幕的情况下开机后无法ssh连接上怎么办 | chilihotpot</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <link rel="shortcut icon" href="/chili.ico">
+  <link rel="stylesheet" href="/css/app.css" type="text/css">
+  <!-- <link rel='stylesheet' href='http://fonts.useso.com/css?family=Source+Code+Pro'> -->
+</head>
+
+<body>
+  <nav class="app-nav">
+  
+    
+      <a href="/.">home</a>
+    
+  
+    
+      <a href="/archives">archive</a>
+    
+  
+    
+      <a href="/tags">tag</a>
+    
+  
+    
+      <a href="/categories">category</a>
+    
+  
+</nav>
+
+  <main class="post">
+  <article>
+  <h1 class="article-title">
+    <a href="/2018/08/17/树莓派Zero-W没有屏幕的情况下开机后无法ssh连接上怎么办/">树莓派Zero W没有屏幕的情况下开机后无法ssh连接上怎么办</a>
+  </h1>
+
+  <section class="article-meta">
+    <p class="article-date">August 17 2018</p>
+  </section>
+
+  <section class="article-entry">
+    <p>Zero W配置好了静态IP后，就不需要屏幕了，照理来说应该可以ssh连接上，事实也是如此，但是偶尔也会出现连接不上WIFI的时候，明明WIFI离它很近就是连不上。我已经好几次强行断电导致TF卡的磁盘损坏，每次都丢资料，还要手动修复，烦的很。所以，如果Zero W上电后，死活连不上WIFI，边上又没有屏幕的话，我可以推荐一招。</p>
+<p>正常情况下，如果连接着屏幕，上电后，第一件要做的事就是输入用户名和密码。所以如果身边没有屏幕的情况下，至少可以通过OTG接口接一个键盘到Zero W的USB口上。我们可以假装有屏幕，盲打用户名和密码</p>
+<figure class="highlight livecodeserver"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="constant">pi</span><span class="comment">	//用户名</span></span><br><span class="line">Pwd<span class="comment">	//密码</span></span><br></pre></td></tr></table></figure>
+<p>注意输入用户名后，等一会儿再输密码，这一步之后，我们其实已经进入系统了，只是没有屏幕给我看而已</p>
+<p>然后再等一会儿，输入命令</p>
+<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="title">sudo</span> poweroff</span><br></pre></td></tr></table></figure>
+<p>再等个几十秒，是不是发现树莓派的灯灭了呢，系统关机了。</p>
+<p>其实原理很简单，我们只要有一个键盘输入就够了，不需要屏幕输出一样可以关机。这样的话，至少在树莓派连不上WIFI无法SSH控制它的时候，不需要强行断电了。树莓派关机后找个屏幕调试看看为什么连不上WIFI，这样至少可以确保TF卡的资料不会丢失。只是注意在盲打的过程中，不要打错字了。</p>
+
+  </section>
+</article>
+
+  <div class="sharing grid">
+  <section class="profile grid-item grid">
+    <img class="avatar" src="/images/chili.png" alt="avatar" />
+    <div class="grid-item">
+      <p class="title"> chilihotpot </p>
+      <p class="subtitle"> You Are The JavaScript In My HTML </p>
+    <div>
+  </section>
+
+  <section class="share-btns">
+    <!-- <p> share it if you like it~ </p> -->
+    <a
+  class="twitter-share-button"
+  data-size="large"
+  data-via="DrakeLeung"
+  href="https://twitter.com/intent/tweet?text=Zero W配置好了静态IP后，就不需要"
+>
+  Tweet
+</a>
+
+<script>
+  window.twttr = (function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0],
+    t = window.twttr || {};
+  if (d.getElementById(id)) return t;
+  js = d.createElement(s);
+  js.id = id;
+  js.src = "https://platform.twitter.com/widgets.js";
+  js.async = true;
+  fjs.parentNode.insertBefore(js, fjs);
+
+  t._e = [];
+  t.ready = function(f) {
+    t._e.push(f);
+  };
+
+  return t;
+}(document, "script", "twitter-wjs"));
+</script>
+
+  </section>
+</div>
+
+
+  
+</main>
+
+</body>
+</html>

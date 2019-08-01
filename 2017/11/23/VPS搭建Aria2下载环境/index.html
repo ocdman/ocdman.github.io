@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>VPS搭建Aria2下载环境 | chilihotpot</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <link rel="shortcut icon" href="/chili.ico">
+  <link rel="stylesheet" href="/css/app.css" type="text/css">
+  <!-- <link rel='stylesheet' href='http://fonts.useso.com/css?family=Source+Code+Pro'> -->
+</head>
+
+<body>
+  <nav class="app-nav">
+  
+    
+      <a href="/.">home</a>
+    
+  
+    
+      <a href="/archives">archive</a>
+    
+  
+    
+      <a href="/tags">tag</a>
+    
+  
+    
+      <a href="/categories">category</a>
+    
+  
+</nav>
+
+  <main class="post">
+  <article>
+  <h1 class="article-title">
+    <a href="/2017/11/23/VPS搭建Aria2下载环境/">VPS搭建Aria2下载环境</a>
+  </h1>
+
+  <section class="article-meta">
+    <p class="article-date">November 23 2017</p>
+  </section>
+
+  <section class="article-entry">
+    <p>月底快到了，刚买的VPS流量才用了2G多，还剩497G没用。索性想想办法，除了翻墙之外，让VPS干点别的事情。刚巧最近一直在研究安装Arch Linux，看到了<code>Aria2</code>这款下载工具，于是产生了在VPS上搭建<code>Aria2</code>下载环境的想法。因为我的VPS系统是CentOS 6，相对较老，所以这只是一篇针对CentOS 6上的教程，并不完全适用于CentOS 7，但是可以用来参考。</p>
+<p>要说在Arch上安装<code>Aria2</code>那是分分钟的事情，一条命令搞定</p>
+<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="title">pacman</span> -S Aria2</span><br></pre></td></tr></table></figure>
+<p>问题是现在的环境变成了CentOS 6。我是参考了<a href="http://www.degoto.com/article/1209.html" target="_blank" rel="external">这篇教程</a>来做的。一上来就遇到了无法安装<code>Aria2</code>的问题。要么CentOS 6上的<code>epel-release</code>源，删除了<code>Aria2</code>，无法通过<code>yum</code>命令来安装，要么就是无法访问 <a href="http://pkgs.repoforge.org" target="_blank" rel="external">http://pkgs.repoforge.org</a> 网址，不能安装<code>rpmforge</code>源。再就是安装<code>gcc</code>来编译源代码，问题是，网上下载的repo，安装失败，涉及安装<code>gcc</code>的某个链接失效了。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">wget https:<span class="comment">//copr.fedoraproject.org/coprs/rhscl/devtoolset-3/repo/epel-6/rhscl-devtoolset-3-epel-6.repo   -O /etc/yum.repos.d/rhscl-devtoolset-3-epel-6.repo</span></span><br><span class="line"></span><br><span class="line">yum install devtoolset-<span class="number">3</span>-gcc devtoolset-<span class="number">3</span>-gcc-c++ devtoolset-<span class="number">3</span>-binutils devtoolset-<span class="number">3</span>-gcc-gfortran</span><br></pre></td></tr></table></figure>
+<p>以上<code>yum install</code>命令失败。无奈之下，我自己找到了一个可以下载<code>aria2.rpm</code>的<a href="https://pkgs.org/download/aria2" target="_blank" rel="external">网站</a>。在安装的时候我走了一些弯路。我总结了一下心得。</p>
+<p>首先先别急着下载rpm文件，在CentOS里，执行命令</p>
+<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="title">yum</span> <span class="built_in">info</span> glibc</span><br></pre></td></tr></table></figure>
+<p>查看一下你的VPS安装的<code>glibc</code>是32位的还是64位的。为什么要查看<code>glibc</code>，因为它是<code>aria2</code>最基础的依赖。我一开始以为环境是64位的，所以得下载安装64位的<code>aria2</code>。其实我的VPS预装的<code>glibc</code>是32位的，所以我只需要下载32位的<code>aria2</code>就OK了。</p>
+<p><img src="/img/2017112301.png" width="670px"></p>
+<p><strong>i686代表32位，x86_64代表64位</strong>。打开<a href="https://pkgs.org/download/aria2" target="_blank" rel="external">aria2.rpm下载网址</a>，可以看到CentOS 6可以下载的<code>aria2</code>版本都是相对较低的，最高也只有1.16.4，最新的<code>aria2</code>的功能都用不了，不过也不打紧，能用就行。</p>
+<p>执行命令，下载<code>aria2-1.16.4-1.el6.rf.i686.rpm</code>文件，如果你的<code>glibc</code>是64位，那就安装<code>aria2-1.16.4-1.el6.rf.x86_64.rpm</code>文件。</p>
+<figure class="highlight crystal"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wget <span class="symbol">http:</span>/<span class="regexp">/ftp.tu-chemnitz.de/pub</span><span class="regexp">/linux/dag</span><span class="regexp">/redhat/el</span>6/en/i386/rpmforge/<span class="constant">RPMS</span>/aria2-<span class="number">1.16</span>.<span class="number">4</span>-<span class="number">1</span>.el6.rf.i686.rpm</span><br></pre></td></tr></table></figure>
+<p>下载rpm文件完成后，执行命令来安装rpm源</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">rpm</span> <span class="tag">-Uvh</span> <span class="tag">aria2-1</span><span class="class">.16</span><span class="class">.4-1</span><span class="class">.el6</span><span class="class">.rf</span><span class="class">.i686</span><span class="class">.rpm</span></span><br></pre></td></tr></table></figure>
+<p>发现报错，根据错误提示再去下载关联的rpm源，主要是因为缺少关联项，这里就不写了。自己到Requires里去找链接地址。</p>
+<p><img src="/img/2017112302.png" width="670px"></p>
+<p>最后，如果相关依赖项都安装成功，执行命令</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">rpm</span> <span class="tag">-Uvh</span> <span class="tag">aria2-1</span><span class="class">.16</span><span class="class">.4-1</span><span class="class">.el6</span><span class="class">.rf</span><span class="class">.i686</span><span class="class">.rpm</span></span><br></pre></td></tr></table></figure>
+<p>通过的话，再执行</p>
+<figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum <span class="keyword">install</span> aria2</span><br></pre></td></tr></table></figure>
+<p>，<code>aria2</code>就安装成功了。<strong>注意<code>aria2</code>的命令是<code>aria2c</code>，使用的时候要注意。</strong>接下来需要创建并配置一下<code>aria2.conf</code>文件。</p>
+<figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">mkdir</span> /etc/aria2/</span><br><span class="line"><span class="keyword">vim</span> /etc/aria2/aria2.<span class="keyword">conf</span></span><br></pre></td></tr></table></figure>
+<p>将下面的内容黏贴进去</p>
+<blockquote>
+<p>#用户名<br>#rpc-user=user<br>#密码<br>#rpc-passwd=passwd<br>#上面的认证方式不建议使用,建议使用下面的token方式<br>#设置加密的密钥<br>#rpc-secret=token<br>#允许rpc<br>enable-rpc=true<br>#允许所有来源, web界面跨域权限需要<br>rpc-allow-origin-all=true<br>#允许外部访问，false的话只监听本地端口<br>rpc-listen-all=true<br>#RPC端口, 仅当默认端口被占用时修改<br>rpc-listen-port=6800<br>#最大同时下载数(任务数), 路由建议值: 3<br>max-concurrent-downloads=5<br>#断点续传<br>continue=true<br>#同服务器连接数<br>max-connection-per-server=5<br>#最小文件分片大小, 下载线程数上限取决于能分出多少片, 对于小文件重要<br>min-split-size=10M<br>#单文件最大线程数, 路由建议值: 5<br>split=10<br>#下载速度限制<br>max-overall-download-limit=0<br>#单文件速度限制<br>max-download-limit=0<br>#上传速度限制<br>max-overall-upload-limit=0<br>#单文件速度限制<br>max-upload-limit=0<br>#断开速度过慢的连接<br>#lowest-speed-limit=0<br>#验证用，需要1.16.1之后的release版本<br>#referer=*<br>#文件保存路径, 默认为当前启动位置<br>dir=/home/user/downloads<br>#文件缓存, 使用内置的文件缓存, 如果你不相信Linux内核文件缓存和磁盘内置缓存时使用, 需要1.16及以上版本<br>#disk-cache=0<br>#另一种Linux文件缓存方式, 使用前确保您使用的内核支持此选项, 需要1.15及以上版本(?)<br>#enable-mmap=true<br>#文件预分配, 能有效降低文件碎片, 提高磁盘性能. 缺点是预分配时间较长<br>#所需时间 none &lt; falloc ? trunc &lt;&lt; prealloc, falloc和trunc需要文件系统和内核支持<br>file-allocation=prealloc<br>dht-file-path=~/.aria2/dht.dat</p>
+</blockquote>
+<p><strong>注意，将配置中的<code>dir=/home/user/download</code>替换成你的保存路径，建议使用绝对路径。同样<code>dht-file-path=~/.aria2/dht.dat</code>建议换成绝对路径。</strong>接下来就可以使用<code>aria2</code>啦。</p>
+<h3 id="aria2的用法">aria2的用法</h3><h6 id="aria2下载文件">aria2下载文件</h6><figure class="highlight crystal"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">aria2c <span class="symbol">http:</span>/<span class="regexp">/www.kernel.org/pub</span><span class="regexp">/linux/kernel</span><span class="regexp">/v2.6/linux</span>-<span class="number">2.6</span>.<span class="number">22.6</span>.tar.bz2</span><br></pre></td></tr></table></figure>
+<p>使用<code>aria2</code>下载文件，只需在命令后附加地址即可。</p>
+<h6 id="aria2_分段下载">aria2 分段下载</h6><figure class="highlight crystal"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">aria2c -s <span class="number">2</span> <span class="symbol">http:</span>/<span class="regexp">/www.kernel.org/pub</span><span class="regexp">/linux/kernel</span><span class="regexp">/v2.6/linux</span>-<span class="number">2.6</span>.<span class="number">22.6</span>.tar.bz2</span><br></pre></td></tr></table></figure>
+<p>利用<code>aria2</code>的分段下载功能可以加快文件的下载速度，对于下载大文件时特别有用。为了使用<code>aria2</code>的分段下载功能，你需要在命令中指定<code>-s</code>选项。</p>
+<h6 id="断点续传">断点续传</h6><figure class="highlight crystal"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">aria2c -c <span class="symbol">http:</span>/<span class="regexp">/www.kernel.org/pub</span><span class="regexp">/linux/kernel</span><span class="regexp">/v2.6/linux</span>-<span class="number">2.6</span>.<span class="number">22.6</span>.tar.bz2</span><br></pre></td></tr></table></figure>
+<p>在命令中使用<code>-c</code>选项可以断点续传文件。</p>
+<h6 id="下载torrent文件">下载torrent文件</h6><figure class="highlight crystal"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">aria2c /tmp/<span class="constant">CentOS</span>-<span class="number">6.3</span>-i386-bin-<span class="constant">DVD1to2</span>.torrent</span><br><span class="line">aria2c <span class="symbol">http:</span>/<span class="regexp">/mirrors.163.com/centos</span><span class="regexp">/6.6/isos</span><span class="regexp">/x86_64/</span><span class="constant">CentOS</span>-<span class="number">6.6</span>-x86_64-minimal.torrent</span><br></pre></td></tr></table></figure>
+<p>既可以通过本地torrent文件进行下载，也支持联网下载torrent文件后下载。</p>
+<h6 id="列出种子内容">列出种子内容</h6><figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">aria2c</span> <span class="tag">-S</span> <span class="class">.torrent</span></span><br></pre></td></tr></table></figure>
+<h6 id="下载种子内特定编号的文件">下载种子内特定编号的文件</h6><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">aria2c --select-file=<span class="number">1</span>,<span class="number">4</span>-<span class="number">7</span> .torrent</span><br></pre></td></tr></table></figure>
+<p>此处下载编号为1,4,5,6,7的文件</p>
+<h6 id="后台下载">后台下载</h6><figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="title">aria2c</span> -D url</span><br><span class="line">aria2c --deamon=<span class="built_in">true</span> url</span><br></pre></td></tr></table></figure>
+<p>这里只列出了一部分的用法，更多更详细的用法，可以去<a href="https://aria2.github.io/manual/en/html/index.html" target="_blank" rel="external">aria2官网</a>查看。</p>
+<h3 id="RPC_Server模式">RPC Server模式</h3><p>虽然更多时候，直接使用命令行来下载很方便，但是我更推荐使用RPC Server模式，使<code>aria2</code>作为后台进程运行，哪怕ssh断开连接后，依然不影响下载。而且还能够结合<a href="https://github.com/ziahamza/webui-aria2" target="_blank" rel="external">webui-aria2</a>界面，通过网页来实时查看下载情况，网页还能够用来驱动<code>aria2</code>后台进程的运行，简直不能更赞。</p>
+<p>首先需要创建一个管理脚本</p>
+<figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vi <span class="regexp">/etc/i</span>nit.d<span class="regexp">/aria2</span></span><br></pre></td></tr></table></figure>
+<p>将下面的内容复制进去</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br></pre></td><td class="code"><pre><span class="line"><span class="shebang">#!/bin/bash</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># aria2 - this script starts and stops the aria2 daemon</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># chkconfig:   - 85 15</span></span><br><span class="line"><span class="comment"># description: Aria2 - Download Manager</span></span><br><span class="line"><span class="comment"># processname: aria2c</span></span><br><span class="line"><span class="comment"># config:      /etc/aria2/aria2.conf</span></span><br><span class="line"><span class="comment"># pidfile:     </span></span><br><span class="line"> </span><br><span class="line"><span class="comment"># Source function library.</span></span><br><span class="line">. /etc/rc.d/init.d/<span class="built_in">functions</span></span><br><span class="line"> </span><br><span class="line"><span class="comment"># Source networking configuration.</span></span><br><span class="line">. /etc/sysconfig/network</span><br><span class="line"> </span><br><span class="line"><span class="comment"># Check that networking is up.</span></span><br><span class="line">[ <span class="string">"<span class="variable">$NETWORKING</span>"</span> = <span class="string">"no"</span> ] &amp;&amp; <span class="built_in">exit</span> <span class="number">0</span></span><br><span class="line"> </span><br><span class="line">aria2c=<span class="string">"/usr/bin/aria2c"</span></span><br><span class="line">ARIA2C_CONF_FILE=<span class="string">"/etc/aria2/aria2.conf"</span></span><br><span class="line">options=<span class="string">" --conf-path=<span class="variable">$ARIA2C_CONF_FILE</span> -D "</span></span><br><span class="line"> </span><br><span class="line">RETVAL=<span class="number">0</span></span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="title">start</span></span>() &#123;</span><br><span class="line">        <span class="comment"># code here to start the program</span></span><br><span class="line">        <span class="built_in">echo</span> -n <span class="string">"Starting aria2c daemon."</span></span><br><span class="line">        <span class="variable">$&#123;aria2c&#125;</span> <span class="variable">$&#123;options&#125;</span></span><br><span class="line">        RETVAL=$?</span><br><span class="line">        <span class="built_in">echo</span></span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="title">stop</span></span>() &#123;</span><br><span class="line">        <span class="built_in">echo</span> -n <span class="string">"Shutting down aria2c daemon."</span></span><br><span class="line">        /usr/bin/killall aria2c</span><br><span class="line">        RETVAL=$?</span><br><span class="line">        <span class="built_in">echo</span></span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="title">status</span></span>() &#123;</span><br><span class="line">        ID=$(/bin/ps -ef | grep <span class="string">'aria2c'</span> | grep -v <span class="string">'grep'</span> | awk <span class="string">'&#123;print $2&#125;'</span>)</span><br><span class="line">        <span class="keyword">if</span> [[ <span class="string">"x<span class="variable">$ID</span>"</span> != <span class="string">"x"</span> ]]; <span class="keyword">then</span></span><br><span class="line">                <span class="built_in">echo</span> <span class="string">"Aria2 is running."</span></span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">                <span class="built_in">echo</span> <span class="string">"Aria2 is not running."</span></span><br><span class="line">        <span class="keyword">fi</span></span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="function"><span class="title">restart</span></span>() &#123;</span><br><span class="line">        stop</span><br><span class="line">        sleep <span class="number">3</span></span><br><span class="line">        start</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="keyword">case</span> <span class="string">"<span class="variable">$1</span>"</span> <span class="keyword">in</span></span><br><span class="line">        start)</span><br><span class="line">                start</span><br><span class="line">                ;;</span><br><span class="line">        stop)</span><br><span class="line">                stop</span><br><span class="line">                ;;</span><br><span class="line">        status) </span><br><span class="line">                status</span><br><span class="line">                ;;</span><br><span class="line">        restart)</span><br><span class="line">                restart</span><br><span class="line">                ;;</span><br><span class="line">        *)</span><br><span class="line">                <span class="built_in">echo</span> <span class="string">"Usage: service aria2c &#123;start|stop|restart&#125;"</span></span><br><span class="line">                RETVAL=<span class="number">1</span>                             </span><br><span class="line"><span class="keyword">esac</span>                                                 </span><br><span class="line">                                                      </span><br><span class="line"><span class="built_in">exit</span> <span class="variable">$RETVAL</span></span><br></pre></td></tr></table></figure>
+<p>然后，添加可执行权限</p>
+<figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">chmod +x <span class="regexp">/etc/i</span>nit.d<span class="regexp">/aria2</span></span><br></pre></td></tr></table></figure>
+<p>启动<code>aria2</code>脚本</p>
+<figure class="highlight dos"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/etc/init.d/aria2 <span class="built_in">start</span></span><br></pre></td></tr></table></figure>
+<p>查看<code>aria2</code>是否运行</p>
+<figure class="highlight fortran"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/etc/init.d/aria2 <span class="keyword">status</span></span><br></pre></td></tr></table></figure>
+<p>到这一步<code>aria2</code>后台进程算是开启了。接下来需要使用Nginx服务器，当然你也可以用你自己的服务器。如果还没搭过Nginx，建议看一下<a href="http://ocdman.github.io/2017/11/01/CentOS%206%E5%AE%89%E8%A3%85Nginx/" target="_blank" rel="external">CentOS 6安装Nginx</a>和<a href="http://ocdman.github.io/2017/11/12/Nginx%E6%90%AD%E5%BB%BA%E6%96%87%E4%BB%B6%E4%B8%8B%E8%BD%BD%E6%9C%8D%E5%8A%A1%E5%99%A8/" target="_blank" rel="external">Nginx搭建文件下载服务器</a>。</p>
+<p>首先需要安装git，执行命令</p>
+<figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum <span class="keyword">install</span> git</span><br></pre></td></tr></table></figure>
+<p>安装完成后，下载<a href="https://github.com/ziahamza/webui-aria2" target="_blank" rel="external">webui-aria2</a></p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git clone <span class="string">https:</span><span class="comment">//github.com/ziahamza/webui-aria2</span></span><br></pre></td></tr></table></figure>
+<p>接下来就是把下载好的<code>webui-aria2</code>文件夹放到Nginx展示目录下。我的目录地址为<code>/usr/share/nginx/html/</code>，把当前<code>webui-aria2</code>移动到该目录下就行。</p>
+<figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mv webui-aria2 <span class="regexp">/usr/</span>share<span class="regexp">/nginx/</span>html<span class="regexp">/</span></span><br></pre></td></tr></table></figure>
+<p>移动完成后，用浏览器打开网址<code>http(s)://yourvpsdomainname/webui-aria2/#</code>，将<code>yourvpsdomainname</code>替换成你的域名即可浏览。</p>
+<p><img src="/img/2017112303.png" width="670px"></p>
+<p>我用<code>aria2</code>，下载了一部电影感觉还是蛮快的，最高可以达到2M/s。虽然不如迅雷，但是有些迅雷下载速度为0的资源，<code>aria2</code>下载的速度依然可以达到1M~2M。而且它还支持用户以及密码的安全设置，防止他人直接操控你的vps。我的1.16.4这个版本不支持<code>token</code>，最新版本推荐使用<code>token</code>来取代用户名和密码。不过能用就行，要是结合<a href="https://owncloud.org/" target="_blank" rel="external">OwnCloud网盘</a>的话，就能实现下载的视频在线看了，爽～</p>
+
+  </section>
+</article>
+
+  <div class="sharing grid">
+  <section class="profile grid-item grid">
+    <img class="avatar" src="/images/chili.png" alt="avatar" />
+    <div class="grid-item">
+      <p class="title"> chilihotpot </p>
+      <p class="subtitle"> You Are The JavaScript In My HTML </p>
+    <div>
+  </section>
+
+  <section class="share-btns">
+    <!-- <p> share it if you like it~ </p> -->
+    <a
+  class="twitter-share-button"
+  data-size="large"
+  data-via="DrakeLeung"
+  href="https://twitter.com/intent/tweet?text=月底快到了，刚买的VPS流量才用了2G多"
+>
+  Tweet
+</a>
+
+<script>
+  window.twttr = (function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0],
+    t = window.twttr || {};
+  if (d.getElementById(id)) return t;
+  js = d.createElement(s);
+  js.id = id;
+  js.src = "https://platform.twitter.com/widgets.js";
+  js.async = true;
+  fjs.parentNode.insertBefore(js, fjs);
+
+  t._e = [];
+  t.ready = function(f) {
+    t._e.push(f);
+  };
+
+  return t;
+}(document, "script", "twitter-wjs"));
+</script>
+
+  </section>
+</div>
+
+
+  
+</main>
+
+</body>
+</html>

@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>如何编译goproxy | chilihotpot</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <link rel="shortcut icon" href="/chili.ico">
+  <link rel="stylesheet" href="/css/app.css" type="text/css">
+  <!-- <link rel='stylesheet' href='http://fonts.useso.com/css?family=Source+Code+Pro'> -->
+</head>
+
+<body>
+  <nav class="app-nav">
+  
+    
+      <a href="/.">home</a>
+    
+  
+    
+      <a href="/archives">archive</a>
+    
+  
+    
+      <a href="/tags">tag</a>
+    
+  
+    
+      <a href="/categories">category</a>
+    
+  
+</nav>
+
+  <main class="post">
+  <article>
+  <h1 class="article-title">
+    <a href="/2018/04/06/如何编译goproxy/">如何编译goproxy</a>
+  </h1>
+
+  <section class="article-meta">
+    <p class="article-date">April 06 2018</p>
+  </section>
+
+  <section class="article-entry">
+    <p>社长的goproxy版本定格在了r1624，如果想要写一个自己的版本，暂时叫它r1625，<a href="https://ocdman.github.io/2018/04/05/%E6%BA%90%E4%BB%A3%E7%A0%81%E5%AE%89%E8%A3%85go%E8%AF%AD%E8%A8%80/" target="_blank" rel="external">上一篇</a>我们已经讲述了如何从源代码安装go语言，这一篇来讲讲如何编译goproxy。</p>
+<p>goproxy的README里有一个<a href="https://github.com/ocdman/goproxy/blob/wiki/HowToBuild.md" target="_blank" rel="external">howToBuild</a>的wiki，可以拿来参考。</p>
+<p>由于社长停止了goproxy项目，所以我把goproxy相关的都fork到自己的github下面，方便自己编译。goproxy对以下golang周边库进行了修改</p>
+<ol>
+<li><a href="https://github.com/ocdman/go" target="_blank" rel="external">https://github.com/ocdman/go</a></li>
+<li><a href="https://github.com/ocdman/net" target="_blank" rel="external">https://github.com/ocdman/net</a></li>
+<li><a href="https://github.com/ocdman/glog" target="_blank" rel="external">https://github.com/ocdman/glog</a></li>
+</ol>
+<p>我们得从golang工具链开始编译，假设以下步骤的工作目录位于<code>~/workspace/goproxy/r1625/</code>，系统为macos，首先确保系统安装了如下工具</p>
+<p><code>awk/git/tar/bzip2/xz/7za/gcc/make/sha1sum/gtimeout/xargs</code>，检查命令</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> CMD <span class="keyword">in</span> curl awk git tar bzip2 xz <span class="number">7</span>za gcc sha1sum gtimeout xargs</span><br><span class="line"><span class="keyword">do</span></span><br><span class="line">	<span class="keyword">if</span> ! <span class="built_in">type</span> -p <span class="variable">$&#123;CMD&#125;</span>; <span class="keyword">then</span></span><br><span class="line">		<span class="built_in">echo</span> <span class="operator">-e</span> <span class="string">"\e[1;31mtool <span class="variable">$&#123;CMD&#125;</span> is not installed, abort.\e[0m"</span></span><br><span class="line">		<span class="built_in">exit</span> <span class="number">1</span></span><br><span class="line">	<span class="keyword">fi</span></span><br><span class="line"><span class="keyword">done</span></span><br></pre></td></tr></table></figure>
+<p>没有的话，可以用homebrew安装。像7za和sha1sum的安装包名称和命令不同，gtimeout比较特殊，linux下的安装包叫timeout,mac下叫gtimeout。</p>
+<figure class="highlight vala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="preprocessor"># 7za</span></span><br><span class="line">brew install p7zip</span><br><span class="line"><span class="preprocessor"># sha1sum</span></span><br><span class="line">brew install md5sha1sum</span><br><span class="line"><span class="preprocessor"># linux下的安装包叫timeout,mac下叫gtimeout</span></span><br><span class="line">brew install gtimeout</span><br><span class="line"><span class="preprocessor"># 取个别名</span></span><br><span class="line">alias timeout=gtimeout</span><br></pre></td></tr></table></figure>
+<p>假设我们已经按照<a href="https://ocdman.github.io/2018/04/05/%E6%BA%90%E4%BB%A3%E7%A0%81%E5%AE%89%E8%A3%85go%E8%AF%AD%E8%A8%80/" target="_blank" rel="external">上一篇</a>安装好了go1.10.1，下一步就要编译phuslu版本的go源程序。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">export</span> BUILD_ROOT=~/workspace/goproxy/r1625</span><br><span class="line"><span class="built_in">export</span> GOROOT=<span class="variable">$&#123;BUILD_ROOT&#125;</span>/go</span><br><span class="line"><span class="built_in">export</span> GOPATH=<span class="variable">$&#123;BUILD_ROOT&#125;</span>/gopath</span><br><span class="line"></span><br><span class="line">git <span class="built_in">clone</span> --depth <span class="number">1</span> https://github.com/ocdman/go</span><br><span class="line">(<span class="built_in">cd</span> go/src &amp;&amp; bash ./make.bash)</span><br><span class="line"></span><br><span class="line"><span class="built_in">export</span> PATH=<span class="variable">$&#123;BUILD_ROOT&#125;</span>/go/bin:<span class="variable">$PATH</span></span><br></pre></td></tr></table></figure>
+<p><code>$GOROOT</code>环境变量是go语言的工具链根目录，也就是刚才编译的go语言目录。<code>$GOPATH</code>是用来存放第三方安装包的目录，比方说github上的包。</p>
+<p>整个编译过程可能会出现以下几种错误情况：</p>
+<h6 id="1-_undefined:_sys-TheVersion">1. undefined: sys.TheVersion</h6><p>这是由于使用了默认的go语言工具链，没有采用phuslu的版本。</p>
+<h6 id="2-_$GOROOT_BOOTSTRAP_must_not_be_set_to_$GOROOT">2. $GOROOT_BOOTSTRAP must not be set to $GOROOT</h6><p>请先安装go1.4.3，再编译phuslu版本的go语言。</p>
+<h6 id="3-_unrecognized_import_path_“github-com/xxx/xxx”">3. unrecognized import path “github.com/xxx/xxx”</h6><p>执行命令</p>
+<figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">go</span> <span class="built_in">get</span> github.<span class="keyword">com</span>/xxx/xxx</span><br></pre></td></tr></table></figure>
+<p>本质是git来下载对应目录的文件，自动创建目录，</p>
+<h6 id="4-_unrecognized_import_path_“golang-org/x/net/http2”">4. unrecognized import path “golang.org/x/net/http2”</h6><p>由于golang.org被墙，git无法直接下载安装包，这里有两个方法。</p>
+<p>其一，给git配置代理</p>
+<figure class="highlight tcl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 查看git配置</span></span><br><span class="line">git config -l</span><br><span class="line"><span class="comment"># 查看git全局配置</span></span><br><span class="line">git config --<span class="keyword">global</span> -l</span><br><span class="line"><span class="comment"># 添加全局http代理</span></span><br><span class="line">git config --<span class="keyword">global</span> <span class="keyword">http</span>:proxy <span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span>:<span class="number">8087</span></span><br><span class="line"><span class="comment"># 添加全局https代理</span></span><br><span class="line">git config --<span class="keyword">global</span> https:proxy <span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span>:<span class="number">8087</span></span><br><span class="line"><span class="comment"># 删除全局http代理</span></span><br><span class="line">git config --<span class="keyword">global</span> --<span class="keyword">unset</span> <span class="keyword">http</span>:proxy</span><br><span class="line"><span class="comment"># 删除全局https代理</span></span><br><span class="line">git config --<span class="keyword">global</span> --<span class="keyword">unset</span> https:proxy</span><br></pre></td></tr></table></figure>
+<p>这种情况要求有代理软件，并且设置为全局代理。</p>
+<p>其二，翻墙上github下载，在<code>$GOPATH</code>的<code>src</code>目录下创建<code>golang.org/x</code>目录，然后将github下载下来的包解压，拷贝到<code>golang.org/x</code>目录下。</p>
+<h6 id="5-_not_enough_arguments_in_call_to_net-DialTCPContext">5. not enough arguments in call to net.DialTCPContext</h6><p>修改<code>$GOPATH/github.com/ocdman/goproxy/httpproxy/helpers/dialer2.go</code>文件，将<code>DialTCPContext(ctx, network, nil, raddr)</code>改为<code>DialTCPContext(ctx, network, nil, raddr, nil)</code>。</p>
+<h6 id="6-_unknown_field_‘RequestConnectionIDTruncation’_in_struct_literal_of_type_quic-Config">6. unknown field ‘RequestConnectionIDTruncation’ in struct literal of type quic.Config</h6><p>修改<code>$GOPATH/github.com/ocdman/goproxy/httpproxy/helpers/dialer2.go</code>以及<code>$GOPATH/github.com/ocdman/goproxy/httpproxy/proxy/quic.go</code>文件，将出现过<code>RequestConnectionIDTruncation</code>的地方都替换为<code>RequestConnectionIDOmission</code>。</p>
+<h6 id="7-_local_import_“-/curve25519”_in_non-local_package">7. local import “./curve25519” in non-local package</h6><p>虽然go语言支持相对路径，但是并不推荐这么做。只有在<code>$GOPATH</code>中找不到时，才会使用相对路径去查找，所以还是老老实实的写全路径吧。将<code>./curve25519</code>修改为<code>github.com/google/boringssl/ssl/test/runner/curve25519</code>。</p>
+<h6 id="8-_code_in_directory_/home/user/gopath/src/github-com/google/boringssl/ssl/test/runner/curve25519_expects_import_“golang-org/x/crypto/curve25519”">8. code in directory /home/user/gopath/src/github.com/google/boringssl/ssl/test/runner/curve25519 expects import “golang.org/x/crypto/curve25519”</h6><p>虽然上一个问题不报错了，但是再编译的时候又报了这个错，按照提示将路径<code>github.com/google/boringssl/ssl/test/runner/curve25519</code>修改成<code>golang.org/x/crypto/curve25519</code>。</p>
+<h6 id="9-_unknown_field_‘KeepAliveTimeout’_in_struct_literal_of_type_h2quic-RoundTripper">9. unknown field ‘KeepAliveTimeout’ in struct literal of type h2quic.RoundTripper</h6><p>这个错误是因为以前’github.com/phuslu/quic-go/h2quic/roundtrip.go’文件里有<code>KeepAliveTimeout</code>字段，但是作者更新了这个文件，取消了这些字段，最新的包已经没有该字段了，而我们只要注释掉就可以了。</p>
+<p>以上，是我在编译过程中碰到的问题，可能还会有别的，会不断补充。</p>
+<p>总的来说，编译goproxy并不复杂，关键在于耐心，编译过程错误可能层出不穷，多看看错误提示，多思考，问题就会迎刃而解。</p>
+
+  </section>
+</article>
+
+  <div class="sharing grid">
+  <section class="profile grid-item grid">
+    <img class="avatar" src="/images/chili.png" alt="avatar" />
+    <div class="grid-item">
+      <p class="title"> chilihotpot </p>
+      <p class="subtitle"> You Are The JavaScript In My HTML </p>
+    <div>
+  </section>
+
+  <section class="share-btns">
+    <!-- <p> share it if you like it~ </p> -->
+    <a
+  class="twitter-share-button"
+  data-size="large"
+  data-via="DrakeLeung"
+  href="https://twitter.com/intent/tweet?text=社长的goproxy版本定格在了r162"
+>
+  Tweet
+</a>
+
+<script>
+  window.twttr = (function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0],
+    t = window.twttr || {};
+  if (d.getElementById(id)) return t;
+  js = d.createElement(s);
+  js.id = id;
+  js.src = "https://platform.twitter.com/widgets.js";
+  js.async = true;
+  fjs.parentNode.insertBefore(js, fjs);
+
+  t._e = [];
+  t.ready = function(f) {
+    t._e.push(f);
+  };
+
+  return t;
+}(document, "script", "twitter-wjs"));
+</script>
+
+  </section>
+</div>
+
+
+  
+</main>
+
+</body>
+</html>

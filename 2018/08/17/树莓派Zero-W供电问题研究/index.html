@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>树莓派Zero W供电问题研究 | chilihotpot</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <link rel="shortcut icon" href="/chili.ico">
+  <link rel="stylesheet" href="/css/app.css" type="text/css">
+  <!-- <link rel='stylesheet' href='http://fonts.useso.com/css?family=Source+Code+Pro'> -->
+</head>
+
+<body>
+  <nav class="app-nav">
+  
+    
+      <a href="/.">home</a>
+    
+  
+    
+      <a href="/archives">archive</a>
+    
+  
+    
+      <a href="/tags">tag</a>
+    
+  
+    
+      <a href="/categories">category</a>
+    
+  
+</nav>
+
+  <main class="post">
+  <article>
+  <h1 class="article-title">
+    <a href="/2018/08/17/树莓派Zero-W供电问题研究/">树莓派Zero W供电问题研究</a>
+  </h1>
+
+  <section class="article-meta">
+    <p class="article-date">August 17 2018</p>
+  </section>
+
+  <section class="article-entry">
+    <p>买Zero W的一个原因就在于它无需插头，通过一根MicroUSB/USB线连接电脑或充电宝就能给他供电，不需要其它的充电头。我把它放在光猫边上，WIFI连接光猫后上网，通过光猫的USB口给它供电，省了不少线以及空间。之前一直很稳定的运行着，直到我想给Zero W挂载移动硬盘。</p>
+<p>一开始我并不知道，在Zero W的USB口连接的OTG接口上又外接了一个移动硬盘，结果只是移动硬盘的灯亮了，但是移动硬盘运转不起来。我去淘宝客服咨询了一下，店主说Zero W连接的OTG接口不要外接移动硬盘，会烧坏板子的。我看没有烧坏啊，也就没当回事。无意间发现同事的小米5V/2A插头竟然能让Zero W连接上移动硬盘，运转正常。暗喜之下结果发现家里没有5V/2A的电源插头，于是问同事要了一个5V/2.4A Max的插头，这个插头是买其它手机附送的，质量没有原装的好，反正凑合着能用就行。</p>
+<p>我将Zero W接上插头，连接屏幕输出，发现带不动移动硬盘。估计是屏幕分了一部分电流，于是断开屏幕的连接，重启之后勉强能带动移动硬盘。于是我把Zero W关机后，移到光猫边上的插座，结果这一次没把移动硬盘带起来。重启后又连不上WIFI，拿到屏幕边上，再重启一次后，这次干脆连指示灯都不亮了。关机后CPU极烫，没错，树莓派GG了。</p>
+<p>一开始，我其实是懵逼的，才买了两星期的板子就被我烧坏了，内心说不出的难受。但是平静了之后仔细去分析一下被烧坏的原因，无外乎几种情况：</p>
+<ol>
+<li>劣质插头可能并不像标的那样，稳定提供5V/2.4A Max的电压和电流。有可能是空载时，电压超过了5V，击穿了板子</li>
+<li>劣质插头的额定电压可能并不到5V，开机运行启动程序，所需电流要求较大，电压就相应低了，低压也可能造成板子损坏</li>
+<li>树莓派的OTG接口不要挂载移动硬盘，移动硬盘最少需要500mA的电流，如果给树莓派供电的额定电流比较小，比如电脑USB口才500mA，树莓派需要200mA电流，移动硬盘需要500mA电流，这种情况下容易造成小马拉大车，对板子造成伤害，最起码电源插头的额定电流要大于树莓派需要的电流加上移动硬盘的电流。移动硬盘需要有源的，或者用有源USB Hub</li>
+</ol>
+<p>这几种情况都需要用专门的仪器做测试，为此我特地去马云家买了USB电压电流测试仪，等货到了，我再写一篇测试结果后的文章。</p>
+<p>总的来说，要避免Zero W主板损坏的几个注意点</p>
+<ol>
+<li>推荐使用5V/1.5A电源给Zero W供电，Zero W的电流在230mA左右，5V/1.5A或5V/2A或更高都可以，只要电压输出为5V就行，插头的额定电流大于树莓派电流。</li>
+<li>最好不要直接用电脑上的USB口给树莓派供电，那个只有5V/500mA，虽然能用但是额定电流太低</li>
+<li>不要用山寨插头，容易导致你的设备损坏</li>
+<li>树莓派挂载移动硬盘，移动硬盘需要是有独立电源的，不要直接挂载在OTG接口</li>
+</ol>
+
+  </section>
+</article>
+
+  <div class="sharing grid">
+  <section class="profile grid-item grid">
+    <img class="avatar" src="/images/chili.png" alt="avatar" />
+    <div class="grid-item">
+      <p class="title"> chilihotpot </p>
+      <p class="subtitle"> You Are The JavaScript In My HTML </p>
+    <div>
+  </section>
+
+  <section class="share-btns">
+    <!-- <p> share it if you like it~ </p> -->
+    <a
+  class="twitter-share-button"
+  data-size="large"
+  data-via="DrakeLeung"
+  href="https://twitter.com/intent/tweet?text=买Zero W的一个原因就在于它无需插头"
+>
+  Tweet
+</a>
+
+<script>
+  window.twttr = (function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0],
+    t = window.twttr || {};
+  if (d.getElementById(id)) return t;
+  js = d.createElement(s);
+  js.id = id;
+  js.src = "https://platform.twitter.com/widgets.js";
+  js.async = true;
+  fjs.parentNode.insertBefore(js, fjs);
+
+  t._e = [];
+  t.ready = function(f) {
+    t._e.push(f);
+  };
+
+  return t;
+}(document, "script", "twitter-wjs"));
+</script>
+
+  </section>
+</div>
+
+
+  
+</main>
+
+</body>
+</html>

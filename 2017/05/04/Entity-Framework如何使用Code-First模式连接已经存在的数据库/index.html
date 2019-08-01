@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Entity Framework如何使用Code First模式连接已经存在的数据库 | chilihotpot</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <link rel="shortcut icon" href="/chili.ico">
+  <link rel="stylesheet" href="/css/app.css" type="text/css">
+  <!-- <link rel='stylesheet' href='http://fonts.useso.com/css?family=Source+Code+Pro'> -->
+</head>
+
+<body>
+  <nav class="app-nav">
+  
+    
+      <a href="/.">home</a>
+    
+  
+    
+      <a href="/archives">archive</a>
+    
+  
+    
+      <a href="/tags">tag</a>
+    
+  
+    
+      <a href="/categories">category</a>
+    
+  
+</nav>
+
+  <main class="post">
+  <article>
+  <h1 class="article-title">
+    <a href="/2017/05/04/Entity-Framework如何使用Code-First模式连接已经存在的数据库/">Entity Framework如何使用Code First模式连接已经存在的数据库</a>
+  </h1>
+
+  <section class="article-meta">
+    <p class="article-date">May 04 2017</p>
+  </section>
+
+  <section class="article-entry">
+    <p>最近有个项目需要反编译别人的程序，在还原的过程中，对方使用了Entity Framework的Code First模式来连接访问数据库（数据库已存在）。</p>
+<p>在使用过程中，我自己先创建了一个继承自DbContext的类BlogContext，其中有个属性HIP_RegistryInfo，类型为DbSet<hip_registryinfo>，是我想要读取的表的集合。可是当我执行代码<br><figure class="highlight pf"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">using(B<span class="keyword">log</span>Context context = new B<span class="keyword">log</span>Context())</span><br><span class="line">&#123;</span><br><span class="line">	HIP_RegistryInfo regInfo = context.HIP_RegistryInfo.FirstOrDefault<span class="variable">&lt;HIP_RegistryInfo&gt;</span>();	</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></hip_registryinfo></p>
+<p>程序就会报错，<em>未将对象引用设置到对象实例</em>，这到底是为什么呢？</p>
+<p>为了搞清楚原因，我决定不再使用自己创建的BlogContext类。我打算用Visual Studio自带的<strong>ADO.NET实体数据模型</strong>来创建BlogContext类。根据官网的说法，有一个<strong>来自数据库的Code First</strong>的选项，可是我找了半天也没找到。好不容易在网上搜到了我想要的答案，原来我使用的Visual Studio 2013，有一个<a href="http://www.microsoft.com/en-us/download/details.aspx?id=40762" target="_blank" rel="external">Entity Framework 6.1.3 Tools for Visual Studio 2013 Setup Wizard</a>包安装了之后，才会有<strong>来自数据库的Code First</strong>的选项。</p>
+<p>安装完成之后，选择来自<strong>数据库的Code First</strong>生成BlogContext类。再次运行刚才的那段代码，还是报相同的错，我就纳闷了，究竟哪里还有问题？</p>
+<p>后来我在BlogContext类的OnModelCreating方法里，打了个断点，想调试进去看看执行了没有，结果刚才那段报错的代码竟然运行通过了。我也是醉了。我猜想，可能是Visual Studio自身的问题，对于创建的BlogContext类还没调整过来，仍然在运行之前我自己创建的BlogContext类。这种情况也不是第一次出现了，之前有过一次用static修饰的变量竟然没有执行，后来打了个断点想要去调试，结果竟然又恢复正常了。</p>
+<p>总结下来，其实用<strong>ADO.NET实体数据模型</strong>来创建BlogContext类，从而访问数据库里的表，这种方式并没有错，而且这种方式出错的几率最小，如果不是很擅长写Code First模型的人，推荐使用该方法，前提是需要安装<strong><em>Entity Framework 6.1.3 Tools for Visual Studio 2013 Setup Wizard（EF以及Visual Studio的版本取决于你的电脑安装了哪些个版本）</em></strong>。</p>
+
+  </section>
+</article>
+
+  <div class="sharing grid">
+  <section class="profile grid-item grid">
+    <img class="avatar" src="/images/chili.png" alt="avatar" />
+    <div class="grid-item">
+      <p class="title"> chilihotpot </p>
+      <p class="subtitle"> You Are The JavaScript In My HTML </p>
+    <div>
+  </section>
+
+  <section class="share-btns">
+    <!-- <p> share it if you like it~ </p> -->
+    <a
+  class="twitter-share-button"
+  data-size="large"
+  data-via="DrakeLeung"
+  href="https://twitter.com/intent/tweet?text=最近有个项目需要反编译别人的程序，在还原"
+>
+  Tweet
+</a>
+
+<script>
+  window.twttr = (function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0],
+    t = window.twttr || {};
+  if (d.getElementById(id)) return t;
+  js = d.createElement(s);
+  js.id = id;
+  js.src = "https://platform.twitter.com/widgets.js";
+  js.async = true;
+  fjs.parentNode.insertBefore(js, fjs);
+
+  t._e = [];
+  t.ready = function(f) {
+    t._e.push(f);
+  };
+
+  return t;
+}(document, "script", "twitter-wjs"));
+</script>
+
+  </section>
+</div>
+
+
+  
+</main>
+
+</body>
+</html>
