@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>git存储库损坏该怎么办 | chilihotpot</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <link rel="shortcut icon" href="/chili.ico">
+  <link rel="stylesheet" href="/css/app.css" type="text/css">
+  <!-- <link rel='stylesheet' href='http://fonts.useso.com/css?family=Source+Code+Pro'> -->
+</head>
+
+<body>
+  <nav class="app-nav">
+  
+    
+      <a href="/.">home</a>
+    
+  
+    
+      <a href="/archives">archive</a>
+    
+  
+    
+      <a href="/tags">tag</a>
+    
+  
+    
+      <a href="/categories">category</a>
+    
+  
+</nav>
+
+  <main class="post">
+  <article>
+  <h1 class="article-title">
+    <a href="/2019/08/01/git存储库损坏该怎么办/">git存储库损坏该怎么办</a>
+  </h1>
+
+  <section class="article-meta">
+    <p class="article-date">August 01 2019</p>
+  </section>
+
+  <section class="article-entry">
+    <p>今天一不小心把我的Github Pages上的git存储库给弄坏了。起因是这样子的，我没有通过git操作，手动把某个文件给彻底删除了，导致我在上传更新的时候报错</p>
+<blockquote>
+<p>fatal: unable to read XXXXXX</p>
+</blockquote>
+<p>上面的<code>XXXXXX</code>的内容就是<code>commit</code>后的日志版本，可以通过命令来查看全部日志</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git log --all</span><br></pre></td></tr></table></figure>
+<p>因为其中的某一个提交版本里，引用到了我彻底删除掉的文件，导致提交失败。</p>
+<p>我的目的是把这段引起错误的<code>commit</code>删除，首先我得要找到该<code>commit</code>日志版本，可以使用命令，一个个尝试去看</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git show [version]</span><br></pre></td></tr></table></figure>
+<p>其中<code>version</code>就是日志的版本了。等定位到了具体的版本号后，我想到了两个方法</p>
+<h3 id="git_reset">git reset</h3><p><code>git reset</code>分为软删除和硬删除两种，之前的文章里有介绍过。</p>
+<p>我分别尝试了两种方法，硬删除直接报错失败，原因同上。而软删除虽然把日志版本号定位到了我指定的版本下，但是上传时，还是报错。要想恢复软删除的话，可以使用命令，查看<code>ref</code>日志版本</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git reflog</span><br></pre></td></tr></table></figure>
+<p>找到最新日志版本号，然后再用一次软删除到最新版本即可。</p>
+<h3 id="git_rebase">git rebase</h3><p><code>git rebase</code>命令可以删除提交记录中间的提交。语法如下</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git rebase --onto &#60;branch name&#62;~&#60;first commit number to remove&#62; &#60;branch name&#62;~&#60;first commit to be kept&#62; &#60;branch name&#62;</span><br></pre></td></tr></table></figure>
+<p>总之，我采用这种方式也没成功。</p>
+<h3 id="git_init">git init</h3><p>实在没办法了，使用命令<code>git fsck</code>命令扫描后报错一堆。</p>
+<p>只能硬着头皮执行以下命令了</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rm -R .git&#10;git init&#10;git add .&#10;git commit -m &#34;Re-initialize repository without old history.&#34;</span><br></pre></td></tr></table></figure>
+<p>这是最后没有办法的办法。重新创建一个git存储库，损坏的存储库只能弃用了。好处是可以重新上传了，缺点是以前提交的历史记录都没有了。</p>
+<h3 id="总结">总结</h3><p>好吧，这次这个事我虽然没有完美解决，但是至少告诉我一个事，能用git进行的操作，千万别手动自己乱来。不然真的会导致一些不可逆的结果。</p>
+
+  </section>
+</article>
+
+  <div class="sharing grid">
+  <section class="profile grid-item grid">
+    <img class="avatar" src="/images/chili.png" alt="avatar" />
+    <div class="grid-item">
+      <p class="title"> chilihotpot </p>
+      <p class="subtitle"> You Are The JavaScript In My HTML </p>
+    <div>
+  </section>
+
+  <section class="share-btns">
+    <!-- <p> share it if you like it~ </p> -->
+    <a
+  class="twitter-share-button"
+  data-size="large"
+  data-via="DrakeLeung"
+  href="https://twitter.com/intent/tweet?text=今天一不小心把我的Github Page"
+>
+  Tweet
+</a>
+
+<script>
+  window.twttr = (function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0],
+    t = window.twttr || {};
+  if (d.getElementById(id)) return t;
+  js = d.createElement(s);
+  js.id = id;
+  js.src = "https://platform.twitter.com/widgets.js";
+  js.async = true;
+  fjs.parentNode.insertBefore(js, fjs);
+
+  t._e = [];
+  t.ready = function(f) {
+    t._e.push(f);
+  };
+
+  return t;
+}(document, "script", "twitter-wjs"));
+</script>
+
+  </section>
+</div>
+
+
+  
+</main>
+
+</body>
+</html>
