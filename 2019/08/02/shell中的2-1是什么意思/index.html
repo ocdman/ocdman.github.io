@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>shell中的2&gt;&amp;1是什么意思 | chilihotpot</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <link rel="shortcut icon" href="/chili.ico">
+  <link rel="stylesheet" href="/css/app.css" type="text/css">
+  <!-- <link rel='stylesheet' href='http://fonts.useso.com/css?family=Source+Code+Pro'> -->
+</head>
+
+<body>
+  <nav class="app-nav">
+  
+    
+      <a href="/.">home</a>
+    
+  
+    
+      <a href="/archives">archive</a>
+    
+  
+    
+      <a href="/tags">tag</a>
+    
+  
+    
+      <a href="/categories">category</a>
+    
+  
+</nav>
+
+  <main class="post">
+  <article>
+  <h1 class="article-title">
+    <a href="/2019/08/02/shell中的2-1是什么意思/">shell中的2>&1是什么意思</a>
+  </h1>
+
+  <section class="article-meta">
+    <p class="article-date">August 02 2019</p>
+  </section>
+
+  <section class="article-entry">
+    <p>我们时常会在Linux的Shell脚本中看到<code>2&gt;&amp;1</code>的语句，一直搞不太懂是什么意思。今天特意去查了一下，总算搞懂了，参考了<a href="https://www.cnblogs.com/caolisong/archive/2007/04/25/726896.html" target="_blank" rel="external">linux shell 中”2&gt;&amp;1”含义</a>一文。</p>
+<p>在Linux中，数字是有其特殊意义的，比如<code>0</code>代表键盘输入，<code>1</code>代表屏幕输出（也可以叫标准输出），<code>2</code>代表错误输出（可以叫标准错误）。而<code>&gt;</code>又代表了重定向，所以<code>2&gt;&amp;1</code>的含义是将标准错误重定向到标准输出。</p>
+<p>请注意，<code>2&gt;&amp;1</code>和<code>2&gt;1</code>不是一个意思。</p>
+<p>在<code>2&gt;1</code>中，<code>2</code>与<code>&gt;</code>结合后代表错误重定向，而<code>1</code>代表了错误重定向到名为<code>1</code>的文件。</p>
+<p>在<code>2&gt;&amp;1</code>中，<code>2</code>与<code>&gt;</code>结合后代表错误重定向，<code>&amp;</code>与<code>1</code>结合才代表标准输出。</p>
+<p>最常见的命令是下面这样子的</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">command &#62;out.file 2&#62;&#38;1 &#38;</span><br></pre></td></tr></table></figure>
+<p>该命令的含义是，将<code>command</code>的输出重定向到<code>out.file</code>文件，即输出内容不打印到屏幕（因为屏幕是标准输出），而是输出到<code>out.file</code>文件中。<code>2&gt;&amp;1</code>是将标准错误重定向到标准输出，因为之前的命令中标准输出已经被重定向到<code>out.file</code>文件了，所以标准错误也一并输出到<code>out.file</code>文件中。最终结果就是标准输出和错误都被重定向到<code>out.file</code>中。</p>
+<p>最后一个<code>&amp;</code> ， 是让该命令在后台执行。</p>
+<p>以下命令稍作变更，含义又不一样了</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">command 2&#62;&#38;1 &#62;out.file &#38;</span><br></pre></td></tr></table></figure>
+<p>这段命令的含义是，<code>2&gt;&amp;1</code>将标准错误重定向到标准输出，但此时的标准输出还在屏幕上，相当于是标准错误也输出到屏幕。<code>&gt;out.file</code>后标准输出才被重定向到<code>out.file</code>，但是标准错误还处在屏幕上。最终结果就是标准输出重定向到<code>out.file</code>中，而标准错误被重定向到屏幕输出。</p>
+<p>最后一个<code>&amp;</code> ， 是让该命令在后台执行。</p>
+<h3 id="总结">总结</h3><p>Linux中的命令果然很有意思，是时候该学一波了。</p>
+
+  </section>
+</article>
+
+  <div class="sharing grid">
+  <section class="profile grid-item grid">
+    <img class="avatar" src="/images/chili.png" alt="avatar" />
+    <div class="grid-item">
+      <p class="title"> chilihotpot </p>
+      <p class="subtitle"> You Are The JavaScript In My HTML </p>
+    <div>
+  </section>
+
+  <section class="share-btns">
+    <!-- <p> share it if you like it~ </p> -->
+    <a
+  class="twitter-share-button"
+  data-size="large"
+  data-via="DrakeLeung"
+  href="https://twitter.com/intent/tweet?text=我们时常会在Linux的Shell脚本中"
+>
+  Tweet
+</a>
+
+<script>
+  window.twttr = (function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0],
+    t = window.twttr || {};
+  if (d.getElementById(id)) return t;
+  js = d.createElement(s);
+  js.id = id;
+  js.src = "https://platform.twitter.com/widgets.js";
+  js.async = true;
+  fjs.parentNode.insertBefore(js, fjs);
+
+  t._e = [];
+  t.ready = function(f) {
+    t._e.push(f);
+  };
+
+  return t;
+}(document, "script", "twitter-wjs"));
+</script>
+
+  </section>
+</div>
+
+
+  
+</main>
+
+</body>
+</html>
