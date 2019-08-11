@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>如何安装Cisco模拟器 | chilihotpot</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <link rel="shortcut icon" href="/chili.ico">
+  <link rel="stylesheet" href="/css/app.css" type="text/css">
+  <!-- <link rel='stylesheet' href='http://fonts.useso.com/css?family=Source+Code+Pro'> -->
+</head>
+
+<body>
+  <nav class="app-nav">
+  
+    
+      <a href="/.">home</a>
+    
+  
+    
+      <a href="/archives">archive</a>
+    
+  
+    
+      <a href="/tags">tag</a>
+    
+  
+    
+      <a href="/categories">category</a>
+    
+  
+</nav>
+
+  <main class="post">
+  <article>
+  <h1 class="article-title">
+    <a href="/2019/08/07/如何安装Cisco模拟器/">如何安装Cisco模拟器</a>
+  </h1>
+
+  <section class="article-meta">
+    <p class="article-date">August 07 2019</p>
+  </section>
+
+  <section class="article-entry">
+    <p>我也是学了CCNA之后才知道，网工也有自己的网络虚拟软件。就拿思科来说吧，不光有自家研发的Cisco Packet Tracer一款模拟器，还有GNS3这种专门为Cisco开发的的开源模拟器。</p>
+<p>至于，学CCNA用哪种模拟器就见仁见智了，反正我选择了GNS3，<a href="https://sourceforge.net/projects/gns-3/files/GNS3/0.8.7/" target="_blank" rel="external">0.8.7的下载地址</a>。<br>我选择的这个版本已经是很旧的一个版本了，但是功能足够应付CCNA了。</p>
+<p>初次安装完GNS3之后，需要注意的是，路由器的图标都无法拖拽，因为路由器的镜像都没安装。在<code>Edit</code>选项卡下找到<code>IOS images and hypervisors</code>选项，点开之后就可以安装你需要的路由器镜像了。</p>
+<p>知道了入口，但是没有思科的路由器镜像也没用。网上可以找到的思科路由器的镜像，<a href="https://drive.google.com/drive/folders/0Bw9lhTf5YT0wflBxeUo5UjFGNkJ2cU9qaERoS25ETy12T0xnSzZQZW5ib2Y5OGRFX0VZTzA" target="_blank" rel="external">这里是链接</a>。</p>
+<p>因为我只是做实验用，所以不需要全部都安装。我选择安装的是<code>c3640</code>这个镜像。我们看到还有<code>c3660</code>这个镜像，它们同属于思科的<code>c3600</code>系列路由。区别在于<code>c3640</code>有4个插槽，而<code>c3660</code>有6个插槽。</p>
+<p>其中，<code>IDLE PC</code>这处留空，因为系统会自动计算。IDLE值有什么用呢？主要是用来降低CPU的占用率。正常情况下启动一个路由器，CPU占用率就会飙到90%左右，但是通过自动计算IDLE值，就能瞬间将CPU的占用率拉回到20%左右。所以，网上有种说法说GNS3占用CPU的说法，其实是说这种话的人自己没好好研究过这款软件。</p>
+<p>如果你对CPU的占用率还不够满意的话，希望越低越好，可以多尝试计算几次IDLE值。步骤是，先启动路由器，然后右键路由器，点击<code>Idle PC</code>即可。等待片刻后，程序就会自动给你几个IDLE值让你选择，你多尝试几次准没错。</p>
+<p>最后，还有需要注意的就是，可以在<code>Preferences</code>选项里修改终端以及抓包软件Wireshark等的启动路径以及参数。我选择的终端是iTerm2，没有用大部分视频里推荐的secureCRT，因为懒得在Mac系统下破解了。如果终端路径错误，或者Wireshark的路径错误，点击启动相应功能的时候，是没有任何反应的。</p>
+<p>本文参考自<a href="https://blog.51cto.com/skypegnu1/1547841" target="_blank" rel="external">Cisco 思科网络设备模拟器 GNS3 使用指南</a></p>
+<p>推荐一个自学CCNA的好网站，<a href="https://www.qingsword.com/sitemap.html#ccna" target="_blank" rel="external">晴刃</a>，写得非常详细，这应该是我看过的学CCNA最好的网站了。虽然网上学CCNA的视频泛滥，但我本人更倾向于这种图文的教学方式。</p>
+
+  </section>
+</article>
+
+  <div class="sharing grid">
+  <section class="profile grid-item grid">
+    <img class="avatar" src="/images/chili.png" alt="avatar" />
+    <div class="grid-item">
+      <p class="title"> chilihotpot </p>
+      <p class="subtitle"> You Are The JavaScript In My HTML </p>
+    <div>
+  </section>
+
+  <section class="share-btns">
+    <!-- <p> share it if you like it~ </p> -->
+    <a
+  class="twitter-share-button"
+  data-size="large"
+  data-via="DrakeLeung"
+  href="https://twitter.com/intent/tweet?text=我也是学了CCNA之后才知道，网工也有自"
+>
+  Tweet
+</a>
+
+<script>
+  window.twttr = (function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0],
+    t = window.twttr || {};
+  if (d.getElementById(id)) return t;
+  js = d.createElement(s);
+  js.id = id;
+  js.src = "https://platform.twitter.com/widgets.js";
+  js.async = true;
+  fjs.parentNode.insertBefore(js, fjs);
+
+  t._e = [];
+  t.ready = function(f) {
+    t._e.push(f);
+  };
+
+  return t;
+}(document, "script", "twitter-wjs"));
+</script>
+
+  </section>
+</div>
+
+
+  
+</main>
+
+</body>
+</html>
