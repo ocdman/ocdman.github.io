@@ -42,32 +42,40 @@
 
   <section class="article-entry">
     <p>最近为了给ArchLinux安装Parallels Tools工具，尝试升级了一下系统。执行命令</p>
-<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="title">pacman</span> -Syu</span><br></pre></td></tr></table></figure>
+<p><figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="title">pacman</span> -Syu</span><br></pre></td></tr></table></figure></p>
 <p>没想到重启后报错</p>
 <blockquote>
-<p>Error: device ‘UUID=b5a9a977-e9a7-4d3d-96a9-dcf9c3a9010d’ not found. Skipping fsck.<br>Error: can’t find UUID=b5a9a977-e9a7-4d3d-96a9-dcf9c3a9010d<br>You are now being dropped into a emergency shell.<br>Can’t access tty: job control turned off</p>
+<p>Error: device 'UUID=b5a9a977-e9a7-4d3d-96a9-dcf9c3a9010d' not found. Skipping fsck.
+Error: can't find UUID=b5a9a977-e9a7-4d3d-96a9-dcf9c3a9010d
+You are now being dropped into a emergency shell.
+Can't access tty: job control turned off</p>
 </blockquote>
 <p>不仅无法进入系统，就连键盘也无法工作了，吓得我一度想重装。网上找了一圈之后，找到了几个靠谱的方案。</p>
-<h3 id="步骤一：引导盘启动">步骤一：引导盘启动</h3><p>既然键盘都无法输入了，只能用引导盘来修复问题了。我的fstab文件配置如下</p>
-<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="preprocessor"># /dev/sda1 		<span class="title">&lt;dir&gt;</span>		<span class="title">&lt;type&gt;</span></span></span><br><span class="line">U<span class="built_in">UID</span>=...			/			xfs</span><br><span class="line"><span class="preprocessor"># /dev/sda2</span></span><br><span class="line">U<span class="built_in">UID</span>=...			/boot		xfs</span><br></pre></td></tr></table></figure>
+<h3>步骤一：引导盘启动</h3>
+<p>既然键盘都无法输入了，只能用引导盘来修复问题了。我的fstab文件配置如下</p>
+<p><figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="preprocessor"># /dev/sda1 		<span class="title">&lt;dir&gt;</span>		<span class="title">&lt;type&gt;</span></span></span><br><span class="line">U<span class="built_in">UID</span>=...			/			xfs</span><br><span class="line"><span class="preprocessor"># /dev/sda2</span></span><br><span class="line">U<span class="built_in">UID</span>=...			/boot		xfs</span><br></pre></td></tr></table></figure></p>
 <p>Paralles选择操作》配置》硬件》CD/DVD1》源，选择archlinux.iso镜像，启动。</p>
-<h3 id="步骤二：挂载启动目录和引导目录">步骤二：挂载启动目录和引导目录</h3><p>执行命令</p>
-<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mount <span class="regexp">/dev/</span>sda1 /mnt</span><br><span class="line">mount <span class="regexp">/dev/</span>sda2 <span class="regexp">/mnt/</span>boot</span><br></pre></td></tr></table></figure>
+<h3>步骤二：挂载启动目录和引导目录</h3>
+<p>执行命令</p>
+<p><figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mount <span class="regexp">/dev/</span>sda1 /mnt</span><br><span class="line">mount <span class="regexp">/dev/</span>sda2 <span class="regexp">/mnt/</span>boot</span><br></pre></td></tr></table></figure></p>
 <p>需要注意的时，不能只挂在启动目录，引导目录也得同时挂载。</p>
-<h3 id="步骤三：更新系统">步骤三：更新系统</h3><p>上一步，挂载了两个目录之后，接下来就要切换到启动目录了，执行</p>
-<figure class="highlight perl"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">arch-<span class="keyword">chroot</span> /mnt</span><br></pre></td></tr></table></figure>
+<h3>步骤三：更新系统</h3>
+<p>上一步，挂载了两个目录之后，接下来就要切换到启动目录了，执行</p>
+<p><figure class="highlight perl"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">arch-<span class="keyword">chroot</span> /mnt</span><br></pre></td></tr></table></figure></p>
 <p>然后更新系统</p>
-<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="title">pacman</span> -Syu</span><br></pre></td></tr></table></figure>
-<h3 id="步骤四：重新生成initramfs">步骤四：重新生成initramfs</h3><p>虽然我也不太懂什么是initramfs，但是这个命令必须执行，它是解决挂钩的关键</p>
-<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mkinitcpio -<span class="tag">p</span> linux</span><br></pre></td></tr></table></figure>
+<p><figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="title">pacman</span> -Syu</span><br></pre></td></tr></table></figure></p>
+<h3>步骤四：重新生成initramfs</h3>
+<p>虽然我也不太懂什么是initramfs，但是这个命令必须执行，它是解决挂钩的关键</p>
+<p><figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mkinitcpio -<span class="tag">p</span> linux</span><br></pre></td></tr></table></figure></p>
 <p>特别注意，如果步骤二时只挂载了启动目录，就更新系统的话，执行mkinitcpio命令会报错</p>
 <blockquote>
-<p>‘/lib/modules/4.11.9-1ARCH’ is not a valid kernel module directory</p>
+<p>'/lib/modules/4.11.9-1ARCH' is not a valid kernel module directory</p>
 </blockquote>
 <p>解决办法是需要挂载引导目录后，再执行命令</p>
-<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="title">pacman</span> -S linux</span><br></pre></td></tr></table></figure>
+<p><figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="title">pacman</span> -S linux</span><br></pre></td></tr></table></figure></p>
 <p>重新安装一次linux包，哪怕版本已经最新了。最后执行mkinitcpio命令。</p>
-<h3 id="总结">总结</h3><p>我就是因为更新系统的时候，没有挂载引导目录，导致执行mkinitcpio报错一直找不到模块目录。</p>
+<h3>总结</h3>
+<p>我就是因为更新系统的时候，没有挂载引导目录，导致执行mkinitcpio报错一直找不到模块目录。</p>
 
   </section>
 </article>

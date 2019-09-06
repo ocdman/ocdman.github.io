@@ -42,7 +42,7 @@
 
   <section class="article-entry">
     <p>实现SSH走SOCKS代理只需要一句话。</p>
-<figure class="highlight perl"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh -o ProxyCommand=<span class="string">"nc -X 5 -x 127.0.0.1:1080 <span class="variable">%h</span> <span class="variable">%p</span>"</span> username<span class="variable">@vpsip</span> -p portnum</span><br></pre></td></tr></table></figure>
+<p><figure class="highlight perl"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh -o ProxyCommand=<span class="string">"nc -X 5 -x 127.0.0.1:1080 <span class="variable">%h</span> <span class="variable">%p</span>"</span> username<span class="variable">@vpsip</span> -p portnum</span><br></pre></td></tr></table></figure></p>
 <p>以上代码可以在Mac以及Linux下直接执行，Windows下尤其是Win10貌似要写个ssh的配置文件，内容是关于ProxyCommand的，Win10下无法直接识别，这里就不赘述了，因为我一般只用Mac进行SSH连接。</p>
 <p>其中，<code>-X</code>后面的<code>5</code>代表<code>SOCKS5</code>。</p>
 

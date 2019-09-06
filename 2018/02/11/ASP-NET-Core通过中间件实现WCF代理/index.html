@@ -42,17 +42,21 @@
 
   <section class="article-entry">
     <p>在项目迁移过程中，涉及到ASP.NET Core引用WCF服务的情况，网上的绝大部分教程是直接使用了VS的插件<code>Microsoft WCF Web Service Reference Provider</code>工具来实现ASP.NET Core项目对WCF服务的引用。</p>
-<h3 id="为什么不使用现有的WCF服务连接">为什么不使用现有的WCF服务连接</h3><p>因为该工具有两个明显的缺点：</p>
+<h3>为什么不使用现有的WCF服务连接</h3>
+<p>因为该工具有两个明显的缺点：</p>
 <p>1.不知道为什么，只要我的ASP.NET Core项目引用了别的.NET Framework框架的项目，使用该工具创建WCF服务的时候，总是会报错</p>
 <blockquote>
-<p>Scaffolding Code …<br>Error:Error: MSBUILD : error MSB1003: Specify a project or solution file. The current working directory does not contain a project or solution file.<br>An error occurred while bootstrapping svcutil. This usually happens when processing references.  You might be able to work around this problem by not providing reference parameters, and manually removing any types redefined in the generated proxy code.</p>
+<p>Scaffolding Code ...
+Error:Error: MSBUILD : error MSB1003: Specify a project or solution file. The current working directory does not contain a project or solution file.
+An error occurred while bootstrapping svcutil. This usually happens when processing references.  You might be able to work around this problem by not providing reference parameters, and manually removing any types redefined in the generated proxy code.</p>
 <p>Failed to generate service reference.</p>
 </blockquote>
 <p>唯一的解决办法就是，先取消对其它.NET Framework框架的引用，然后添加WCF服务，最后再引用刚才取消的引用。极其繁琐，尤其是遇到频繁地添加新的WCF服务的时候。</p>
 <p>2.该工具生成的WCF服务引用缺少配置文件，尤其是在生产环境中要修改WCF服务的地址时，会显得极其不方便。</p>
 <p>以上两点，就足以让我否定现有的VS上的<code>Microsoft WCF Web Service Reference Provider</code>工具。虽然该工具还在不断更新完善中，但是就目前这种情况来看，要想用于实际项目，还是有一段路要走的。那么如何才能做到像在.NET Framework框架中引用WCF服务那般灵活方便呢？</p>
 <p>网上有网友公开了他的<a href="https://github.com/jolmari/netcore-wcf-service-proxy" target="_blank" rel="external">.NET Core WCF Service Proxy</a>程序，该程序通过代理中转的方式实现了ASP.NET Core引用WCF服务过程中，读取配置文件访问WCF服务的功能。很好地满足了我目前的这种情况，于是拿来借鉴一下。</p>
-<h3 id="代理方案的优缺点">代理方案的优缺点</h3><ul>
+<h3>代理方案的优缺点</h3>
+<ul>
 <li>优点</li>
 </ul>
 <p>不需要创建多个单独的连接服务引用，只需要在配置文件中配置的wcf服务的url以及端口号就能够实现代理访问。其中通过配置文件来实现代理访问正是我所需要的。</p>
@@ -60,7 +64,8 @@
 <li>缺点</li>
 </ul>
 <p>需要额外创建包装类接口，以及实现包装类。会比直接引用wcf服务引用要多写代码。</p>
-<h3 id="如何实现wcf代理">如何实现wcf代理</h3><p>大致分为以下几个步骤：</p>
+<h3>如何实现wcf代理</h3>
+<p>大致分为以下几个步骤：</p>
 <ol>
 <li>创建WCF服务</li>
 <li>WCF代理程序中，创建基于服务引用的服务合同类。该合同类的内容为原先.NET Framework上对WCF服务的引用，即机器生成的Reference.cs文件的内容，将其引入代理程序中，并修改一下文件名即可</li>
@@ -68,7 +73,8 @@
 <li>包装器将数据传输对象映射到单独的模型类</li>
 <li>在ASP.NET Core项目中在需要包装器的地方注入使用</li>
 </ol>
-<h3 id="总结">总结</h3><p>要想了解更多wcf代理的实现细节还是要参考<a href="https://github.com/jolmari/netcore-wcf-service-proxy" target="_blank" rel="external">.NET Core WCF Service Proxy</a>程序。这篇文章只是对该方案进行了部分翻译，以及加入一些自己的理解在里面。</p>
+<h3>总结</h3>
+<p>要想了解更多wcf代理的实现细节还是要参考<a href="https://github.com/jolmari/netcore-wcf-service-proxy" target="_blank" rel="external">.NET Core WCF Service Proxy</a>程序。这篇文章只是对该方案进行了部分翻译，以及加入一些自己的理解在里面。</p>
 
   </section>
 </article>

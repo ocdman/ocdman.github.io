@@ -43,8 +43,10 @@
   <section class="article-entry">
     <p>最近在做一个Web Service的项目中发现，使用log4net往SQL Server数据库表里插入日志，隔一段时间后，不能再插入日志的情况。</p>
 <p>Google了一下发现，原来log4net的ADONetAppender模块，默认情况下，当数据库连接断开后，就无法再往数据库表里写入日志，哪怕数据库连接恢复。那么有什么办法，使得数据库连接恢复之后，依然还能继续写入日志呢？</p>
-<p>(1) 在appender节点下，添加以下这段xml<br><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="title">reconnectonerror</span> <span class="attribute">value</span>=<span class="value">"True"</span> /&gt;</span></span><br></pre></td></tr></table></figure></p>
-<p>(2) 在connectionString里，加入连接超时，超时时间设置为1<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Connect Timeout=<span class="number">1</span></span><br></pre></td></tr></table></figure></p>
+<p>(1) 在appender节点下，添加以下这段xml
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="title">reconnectonerror</span> <span class="attribute">value</span>=<span class="value">"True"</span> /&gt;</span></span><br></pre></td></tr></table></figure></p>
+<p>(2) 在connectionString里，加入连接超时，超时时间设置为1
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Connect Timeout=<span class="number">1</span></span><br></pre></td></tr></table></figure></p>
 <p>在添加以上两点之后，我的log4net日志功能又恢复了往常 ^_^</p>
 
   </section>

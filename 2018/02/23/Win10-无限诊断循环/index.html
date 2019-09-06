@@ -43,20 +43,27 @@
   <section class="article-entry">
     <p>今天开机的时候，Win10始终无法正常打开，永远告诉我正在诊断你的电脑，最后来一句，你的电脑未正确启动。</p>
 <p>网上的方法我都试了一遍，说说我的感受。</p>
-<h3 id="安全模式">安全模式</h3><p>在高级选项里可以选择安全模式启动，问题是我选择以安全模式启动后，仍然无效。画面停在了Lenovo的商标页面，最后又是蓝屏。</p>
-<h3 id="系统恢复">系统恢复</h3><p>照理来讲，系统出问题了，应该可以回退到上一个版本，问题是我选择了回退功能之后，卡死在了点击下一步按钮这个页面上。也就是说系统恢复方法对我无效。</p>
-<h3 id="引导盘启动">引导盘启动</h3><p>我尝试了U盘作为引导盘启动，然后查看日志，C:\Windows\System32\LogFiles\Srt\Srttrail.txt，但没有什么有用的提示，看着貌似只有重装的选择。</p>
-<h3 id="命令提示符">命令提示符</h3><p>网上有推荐方法，打开命令提示符执行命令</p>
-<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">bootrec<span class="class">.exe</span> /fixmbr</span><br><span class="line">bootrec<span class="class">.exe</span> /fixboot</span><br><span class="line">bootrec<span class="class">.exe</span> /rebuildbcd</span><br></pre></td></tr></table></figure>
+<h3>安全模式</h3>
+<p>在高级选项里可以选择安全模式启动，问题是我选择以安全模式启动后，仍然无效。画面停在了Lenovo的商标页面，最后又是蓝屏。</p>
+<h3>系统恢复</h3>
+<p>照理来讲，系统出问题了，应该可以回退到上一个版本，问题是我选择了回退功能之后，卡死在了点击下一步按钮这个页面上。也就是说系统恢复方法对我无效。</p>
+<h3>引导盘启动</h3>
+<p>我尝试了U盘作为引导盘启动，然后查看日志，C:\Windows\System32\LogFiles\Srt\Srttrail.txt，但没有什么有用的提示，看着貌似只有重装的选择。</p>
+<h3>命令提示符</h3>
+<p>网上有推荐方法，打开命令提示符执行命令</p>
+<p><figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">bootrec<span class="class">.exe</span> /fixmbr</span><br><span class="line">bootrec<span class="class">.exe</span> /fixboot</span><br><span class="line">bootrec<span class="class">.exe</span> /rebuildbcd</span><br></pre></td></tr></table></figure></p>
 <p>但是我在执行第二条命令的时候，告诉我无权限操作。所以这个方法也没效果。</p>
 <p>还有说法说，用scf命令查找错误</p>
-<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="title">scf</span> /scannow</span><br></pre></td></tr></table></figure>
+<p><figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="title">scf</span> /scannow</span><br></pre></td></tr></table></figure></p>
 <p>直接告诉我资源被保护，无法启动。</p>
-<h3 id="对我有用的办法">对我有用的办法</h3><p>还是需要打开命令提示符，执行</p>
-<figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">c:</span><br><span class="line">cd \windows\system32\config</span><br><span class="line">MD Backup</span><br><span class="line"><span class="built_in">copy</span> <span class="bash">*.* backup</span><br><span class="line"></span>cd RegBack</span><br><span class="line"><span class="built_in">copy</span> <span class="bash">*.* ..</span><br><span class="line"></span>exit</span><br></pre></td></tr></table></figure>
+<h3>对我有用的办法</h3>
+<p>还是需要打开命令提示符，执行</p>
+<p><figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">c:</span><br><span class="line">cd \windows\system32\config</span><br><span class="line">MD Backup</span><br><span class="line"><span class="built_in">copy</span> <span class="bash">*.* backup</span><br><span class="line"></span>cd RegBack</span><br><span class="line"><span class="built_in">copy</span> <span class="bash">*.* ..</span><br><span class="line"></span>exit</span><br></pre></td></tr></table></figure></p>
 <p>再以安全模式打开，看到系统提示，上次更新失败，正在恢复，我知道有戏，果不其然，安全模式正常开启。最后以正常模式打开，进入系统。</p>
 <p>这种方式可能以恢复原来的注册表来达到恢复系统的原理吧。总的来说，网上无限诊断循环的情况各异，有些人安全模式一下就进去了，有些人是因为卸载了显卡驱动才进去的，归根到底还是win10自动更新惹的祸。看样子得想办法，解决win10的强制更新才行。</p>
-<h3 id="其它参考方案">其它参考方案</h3><p><a href="https://www.zhihu.com/question/36422385" target="_blank" rel="external">win10开机无法进入系统，始终卡在转圈圈这步，怎么破。?</a><br><a href="https://answers.microsoft.com/zh-hans/insider/forum/insider_wintp-insider_install/%E6%B1%82%E5%8A%A9win10%E6%AC%A2%E8%BF%8E%E7%95%8C/00b027de-7e0b-4c95-8976-b834ba70a548" target="_blank" rel="external">求助win10欢迎界面转圈无法进入windows</a></p>
+<h3>其它参考方案</h3>
+<p><a href="https://www.zhihu.com/question/36422385" target="_blank" rel="external">win10开机无法进入系统，始终卡在转圈圈这步，怎么破。?</a>
+<a href="https://answers.microsoft.com/zh-hans/insider/forum/insider_wintp-insider_install/%E6%B1%82%E5%8A%A9win10%E6%AC%A2%E8%BF%8E%E7%95%8C/00b027de-7e0b-4c95-8976-b834ba70a548" target="_blank" rel="external">求助win10欢迎界面转圈无法进入windows</a></p>
 <p><a href="https://www.drivereasy.com/knowledge/windows-10-automatic-repair-loop-solved/" target="_blank" rel="external">Windows 10 Automatic Repair Loop</a></p>
 <p><a href="https://www.youtube.com/watch?v=IgdAzvBcJyo" target="_blank" rel="external">Automatic Repair Loop Fix Windows 10 [Tutorial]</a></p>
 

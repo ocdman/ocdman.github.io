@@ -44,11 +44,12 @@
     <p>想要体验一个完全定制化的Linux系统，非Arch和Gentoo莫属。而我只需要一个桌面系统，貌似Arch更适合我。<a href="https://linux.cn/article-6513-1.html" target="_blank" rel="external">这篇文章</a>很大程度上坚定了我对Arch的选择。</p>
 <p>我的安装环境是Mac+Parallels，我没有选择直接在电脑上安装，而是从虚拟机入手。Parallels已经证明是一款在Mac上表现优异的虚拟机了，我的Win10操作系统在Parallels里养得好好的。</p>
 <p>安装手册我推荐官方wiki的<a href="https://wiki.archlinux.org/index.php/Installation_guide" target="_blank" rel="external">Installation_guide章节</a>，有中文版也有英文版。安装过程就不详细介绍了，细节太多，照着wiki做就行了。或者参考<a href="http://www.viseator.com/2017/05/17/arch_install/" target="_blank" rel="external">这篇文章</a>，写很详细。我就记录下我踩过的坑。</p>
-<h3 id="一、安装系统时忘记安装无线软件包dialog">一、安装系统时忘记安装无线软件包dialog</h3><p>当我装完系统重启之后，想要联网下载软件包，输入命令</p>
-<figure class="highlight mel"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wifi-<span class="keyword">menu</span></span><br></pre></td></tr></table></figure>
+<h3>一、安装系统时忘记安装无线软件包dialog</h3>
+<p>当我装完系统重启之后，想要联网下载软件包，输入命令</p>
+<p><figure class="highlight mel"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wifi-<span class="keyword">menu</span></span><br></pre></td></tr></table></figure></p>
 <p>来选择无线网络，却报错</p>
 <blockquote>
-<p><em>Please install</em> ‘<em>dialog’ to use wifi</em>-menu</p>
+<p><em>Please install</em> '<em>dialog' to use wifi</em>-menu</p>
 </blockquote>
 <p>。原因是我在安装操作系统时，忘记下载dialog包，导致新系统无法使用无线网络。而且我使用的是MacBookPro，没有雷电转网线的转接线，只有wifi可以用。</p>
 <p>网上的解决方法是</p>
@@ -56,7 +57,7 @@
 <p>如果以后我们的系统出现了问题，只要插入U盘并启动， 将我们的系统根分区挂载到了<code>/mnt</code>下（如果有<code>efi</code>分区也要挂载到<code>/mnt/boot</code>下），再通过<code>arch-chroot /mnt</code>这条命令就可以进入我们的系统进行修复操作。</p>
 </blockquote>
 <p>我的环境是虚拟机，我只需要以iso镜像文件来启动。但是为啥安装完系统之后，我进不了iso的启动程序了呢。<strong>原来Parallels配置里有个启动顺序，我默认以硬盘启动，CD/DVD启动被排在硬盘的后面</strong>，所以能够解释我新系统安装完成之后，每次默认以硬盘启动，而不再读取CD了。</p>
-<p><img src="/img/2017111401.png" width="670px"></p>
+<p>&lt;img src=&quot;/img/2017111401.png&quot; width=&quot;670px&quot; /&gt;</p>
 <p>调整顺序，将CD/DVD排在最前，就能以iso镜像文件来启动了。接下来分三步走</p>
 <ol>
 <li>将系统根分区挂载到/mnt目录，如果有efi分区挂载到/mnt/boot下。</li>
@@ -69,13 +70,14 @@
 <p>If only one wireless interface is available, INTERFACE can be omitte.</p>
 </blockquote>
 <p>。原来是因为<strong>虚拟机没有无线网卡，在虚拟机里面都是本地连接</strong>。所以只要执行命令</p>
-<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">dhcpcd</span><br></pre></td></tr></table></figure>
+<p><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">dhcpcd</span><br></pre></td></tr></table></figure></p>
 <p>，就能连接网络了。dhcpcd命令默认已经安装了，不需要下载额外的包。搞了半天为了能连上网络，我绕了一个大圈。</p>
-<h3 id="二、安装i3-wm窗口管理器，快捷键无效">二、安装i3-wm窗口管理器，快捷键无效</h3><p>安装完Arch系统之后，我需要一个图形界面，听说i3不错，它是一款平铺式窗口管理器，相对于GNOME和KDE来讲，i3-wm是一个轻量级的显示管理器，不会占用太多内存，而且支持自己美化。我是因为<a href="https://www.zhihu.com/question/27733243" target="_blank" rel="external">这篇文章</a>，才决定安装i3的。</p>
+<h3>二、安装i3-wm窗口管理器，快捷键无效</h3>
+<p>安装完Arch系统之后，我需要一个图形界面，听说i3不错，它是一款平铺式窗口管理器，相对于GNOME和KDE来讲，i3-wm是一个轻量级的显示管理器，不会占用太多内存，而且支持自己美化。我是因为<a href="https://www.zhihu.com/question/27733243" target="_blank" rel="external">这篇文章</a>，才决定安装i3的。</p>
 <p>i3的安装过程真的是很曲折，建议参考官方wiki的<a href="https://wiki.archlinux.org/index.php/I3" target="_blank" rel="external">i3章节</a>。一开始我完全没理解教程，以为安装i3了之后，就能执行<code>startx</code>命令了。因为命令出错，我又去找原因，原来桌面环境需要Xorg的支持，Xorg是Linux下的一个著名的开源图形服务。我把xorg的包全部安装了，然后执行<code>startx</code>，结果图形界面黑屏。我又找了一大堆命令，最后执行命令</p>
-<figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cp <span class="regexp">/etc/</span>X11<span class="regexp">/xinit/</span>xinitrc ~<span class="regexp">/.xinitrc</span></span><br></pre></td></tr></table></figure>
+<p><figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cp <span class="regexp">/etc/</span>X11<span class="regexp">/xinit/</span>xinitrc ~<span class="regexp">/.xinitrc</span></span><br></pre></td></tr></table></figure></p>
 <p>之后，图形界面总算出来了。但是MacbookPro的像素太高了，导致图形界面里的终端看不清楚，又得找办法调整图形界面里的像素。好在也有办法，在图形界面里执行命令</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">xrandr <span class="operator">-s</span> <span class="number">8</span></span><br></pre></td></tr></table></figure>
+<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">xrandr <span class="operator">-s</span> <span class="number">8</span></span><br></pre></td></tr></table></figure></p>
 <p>，这里的8是分辨率的代号，根据自己的喜欢决定。执行一下<code>xrandr</code>就能知道当前的像素，有10多个像素的选择。</p>
 <p>图像是有了但是i3最引以为傲的快捷键却完全不起效果。我几乎把网上能查的都查了个遍，能用的方法都试了个遍，依然无果。最后无意间发现了<code>i3-config-wizard</code>命令，该命令会自动将<code>/etc/i3/config</code>文件内容复制到<code>~/.config/i3/config</code>文件。然后将<code>/etc/i3/config.keycodes</code>里的<code>$mod</code>加入到<code>~/.config/i3/config</code>文件。我把原来的<code>~/.config/i3/config</code>文件删除，在图像界面下执行<code>i3-config-wizard</code>命令，报错</p>
 <blockquote>
@@ -92,7 +94,7 @@
 <p>exec i3</p>
 </blockquote>
 <p>难怪我的<code>exec i3</code>每次都看不出效果，原来我的程序先执行的并不是i3而是xterm桌面环境。我赶紧注释了<code>exec xterm</code>，再次执行<code>startx</code>。结果图形界面一闪而过，我知道有戏了，于是修改<code>~/.xinitrc</code>文件末尾处为</p>
-<figure class="highlight mel"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">exec</span> i3 -V &gt;&gt; ~/i3log-<span class="variable">$(</span><span class="keyword">date</span> +<span class="string">'%F-%k-%M-%S'</span>) <span class="number">2</span>&gt;&amp;<span class="number">1</span></span><br></pre></td></tr></table></figure>
+<p><figure class="highlight mel"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">exec</span> i3 -V &gt;&gt; ~/i3log-<span class="variable">$(</span><span class="keyword">date</span> +<span class="string">'%F-%k-%M-%S'</span>) <span class="number">2</span>&gt;&amp;<span class="number">1</span></span><br></pre></td></tr></table></figure></p>
 <p>，用来记录输出日志。日志内容为</p>
 <blockquote>
 <p>another window manager seem to be running</p>
@@ -100,12 +102,12 @@
 <p>再次在网上找了一堆关于这个问题的解答，依然无解。</p>
 <p>最后我又打开<code>~/.xinitrc</code>文件看了一下，突然发现注释掉的<code>exec xterm</code>上面还有xterm，而且还是以&amp;作为结尾的。于是我赶紧再改了一下</p>
 <blockquote>
-<p> #twm &amp;</p>
-<p> #xclock -geometry 50*50-1+1 &amp;</p>
-<p> #xterm -geometry 80*50+494+51 &amp;</p>
-<p> #xterm -geometry 80*20+494-0 &amp;</p>
-<p> #exec xterm -geometry 80*60+0+0 -name login</p>
-<p> exec i3</p>
+<p>#twm &amp;</p>
+<p>#xclock -geometry 50*50-1+1 &amp;</p>
+<p>#xterm -geometry 80*50+494+51 &amp;</p>
+<p>#xterm -geometry 80*20+494-0 &amp;</p>
+<p>#exec xterm -geometry 80*60+0+0 -name login</p>
+<p>exec i3</p>
 </blockquote>
 <p>终于这一次，桌面出来了。</p>
 <p>但还是黑屏的，当我还在懵逼的时候，我按了下<code>$mod+Enter</code>，结果一个白底的终端出现了，我知道我成功了！</p>

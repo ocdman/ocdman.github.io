@@ -42,12 +42,12 @@
 
   <section class="article-entry">
     <p>NTFS文件系统是Windows系统下的一种文件格式，树莓派默认是无法读取这种文件格式的。但是可以安装<code>ntfs-3g</code>模块来支持NTFS格式。</p>
-<figure class="highlight q"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 更新仓库源信息</span></span><br><span class="line">sudo apt-<span class="built_in">get</span> <span class="keyword">update</span></span><br><span class="line"><span class="comment">// 下载安装ntfs-3g模块</span></span><br><span class="line">sudo apt-<span class="built_in">get</span> install ntfs-<span class="number">3</span>g</span><br></pre></td></tr></table></figure>
+<p><figure class="highlight q"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 更新仓库源信息</span></span><br><span class="line">sudo apt-<span class="built_in">get</span> <span class="keyword">update</span></span><br><span class="line"><span class="comment">// 下载安装ntfs-3g模块</span></span><br><span class="line">sudo apt-<span class="built_in">get</span> install ntfs-<span class="number">3</span>g</span><br></pre></td></tr></table></figure></p>
 <p>先来说说<code>apt-get update</code>命令和<code>apt-get upgrade</code>命令的区别，<code>apt-get update</code>是从源服务器里那里下载软件包列表进行更新，<code>apt-get install</code>命令依赖于软件包的信息。如果上面的命令没有执行<code>apt-get update</code>，那么会报错找不到ntfs-3g模块。原因就在于服务器的软件包信息已经变了，所以每次下载安装软件前，执行一下<code>apt-get update</code>是个不错的习惯。</p>
 <p>而<code>apt-get upgrade</code>则是对现有安装的软件进行更新，如果没什么必要的话，不用去执行。主要是我的SD卡太小了只有4G，装个大点的软件都要捉襟见肘，生怕用完了。</p>
 <p>网上还有推荐说要安装<code>fuse-utils</code>模块，但貌似最新的RASPBIAN STRETCH LITE系统已经自带了这个模块</p>
 <p>最后执行命令，来加载ntfs内核</p>
-<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="title">modprobe</span> fuse</span><br></pre></td></tr></table></figure>
+<p><figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="title">modprobe</span> fuse</span><br></pre></td></tr></table></figure></p>
 
   </section>
 </article>

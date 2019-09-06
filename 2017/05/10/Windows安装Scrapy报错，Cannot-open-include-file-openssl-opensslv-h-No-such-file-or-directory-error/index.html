@@ -44,8 +44,9 @@
     <p>交接爬虫项目时，要安装Scrapy框架，操作系统都是Windows。本来在我的电脑上运行好好的程序，结果在同事电脑上连安装都安装不上。</p>
 <p>究其原因，主要的错误是在安装Scrapy时，需要引入PySSlOpen模块时抛出的错误，Cannot open include file: openssl/opensslv.h: No such file or directory error。</p>
 <p>我参照了很多网上的做法，都不管用。把我给气的。由于我的电脑上的Python是32位的，而同事的则是64位，我实在没辙，让他也换成32位，又装了一个pywin32程序，让32位的Python也能运行64位的模块，本来以为能成功，结果一直报win32应用程序出错，实在是一头雾水，可是我明明已经装了pywin32程序了，而且版本号都是2.7。无奈之下，卸了再装64位的Python。</p>
-<p>因为我发现同事装了 Microsoft Visual C++ Compiler Package for Pythoon 2.7，这个在我电脑里没有，于是我让他卸了，由于卸了之后，安装Scrapy会报Visual C++ 9.0的错误，网上一搜，一种说是要安装 Microsoft Visual C++ 2008 Redistributable，还一种就是安装之前被我卸载的 Microsoft Visual C++ Compiler Package for Pythoon 2.7 程序。<br>我先安装了 Microsoft Visual C++ 2008 Redistributable 32位和64位的程序。然后运行还是报Visual C++ 9.0的错误，只能继续安装 Microsoft Visual C++ Compiler Package for Pythoon 2.7。由于我的Scrapy版本较低，其引用的模块版本也较低，于是我选定安装Scrapy关联的模块的版本，代码如下：</p>
-<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install -v cryptography X<span class="class">.XX</span><span class="class">.XX</span></span><br></pre></td></tr></table></figure>
+<p>因为我发现同事装了 Microsoft Visual C++ Compiler Package for Pythoon 2.7，这个在我电脑里没有，于是我让他卸了，由于卸了之后，安装Scrapy会报Visual C++ 9.0的错误，网上一搜，一种说是要安装 Microsoft Visual C++ 2008 Redistributable，还一种就是安装之前被我卸载的 Microsoft Visual C++ Compiler Package for Pythoon 2.7 程序。
+我先安装了 Microsoft Visual C++ 2008 Redistributable 32位和64位的程序。然后运行还是报Visual C++ 9.0的错误，只能继续安装 Microsoft Visual C++ Compiler Package for Pythoon 2.7。由于我的Scrapy版本较低，其引用的模块版本也较低，于是我选定安装Scrapy关联的模块的版本，代码如下：</p>
+<p><figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pip install -v cryptography X<span class="class">.XX</span><span class="class">.XX</span></span><br></pre></td></tr></table></figure></p>
 <p>由于我安装好了较低版本的cryptography模块，以及pyopenssl模块，Scrapy这一次安装没有抛错。</p>
 <p>总结下来，<strong>可能是我安装了 Microsoft Visual C++ 2008 Redistributable，还有可能就是在安装模块时，采用了较低版本。</strong></p>
 <p><strong><em>后记</em></strong></p>

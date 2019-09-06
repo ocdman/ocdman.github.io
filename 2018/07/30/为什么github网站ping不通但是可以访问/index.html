@@ -42,22 +42,26 @@
 
   <section class="article-entry">
     <p>最近在使用git上传资料到github的时候超时了（git没有配置代理），我本能地使用ping命令，去ping一下github.com</p>
-<figure class="highlight autoit"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">ping</span> github.com</span><br></pre></td></tr></table></figure>
+<p><figure class="highlight autoit"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">ping</span> github.com</span><br></pre></td></tr></table></figure></p>
 <p>反馈地结果都是</p>
 <blockquote>
 <p>Request timeout</p>
 </blockquote>
 <p>一开始我以为是墙影响到了github，应该只是暂时性的。但是隔了很长一段时间，我又去ping了一次后发现还是ping不同。于是我就用浏览器直接访问github，不开代理的情况下，竟然能访问。于是我就很不解，为什么网站ping不通的情况下，还能够访问？</p>
 <p>Google了一下后发现，原来还可以通过设置来实现防ping这种操作。</p>
-<h3 id="为什么要防ping">为什么要防ping</h3><p>这么做的目的，主要是为了安全考虑。如果黑客想要攻击某个网站，最简单的做法就是，他们只要模拟一大批设备狂ping该网站，导致该网站处理ping包而耗费大量资源，那么正常用户想要访问该网站时，因为资源分配不均，就会变得极其慢。网站甚至有可能会宕机。</p>
-<h3 id="如何实现防ping">如何实现防ping</h3><p>防ping的手段多种多样，Windows系统下主要有三种方法：</p>
+<h3>为什么要防ping</h3>
+<p>这么做的目的，主要是为了安全考虑。如果黑客想要攻击某个网站，最简单的做法就是，他们只要模拟一大批设备狂ping该网站，导致该网站处理ping包而耗费大量资源，那么正常用户想要访问该网站时，因为资源分配不均，就会变得极其慢。网站甚至有可能会宕机。</p>
+<h3>如何实现防ping</h3>
+<p>防ping的手段多种多样，Windows系统下主要有三种方法：</p>
 <ol>
 <li>使用IPSec安全策略</li>
 <li>使用第三方防火墙工具</li>
 <li>使用路由与远程访问组件</li>
 </ol>
-<h3 id="防ping原理">防ping原理</h3><p>防ping的本质是过滤icmp协议的响应报文。ping命令是基于icmp协议中的echo request报文进行工作的。本机发送一个icmp协议中的echo request到目标主机，等待目标主机的响应。如果此时把响应的结果过滤掉，那么ping也就无法继续工作，直接收到一个超时信息。</p>
-<h3 id="如何解释github网站ping不通">如何解释github网站ping不通</h3><p>可能不是github的问题，而是国内的github被解析到了某个CDN上，而该CDN禁用ping了而已。我用国外的VPS尝试ping一下github正常，果然应该就是这个原因了。</p>
+<h3>防ping原理</h3>
+<p>防ping的本质是过滤icmp协议的响应报文。ping命令是基于icmp协议中的echo request报文进行工作的。本机发送一个icmp协议中的echo request到目标主机，等待目标主机的响应。如果此时把响应的结果过滤掉，那么ping也就无法继续工作，直接收到一个超时信息。</p>
+<h3>如何解释github网站ping不通</h3>
+<p>可能不是github的问题，而是国内的github被解析到了某个CDN上，而该CDN禁用ping了而已。我用国外的VPS尝试ping一下github正常，果然应该就是这个原因了。</p>
 
   </section>
 </article>
