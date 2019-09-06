@@ -43,12 +43,12 @@
   <section class="article-entry">
     <p>发现上次Zero W意外断电，修复了磁盘之后，树莓派的时间变成了2016年。导致我执行<code>npm install</code>安装包的时候会提示</p>
 <blockquote>
-<p>error request to https://xxx.com failed, reason: certificate is not yet valid</p>
+<p>error request to <a href="https://xxx.com" target="_blank" rel="external">https://xxx.com</a> failed, reason: certificate is not yet valid</p>
 </blockquote>
 <p>树莓派上查看时间的命令是</p>
-<p><figure class="highlight applescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">date</span></span><br></pre></td></tr></table></figure></p>
+<figure class="highlight applescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">date</span></span><br></pre></td></tr></table></figure>
 <p>如果想要将时间进行同步，需要安装ntp服务</p>
-<p><figure class="highlight actionscript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//安装ntp服务</span></span><br><span class="line">sudo apt-<span class="keyword">get</span> install ntp</span><br><span class="line"><span class="comment">//时间同步</span></span><br><span class="line">sudo ntpd -s -d</span><br></pre></td></tr></table></figure></p>
+<figure class="highlight actionscript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//安装ntp服务</span></span><br><span class="line">sudo apt-<span class="keyword">get</span> install ntp</span><br><span class="line"><span class="comment">//时间同步</span></span><br><span class="line">sudo ntpd -s -d</span><br></pre></td></tr></table></figure>
 <p>执行完以上两条命令后，我查看了一下时间，已经变成了当前时间，目标达成。</p>
 
   </section>

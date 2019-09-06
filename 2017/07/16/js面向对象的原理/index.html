@@ -41,30 +41,7 @@
   </section>
 
   <section class="article-entry">
-    <p>今天看了汤姆大叔的博客（），谈到了关于js面向对象的详解，不禁忍不住，说说自己的理解。
-之前我只知道js是依靠原型链来实现继承的，而且所有的类型都是对象。但我一直不理解为什么函数也是对象，今天看了这篇文章突然开窍了。
-首先我们来说说，为什么js是一门面向对象的语言，什么是面向对象？
-面向对象是一种高度的抽象，把所有的事物都认为是对象，抽象之后再做归类。Object类型指的就是对象，其实不光是Object类型了，就连函数Function，随便定义一个函数，function F(){}，随便定义的一个对象实例，var obj = {}，以及基本类型String，Number，Boolean都是对象。在js里，一切都是对象，任何一门面向对象的语言也皆是如此。
-而我们知道，实例化的对象obj以及自定义函数F都有自己的属性，而且他们的属性还不是完全，这些属性都是从哪里来的呢？
-首先，所有的函数类型，以及根据函数类型实例化的对象，都有几个共同的属性，比方说toString方法，再比方说，valueOf方法。这些方法都是从哪里定义的呢？为什么函数F和对象实例obj都可以调用这些方法呢？原因就在于所有的实例也好，函数也罢，都视为对象，只要是对象，在继承链的顶端，就会引用对象的原型，即Object.prototype属性。所以obj和F都能调用toString方法，原因就在此，Object.prototype里定义了toString和valueOf等方法。只要给Object.prototype添加方法，就能在所有的对象中得到体现。比方说，我们给Object.prototype添加一个方法say，Object.prototype.say = function(){ alert('hello'); }，现在调用obj.say()和F.say()都会跳出弹窗，内容是hello。所以在Object.prototype里做的修改，立马会在所有对象中的得到体现。
-第二个问题，函数为什么是对象？
-我们知道，以function关键字命名的都叫函数，像Object，Number，String等类型都是函数，都是Function的实例。以下运算都行得通。
-Object instanceof Function; //true
-Number instanceof Function; //true
-String instanceof Function; //true
-Function instanceof Object; //true
-Function instanceof Function; //true
-Object instanceof Object; //true
-所以说函数是对象行得通，从某种意义上来说，Function等价于Object。注意不是等于，所有函数类型都是Function的实例，包括Object也是，但Function偏偏又是Object类型的实例。
-第三，所有对象都有__proto__属性？
-我们知道函数有prototype属性，比方说F.prototype，实例没有prototype属性，比方说没有obj.prototype。这是因为函数在声明的时候，会多创建一个prototype属性，而这个属性的值是一个实例化的Object对象。而在F.prototype里添加的属性，会在以F为类型实例化的对象中得到。
-F.prototype.fun = function(){
-alert('fun');
-}
-var f = new F();
-f.fun() //弹窗弹出fun
-F.prototype在内存里只有一份，凡是以F为类型实例化的对象，都会通过一个隐式指针__proto__指向F.prototype，所以F.prototype里添加的任何属性，最终都会在以该类型实例化后的对象中体现。但是到这里还没有结束，函数有显式的prototype属性，实例有隐式的__proto__属性，实例的__proto__指向函数的prototype。问题是函数有没有隐式属性__proto__？答案是有的，函数的__proto__最终会指向Function.prototype，而Function.prototype.<strong>proto__指向了Object.prototype对象。由此就实现了函数为什么能有toString等方法的原因了，而像bind等函数的方法，则定义在了Function.prototype里。如果给Function.prototype添加属性的话，立马就会在所有函数里得到体现。不光是实例，所有的函数，都有隐式指针__proto</strong>，最终都会指向Object.prototype，而Object.prototype.__proto__的值为null。需要指明一点的是，Object.<strong>proto</strong> 和 Function.<strong>proto</strong> 都指向了Function.prototype，这点需要注意。而Object.prototype instanceof Object的值为false，说明Object.prototype不是Object类型的实例。Object.prototype是一个特殊的存在，是所有对象的基础。
-以上，是我对js面向对象的理解。</p>
+    <p>今天看了汤姆大叔的博客（），谈到了关于js面向对象的详解，不禁忍不住，说说自己的理解。<br>之前我只知道js是依靠原型链来实现继承的，而且所有的类型都是对象。但我一直不理解为什么函数也是对象，今天看了这篇文章突然开窍了。<br>首先我们来说说，为什么js是一门面向对象的语言，什么是面向对象？<br>面向对象是一种高度的抽象，把所有的事物都认为是对象，抽象之后再做归类。Object类型指的就是对象，其实不光是Object类型了，就连函数Function，随便定义一个函数，function F(){}，随便定义的一个对象实例，var obj = {}，以及基本类型String，Number，Boolean都是对象。在js里，一切都是对象，任何一门面向对象的语言也皆是如此。<br>而我们知道，实例化的对象obj以及自定义函数F都有自己的属性，而且他们的属性还不是完全，这些属性都是从哪里来的呢？<br>首先，所有的函数类型，以及根据函数类型实例化的对象，都有几个共同的属性，比方说toString方法，再比方说，valueOf方法。这些方法都是从哪里定义的呢？为什么函数F和对象实例obj都可以调用这些方法呢？原因就在于所有的实例也好，函数也罢，都视为对象，只要是对象，在继承链的顶端，就会引用对象的原型，即Object.prototype属性。所以obj和F都能调用toString方法，原因就在此，Object.prototype里定义了toString和valueOf等方法。只要给Object.prototype添加方法，就能在所有的对象中得到体现。比方说，我们给Object.prototype添加一个方法say，Object.prototype.say = function(){ alert(‘hello’); }，现在调用obj.say()和F.say()都会跳出弹窗，内容是hello。所以在Object.prototype里做的修改，立马会在所有对象中的得到体现。<br>第二个问题，函数为什么是对象？<br>我们知道，以function关键字命名的都叫函数，像Object，Number，String等类型都是函数，都是Function的实例。以下运算都行得通。<br>Object instanceof Function; //true<br>Number instanceof Function; //true<br>String instanceof Function; //true<br>Function instanceof Object; //true<br>Function instanceof Function; //true<br>Object instanceof Object; //true<br>所以说函数是对象行得通，从某种意义上来说，Function等价于Object。注意不是等于，所有函数类型都是Function的实例，包括Object也是，但Function偏偏又是Object类型的实例。<br>第三，所有对象都有<strong>proto</strong>属性？<br>我们知道函数有prototype属性，比方说F.prototype，实例没有prototype属性，比方说没有obj.prototype。这是因为函数在声明的时候，会多创建一个prototype属性，而这个属性的值是一个实例化的Object对象。而在F.prototype里添加的属性，会在以F为类型实例化的对象中得到。<br>F.prototype.fun = function(){<br> alert(‘fun’);<br>}<br>var f = new F();<br>f.fun() //弹窗弹出fun<br>F.prototype在内存里只有一份，凡是以F为类型实例化的对象，都会通过一个隐式指针<strong>proto</strong>指向F.prototype，所以F.prototype里添加的任何属性，最终都会在以该类型实例化后的对象中体现。但是到这里还没有结束，函数有显式的prototype属性，实例有隐式的<strong>proto</strong>属性，实例的<strong>proto</strong>指向函数的prototype。问题是函数有没有隐式属性<strong>proto</strong>？答案是有的，函数的<strong>proto</strong>最终会指向Function.prototype，而Function.prototype.<strong>proto</strong>指向了Object.prototype对象。由此就实现了函数为什么能有toString等方法的原因了，而像bind等函数的方法，则定义在了Function.prototype里。如果给Function.prototype添加属性的话，立马就会在所有函数里得到体现。不光是实例，所有的函数，都有隐式指针<strong>proto</strong>，最终都会指向Object.prototype，而Object.prototype.<strong>proto</strong>的值为null。需要指明一点的是，Object.<strong>proto</strong> 和 Function.<strong>proto</strong> 都指向了Function.prototype，这点需要注意。而Object.prototype instanceof Object的值为false，说明Object.prototype不是Object类型的实例。Object.prototype是一个特殊的存在，是所有对象的基础。<br>以上，是我对js面向对象的理解。</p>
 
   </section>
 </article>

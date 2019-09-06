@@ -55,8 +55,7 @@
 <p>第二，敏感域名在TLS握手的时候已经被加密了，中间人只能看到被加密的内容</p>
 <p>所以说，使用Stunnel作为客户端可以保护消息的安全性，不被中间人窃听。效果相当于Chrome+SwitchyOmega直接使用TLS协议。只不过Stunnel把HTTP协议部分和TLS协议部分很好地衔接在了一起，看上去好像只使用了TLS协议一样。</p>
 <p>不过我在研究GoProxy-VPS源码的时候发现，直接使用Chrome+SwitchyOmega，ClientHello握手消息里的ServerName为空，而使用Stunnel客户端，ClientHello握手消息里的ServerName是服务器的域名。这点需要注意。</p>
-<h3>总结</h3>
-<p>其实不光可以使用Stunnel作为系统全局代理的客户端，GoProxy本身也可以，只是我还没研究VPS的配置。任何一个只要能够实现Stunnel思路的软件都能充当系统全局代理客户端。</p>
+<h3 id="总结">总结</h3><p>其实不光可以使用Stunnel作为系统全局代理的客户端，GoProxy本身也可以，只是我还没研究VPS的配置。任何一个只要能够实现Stunnel思路的软件都能充当系统全局代理客户端。</p>
 
   </section>
 </article>

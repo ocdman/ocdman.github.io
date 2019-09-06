@@ -48,9 +48,9 @@
 <p>事情的缘由是这样的，我原先使用<code>make.bash</code>文件生成的<code>build/darwin_amd64_cgo/stage</code>文件夹下的打包文件在测试，在Mac钥匙串访问中，证书导入的也是该文件夹下的<code>GoProxy.crt</code>。测试下来一切ok，于是我想切换到<code>goproxy</code>开发目录下，进行更深入的测试。谁知道，等我重新导入了<code>goproxy</code>目录下生成的<code>GoProxy.crt</code>证书后，就报上面的错误了。</p>
 <p>这样我有点不能理解，于是我删了<code>stage</code>文件夹下的内容后，重新生成该文件夹下的打包文件，以及重新导入<code>GoProxy.crt</code>文件，发现竟然还是报上面的错。起先我怀疑是证书的问题，后来我又看到一种说法是Go版本有关，但事实证明都没关系。</p>
 <p>解决方法是，我把Chrome浏览器关闭后，重新导入<code>GoProxy.crt</code>，然后再打开Chrome浏览器就可以了。原来，刚导入的证书，和打开的浏览器有一个缓存的关系。<strong>如果从钥匙串访问中把自签证书删了，重新导入新的证书的话，记得一定要重启浏览器</strong>。如果遇到某个网站报错的话，那是因为在<code>cache/ecc</code>文件夹下有该网站的证书缓存，将其清理掉就可以了。如果是隐藏文件，用命令行删除。可以使用<code>ls</code>命令查看文件夹权限及隐藏文件</p>
-<p><figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">ls</span> -<span class="keyword">al</span> cache/ecc</span><br></pre></td></tr></table></figure></p>
+<figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">ls</span> -<span class="keyword">al</span> cache/ecc</span><br></pre></td></tr></table></figure>
 <p>如果你使用的是<code>goproxy-macos.command</code>快捷打开方式，如果报错<code>permission denied</code>的错误的话，那是因为你的<code>ecc</code>文件夹的权限有可能是<code>root</code>用户的权限，将其修改成当前用户的权限即可，比如</p>
-<p><figure class="highlight perl"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">chmod</span> -R 当前用户名 ecc/</span><br></pre></td></tr></table></figure></p>
+<figure class="highlight perl"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">chmod</span> -R 当前用户名 ecc/</span><br></pre></td></tr></table></figure>
 
   </section>
 </article>

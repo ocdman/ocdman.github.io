@@ -43,14 +43,7 @@
   <section class="article-entry">
     <p>Windows Server 2008r2系统的服务器上需要升级SQL Server数据库从2008到 2014。但是在最后升级快完成的时候失败了，查看Windows日志后发现，报错内容</p>
 <blockquote>
-<p>错误应用程序名称: TrustedInstaller.exe，版本: 6.1.7601.17514，时间戳: 0x4ce7989b
-错误模块名称: cmifw.dll，版本: 6.1.7600.16385，时间戳: 0x4a5bdec6
-异常代码: 0xc0000005
-错误偏移量: 0x000000000000a8b5
-错误进程 ID: 0x18c
-错误应用程序启动时间: 0x01d433ab6e783bec
-错误应用程序路径: C:\Windows\servicing\TrustedInstaller.exe
-错误模块路径: C:\Windows\WinSxS\amd64_microsoft-windows-f..allconfig-installer_31bf3856ad364e35_6.1.7600.16385_none_731e1fe6187914ea\cmifw.dll</p>
+<p>错误应用程序名称: TrustedInstaller.exe，版本: 6.1.7601.17514，时间戳: 0x4ce7989b<br>错误模块名称: cmifw.dll，版本: 6.1.7600.16385，时间戳: 0x4a5bdec6<br>异常代码: 0xc0000005<br>错误偏移量: 0x000000000000a8b5<br>错误进程 ID: 0x18c<br>错误应用程序启动时间: 0x01d433ab6e783bec<br>错误应用程序路径: C:\Windows\servicing\TrustedInstaller.exe<br>错误模块路径: C:\Windows\WinSxS\amd64_microsoft-windows-f..allconfig-installer_31bf3856ad364e35_6.1.7600.16385_none_731e1fe6187914ea\cmifw.dll</p>
 </blockquote>
 <p>经过查询资料后发现，TrustedInstaller.exe进程属于Windows Modules Installer服务。打开服务，找到Windows Modules Installer服务，发现状态为未启动。右键启动后，刷新服务，状态又变成未启动。查看Windows日志，报错内容和SQL Server升级失败的内容一样。</p>
 <p>网上找了一大堆资料，但都不是针对我这种情况的，最后突发奇想，拿错误模块路径cmifw.dll搜搜看，竟然还真被我找到了解决方法，具体可以参考这篇，<a href="https://www.techieshelp.com/faulting-application-name-trustedinstaller-exe-version-6-1-server-2008r2/" target="_blank" rel="external">Faulting application name TrustedInstaller.exe version: 6.1 Server 2008r2 and Windows 7</a>。</p>

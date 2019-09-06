@@ -44,22 +44,19 @@
     <p>GoProxy-VPS的学习之路还是因为对Go语言基础了解不透彻，造成很多细节之处，难以理解。哪怕后来又写了一个最简单的HTTP(S)代理，代码还是无法完全理解，归根结底，基础没稳固。那么索性先把GoProxy-VPS这一块先放放，从Go语言基础开始学起。</p>
 <p>网上的Go基础教程多如牛毛，随便一搜都是一箩筐，怎么在这汪洋大海中，选择一个容易理解，容易上手的呢？我找到了一个至少我认为分析地很不错的网址，<a href="https://github.com/astaxie/build-web-application-with-golang/blob/master/zh/preface.md" target="_blank" rel="external">build web application with golang</a>。其中关于Go语言基础的分析，每一篇我认为都非常出彩。</p>
 <p>就跟随大神的脚步，一篇一篇的来学习，开篇之作，自然从程序员的启蒙，Hello World开始学起。</p>
-<h3>程序</h3>
-<p>先来一个最简单的<code>hello world</code>输出程序，看看Go是怎么实现的。</p>
-<p><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">package main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> "fmt"</span><br><span class="line"></span><br><span class="line"><span class="func"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">  fmt.<span class="type">Printf</span>(<span class="string">"Hello, world or 你好，世界 or καλημ ́ρα κóσμ or こんにちはせかい\n"</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h3 id="程序">程序</h3><p>先来一个最简单的<code>hello world</code>输出程序，看看Go是怎么实现的。</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">package main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> "fmt"</span><br><span class="line"></span><br><span class="line"><span class="func"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">  fmt.<span class="type">Printf</span>(<span class="string">"Hello, world or 你好，世界 or καλημ ́ρα κóσμ or こんにちはせかい\n"</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>输出如下</p>
 <blockquote>
 <p>Hello, world or 你好，世界 or καλημ ́ρα κóσμ or こんにちはせかい</p>
 </blockquote>
-<h3>详解</h3>
-<p>Go程序通过一个个<code>package</code>包来组织，比方说上面代码里的<code>fmt</code>包，就是系统输出日志的包。学过Python的朋友应该都不陌生，Go语言里的包和Python里的包类似，主要是为了模块化以及可复用性。</p>
+<h3 id="详解">详解</h3><p>Go程序通过一个个<code>package</code>包来组织，比方说上面代码里的<code>fmt</code>包，就是系统输出日志的包。学过Python的朋友应该都不陌生，Go语言里的包和Python里的包类似，主要是为了模块化以及可复用性。</p>
 <blockquote>
 <p>每一个可独立运行的Go程序，必定包含一个<code>package main</code>，在这个<code>main</code>包中必定包含一个<code>main</code>入口函数，这个函数没有参数也没有返回值。</p>
 </blockquote>
 <p>Go程序的入口在<code>main</code>包里的<code>main</code>函数，这个很好理解。它和C的语法有一部分相似之处在于，函数体包含在<code>{}</code>花括号内；不同之处在于，代码结束处不需要添加<code>;</code>分号。</p>
 <p>最后，Go天然支持UTF-8字符，这点比Python方便太多了。</p>
-<h3>总结</h3>
-<p>第一点，Go使用<code>package</code>包来组织代码。</p>
+<h3 id="总结">总结</h3><p>第一点，Go使用<code>package</code>包来组织代码。</p>
 <p>第二点，<code>main.main()</code>函数是程序的入口。</p>
 <p>第三点，Go天然支持UTF-8字符，即支持多语言。</p>
 

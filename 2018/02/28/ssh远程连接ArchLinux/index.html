@@ -42,27 +42,23 @@
 
   <section class="article-entry">
     <p>我的Arch Linux系统虽然配色看上去很炫，但是中文有字体发虚的现象，以及vim的文字配色太暗，整体字体又小，看文字久了很累。所以还是用本机的终端ssh远程连接Arch最舒服。</p>
-<h3>1. 安装openssh</h3>
-<p>要想让Arch支持ssh连接首先得安装openssh服务，执行命令</p>
-<p><figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="title">pacman</span> -S openssh</span><br></pre></td></tr></table></figure></p>
+<h3 id="1-_安装openssh">1. 安装openssh</h3><p>要想让Arch支持ssh连接首先得安装openssh服务，执行命令</p>
+<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="title">pacman</span> -S openssh</span><br></pre></td></tr></table></figure>
 <p>安装完openssh服务之后，首先查看sshd状态</p>
-<p><figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">systemctl</span> <span class="tag">status</span> <span class="tag">sshd</span><span class="class">.service</span></span><br></pre></td></tr></table></figure></p>
-<h3>2. 启动sshd服务</h3>
-<p>如果未开启的话，需要启动sshd命令，执行命令</p>
-<p><figure class="highlight dos"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">systemctl <span class="built_in">start</span> sshd</span><br></pre></td></tr></table></figure></p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">systemctl</span> <span class="tag">status</span> <span class="tag">sshd</span><span class="class">.service</span></span><br></pre></td></tr></table></figure>
+<h3 id="2-_启动sshd服务">2. 启动sshd服务</h3><p>如果未开启的话，需要启动sshd命令，执行命令</p>
+<figure class="highlight dos"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">systemctl <span class="built_in">start</span> sshd</span><br></pre></td></tr></table></figure>
 <p>但是遇到报错</p>
 <blockquote>
 <p>Failed to start sshd.service: The name org.freedesktop.PolicyKit1 was not provided by any .service files</p>
 </blockquote>
 <p>解决办法是使用<code>sudo</code>来执行即可。默认监听22端口。</p>
 <p>如果想要将sshd命令开机启动的话，同样需要root权限执行</p>
-<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">systemctl <span class="built_in">enable</span> sshd.service</span><br></pre></td></tr></table></figure></p>
-<h3>3. 查看Arch IP地址</h3>
-<p>查看Arch Linux系统的ip地址，执行命令</p>
-<p><figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="title">ip</span> addr</span><br></pre></td></tr></table></figure></p>
-<h3>4. ssh远程连接</h3>
-<p>最后本机ssh远程连接即可</p>
-<p><figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="title">ssh</span> user<span class="variable">@ip</span></span><br></pre></td></tr></table></figure></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">systemctl <span class="built_in">enable</span> sshd.service</span><br></pre></td></tr></table></figure>
+<h3 id="3-_查看Arch_IP地址">3. 查看Arch IP地址</h3><p>查看Arch Linux系统的ip地址，执行命令</p>
+<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="title">ip</span> addr</span><br></pre></td></tr></table></figure>
+<h3 id="4-_ssh远程连接">4. ssh远程连接</h3><p>最后本机ssh远程连接即可</p>
+<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="title">ssh</span> user<span class="variable">@ip</span></span><br></pre></td></tr></table></figure>
 <p>注意，我没有使用root权限登录，因为Arch默认禁止通过ssh进行root用户登录，但是可以修改配置文件来实现，具体参考<a href="https://wiki.archlinux.org/index.php/Secure_Shell" target="_blank" rel="external">Secure Shell</a>这篇文章里的<code>Server usage</code>内容。</p>
 
   </section>

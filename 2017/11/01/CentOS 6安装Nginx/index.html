@@ -42,30 +42,20 @@
 
   <section class="article-entry">
     <p>在CentOS 6上安装Nginx时，遇到了一些困难，在这里记录一下。</p>
-<p>已知我的操作系统是Linux，版本是CentOS 6。已经安装了EPEL源，可是在执行命令
-<figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo yum <span class="keyword">install</span> nginx</span><br></pre></td></tr></table></figure></p>
+<p>已知我的操作系统是Linux，版本是CentOS 6。已经安装了EPEL源，可是在执行命令<br><figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo yum <span class="keyword">install</span> nginx</span><br></pre></td></tr></table></figure></p>
 <p>后，仍旧提示找不到nginx包。网上的很多解决方案都是说，先去下载安装EPEL源，再执行刚才的命令就行了。问题是我已经下载安装EPEL源了，还是提示报错，最后<a href="https://gist.github.com/ifels/c8cfdfe249e27ffa9ba1" target="_blank" rel="external">centos 6.5 nginx安装与配置</a>这个帖子解决了我的问题。</p>
 <p>总结一下，大概分为几个步骤：</p>
-<p>1. 首先执行命令
-<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rpm -<span class="tag">q</span> epel-release</span><br></pre></td></tr></table></figure></p>
-<p>确认已经安装了epel-release源。
-&lt;img src=&quot;/img/213FDB74A2BD6FC3DD0C8DA67477B18A.png&quot; width=&quot;670px&quot; /&gt;</p>
-<p>2. 在/etc/yum.repos.d/目录下创建一个源配置文件nginx.repo，执行命令
-<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cd /etc/yum<span class="class">.repos</span><span class="class">.d</span>/</span><br><span class="line">vi nginx.repo</span><br></pre></td></tr></table></figure></p>
+<p>1. 首先执行命令<br><figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rpm -<span class="tag">q</span> epel-release</span><br></pre></td></tr></table></figure></p>
+<p>确认已经安装了epel-release源。<br><img src="/img/213FDB74A2BD6FC3DD0C8DA67477B18A.png" width="670px"></p>
+<p>2. 在/etc/yum.repos.d/目录下创建一个源配置文件nginx.repo，执行命令<br><figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cd /etc/yum<span class="class">.repos</span><span class="class">.d</span>/</span><br><span class="line">vi nginx.repo</span><br></pre></td></tr></table></figure></p>
 <p>3. 在新建的nginx.repo文件里，填写以下内容</p>
 <blockquote>
-<p>[nginx]
-name=nginx repo
-baseurl=http://nginx.org/packages/centos/$releasever/$basearch/
-gpgcheck=0
-enabled=1</p>
+<p>[nginx]<br>name=nginx repo<br>baseurl=<a href="http://nginx.org/packages/centos/$releasever/$basearch/" target="_blank" rel="external">http://nginx.org/packages/centos/$releasever/$basearch/</a><br>gpgcheck=0<br>enabled=1</p>
 </blockquote>
 <p>4. 保存，产生一个/etc/yum.repos.d/nginx.repo文件。</p>
-<p>5. 执行命令即可安装nginx了。
-<figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo yum <span class="keyword">install</span> nginx</span><br></pre></td></tr></table></figure></p>
-<p>6. 最后，执行命令来启动nginx。
-<figure class="highlight dos"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo /etc/init.d/nginx <span class="built_in">start</span></span><br></pre></td></tr></table></figure></p>
-<p>&lt;img src=&quot;/img/9767D1046D3F5A39D29A7133B85D34CF.png&quot; width=&quot;670px&quot; /&gt;</p>
+<p>5. 执行命令即可安装nginx了。<br><figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo yum <span class="keyword">install</span> nginx</span><br></pre></td></tr></table></figure></p>
+<p>6. 最后，执行命令来启动nginx。<br><figure class="highlight dos"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo /etc/init.d/nginx <span class="built_in">start</span></span><br></pre></td></tr></table></figure></p>
+<p><img src="/img/9767D1046D3F5A39D29A7133B85D34CF.png" width="670px"></p>
 
   </section>
 </article>

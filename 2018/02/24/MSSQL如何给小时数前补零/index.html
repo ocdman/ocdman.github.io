@@ -43,7 +43,7 @@
   <section class="article-entry">
     <p>现在有个需求，时间类型的数值，取其小时数，如果值是1位的，前面补0。如果为2位的话，则不补。</p>
 <p>SQL SERVER有一个<code>RIGHT</code>函数可以解决这个问题</p>
-<p><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="operator"><span class="keyword">select</span> <span class="keyword">RIGHT</span>(<span class="string">'0'</span> + <span class="keyword">CAST</span>(MyHour <span class="keyword">as</span> <span class="built_in">varchar</span>), <span class="number">2</span>)</span></span><br></pre></td></tr></table></figure></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="operator"><span class="keyword">select</span> <span class="keyword">RIGHT</span>(<span class="string">'0'</span> + <span class="keyword">CAST</span>(MyHour <span class="keyword">as</span> <span class="built_in">varchar</span>), <span class="number">2</span>)</span></span><br></pre></td></tr></table></figure>
 <p>该函数的意思是，向左补零，最多支持到2位。</p>
 
   </section>

@@ -45,16 +45,11 @@
 <blockquote>
 <p>sh: man: command not found</p>
 </blockquote>
-<p>这个帖子，<a href="https://unix.stackexchange.com/questions/259478/cant-install-man-pages-on-minimal-centos-docker-container" target="_blank" rel="external">Can't install man pages on minimal Centos Docker container</a>可以解决这个问题。</p>
+<p>这个帖子，<a href="https://unix.stackexchange.com/questions/259478/cant-install-man-pages-on-minimal-centos-docker-container" target="_blank" rel="external">Can’t install man pages on minimal Centos Docker container</a>可以解决这个问题。</p>
 <p>之所以会无法使用man，估计是Minimal CentOS镜像把man这部分也给剥离了，只留下最核心的部分。如何才能恢复man呢？</p>
-<h3>步骤一：</h3>
-<p>找到 <strong>/etc/yum.conf</strong> 文件，将里面的 <strong>tsflags=nodocs</strong> 这一行给注释掉</p>
-<h3>步骤二：</h3>
-<p>执行命令：
-<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="title">yum</span> reinstall shadow-utils</span><br></pre></td></tr></table></figure></p>
-<h3>步骤三：</h3>
-<p>最后执行命令：
-<figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum <span class="keyword">install</span> -y man-pages</span><br></pre></td></tr></table></figure></p>
+<h3 id="步骤一：">步骤一：</h3><p>找到 <strong>/etc/yum.conf</strong> 文件，将里面的 <strong>tsflags=nodocs</strong> 这一行给注释掉</p>
+<h3 id="步骤二：">步骤二：</h3><p>执行命令：<br><figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="title">yum</span> reinstall shadow-utils</span><br></pre></td></tr></table></figure></p>
+<h3 id="步骤三：">步骤三：</h3><p>最后执行命令：<br><figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum <span class="keyword">install</span> -y man-pages</span><br></pre></td></tr></table></figure></p>
 <p>虽然基础的man命令可以用了，但是和完整操作系统上的man命令比起来，还是会缺一部分，比如说，man vim。</p>
 
   </section>
