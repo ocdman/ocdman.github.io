@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>如何计算SSD的寿命 | chilihotpot</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <link rel="shortcut icon" href="/chili.ico">
+  <link rel="stylesheet" href="/css/app.css" type="text/css">
+  <!-- <link rel='stylesheet' href='http://fonts.useso.com/css?family=Source+Code+Pro'> -->
+</head>
+
+<body>
+  <nav class="app-nav">
+  
+    
+      <a href="/.">home</a>
+    
+  
+    
+      <a href="/archives">archive</a>
+    
+  
+    
+      <a href="/tags">tag</a>
+    
+  
+    
+      <a href="/categories">category</a>
+    
+  
+</nav>
+
+  <main class="post">
+  <article>
+  <h1 class="article-title">
+    <a href="/2019/09/10/如何计算SSD的寿命/">如何计算SSD的寿命</a>
+  </h1>
+
+  <section class="article-meta">
+    <p class="article-date">September 10 2019</p>
+  </section>
+
+  <section class="article-entry">
+    <p>今天看到<a href="https://zhuanlan.zhihu.com/p/35806613" target="_blank" rel="external">2015款rMBP可以自行升级NVME协议的SSD</a>的帖子后，突然想计算一下当前原装SSD的寿命到什么程度了。</p>
+<p>我们知道决定SSD的寿命的关键在于磁盘的写入量，要想知道SSD当前写入量的话，需要借助软件查看。我使用的是容量占用极小的一个命令行工具<code>smartmontools</code>。该软件安装后，默认可执行文件<code>smartctl</code>位于<code>/usr/local/sbin/</code>目录下，并不是全局变量，这个需要注意一下。</p>
+<p>如果需要获取全部S.M.A.R.T信息，可以执行</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/usr/local/sbin/smartctl -a /dev/disk1</span><br></pre></td></tr></table></figure>
+<p>我的磁盘目录为<code>/dev/disk1</code>，这因机器而异。运行后的输出内容如下</p>
+<blockquote>
+<p>175 Host_Writes_MiB         0x0022   099   099   000    Old_age   Always       -       10884256</p>
+</blockquote>
+<p>找到<code>Host_Writes_MiB</code>，这就是我想要的答案。接下来就是换算了</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">10884256</span>/<span class="number">1024</span>/<span class="number">1024</span> = <span class="number">10.38</span> TB</span><br></pre></td></tr></table></figure>
+<p>因为原数据格式为MB，所以除以第一个1024后格式为GB，再除以第二个1024后格式为TB。那么，比如我的256GB的硬盘总共可以写入多少TB呢？</p>
+<p>根据官方介绍，256GB的原装SSD寿命为3000次P/E。什么是P/E？就是写满一次硬盘容量记作一次P/E，拿我的硬盘为例，写入256G的文件才算做一次。所以，要把256GB的SSD写坏，总共需要写入750TB的内容，我现在才零头都不到。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">256</span>*<span class="number">3000</span>/<span class="number">1024</span> = <span class="number">750</span> TB</span><br></pre></td></tr></table></figure>
+<p>我也可以求一下当前写入的数据一共用了多少次P/E。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">10884256</span>/<span class="number">1024</span>/<span class="number">256</span> = <span class="number">41.52</span> P/E</span><br></pre></td></tr></table></figure>
+<p>先将MB换算成GB后，再除以硬盘的大小就可以了。</p>
+<p>如果真是这个数字没错的话，我感觉真没必要换NVME协议的SSD了，因为我容量够用，大部分人换是因为他们买的128GB，不够用才不得不换更大的。</p>
+
+  </section>
+</article>
+
+  <div class="sharing grid">
+  <section class="profile grid-item grid">
+    <img class="avatar" src="/images/chili.png" alt="avatar" />
+    <div class="grid-item">
+      <p class="title"> chilihotpot </p>
+      <p class="subtitle"> You Are The JavaScript In My HTML </p>
+    <div>
+  </section>
+
+  <section class="share-btns">
+    <!-- <p> share it if you like it~ </p> -->
+    <a
+  class="twitter-share-button"
+  data-size="large"
+  data-via="DrakeLeung"
+  href="https://twitter.com/intent/tweet?text=今天看到<a href="https:/"
+>
+  Tweet
+</a>
+
+<script>
+  window.twttr = (function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0],
+    t = window.twttr || {};
+  if (d.getElementById(id)) return t;
+  js = d.createElement(s);
+  js.id = id;
+  js.src = "https://platform.twitter.com/widgets.js";
+  js.async = true;
+  fjs.parentNode.insertBefore(js, fjs);
+
+  t._e = [];
+  t.ready = function(f) {
+    t._e.push(f);
+  };
+
+  return t;
+}(document, "script", "twitter-wjs"));
+</script>
+
+  </section>
+</div>
+
+
+  
+</main>
+
+</body>
+</html>
