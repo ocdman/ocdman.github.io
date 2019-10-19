@@ -41,7 +41,7 @@
   </section>
 
   <section class="article-entry">
-    <p>今天挑战的内容是选择排序，其实我之前分不太清楚什么是选择排序。看了一遍<a href="https://visualgo.net/en/sorting" target="_blank" rel="external">visualgo.net</a>上的演示后才知道，它的本质思想是循环找到最小的数然后交换到第一个未排序的位置，以此类推。和冒泡排序不同的是，冒泡排序在内循环中执行交换，一次外循环最多可以执行<code>N-1</code>次交换。而选择排序在外循环中执行交换，一次外循环最多执行一次交换。所以，他们的最优时间复杂度是不一样的。</p>
+    <p>今天挑战的内容是选择排序，其实我之前分不太清楚什么是选择排序。看了一遍<a href="https://visualgo.net/en/sorting" target="_blank" rel="external">visualgo.net</a>上的演示后才知道，它的本质思想是循环找到最小的数然后交换到第一个未排序的位置，以此类推。</p>
 <p>下面是visualgo.net上的伪代码</p>
 <figure class="highlight livecodeserver"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">repeat</span> (numOfElements - <span class="number">1</span>) times</span><br><span class="line"></span><br><span class="line">  <span class="built_in">set</span> <span class="operator">the</span> <span class="keyword">first</span> unsorted <span class="keyword">element</span> <span class="keyword">as</span> <span class="operator">the</span> minimum</span><br><span class="line"></span><br><span class="line">  <span class="keyword">for</span> <span class="keyword">each</span> <span class="operator">of</span> <span class="operator">the</span> unsorted elements</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">element</span> &lt; currentMinimum</span><br><span class="line"></span><br><span class="line">      <span class="built_in">set</span> <span class="keyword">element</span> <span class="keyword">as</span> <span class="built_in">new</span> minimum</span><br><span class="line"></span><br><span class="line">  swap minimum <span class="operator">with</span> <span class="keyword">first</span> unsorted position</span><br></pre></td></tr></table></figure>
 <p>如果用javascript实现的话</p>
@@ -56,8 +56,8 @@
 <p>两式相加<code>2Sn=n+n+n+...+n+n+n</code>，一共n-1个n，所以<code>Sn=n(n-1)/2</code>。<code>Sn=n^2-n/2</code>和<code>n^2</code>成正比，所以平均时间复杂度为<code>O(N^2)</code>。</p>
 <p>和冒泡排序的最优时间复杂度<code>O(N)</code>不同的是，选择排序的最优时间复杂度为<code>O(N^2)</code>。</p>
 <p>最差时间复杂度也是<code>O(N^2)</code>。</p>
-<p>空间复杂度始终为<code>O(N)</code>。</p>
-<p>以上就是第二天的挑战。让我理解了什么叫选择排序以及选择排序和冒泡排序的不同之处。</p>
+<p>空间复杂度为<code>O(1)</code>。</p>
+<p>以上就是第二天的挑战。说说和冒泡排序的不同之处，冒泡排序在<strong>内循环中执行交换，一次外循环最多可以执行<code>N-1</code>次交换</strong>。而选择排序在<strong>内循环外执行交换，一次外循环最多执行一次交换</strong>。所以，他们的<strong>最优时间复杂度是不一样的</strong>。还有就是选择排序在一次外循环中需要确定最小元素的索引，内循环结束后进行交换。这是选择排序的核心。</p>
 
   </section>
 </article>
