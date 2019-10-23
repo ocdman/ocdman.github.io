@@ -46,19 +46,18 @@
 <p>Array variables are like pointers</p>
 </blockquote>
 <p>原书是这么写的。为什么说数组变量有点像指针？举个书中的例子</p>
-<p><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">fortune_cookie</span><span class="params">(<span class="keyword">char</span> msg[])</span></span><br><span class="line"></span>&#123;</span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">"Message read: %s\n"</span>, msg);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">char</span> quote[] = <span class="string">"Cookies make you fat"</span>;</span><br><span class="line">fortune_cookie(quote);</span><br></pre></td></tr></table></figure></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">fortune_cookie</span><span class="params">(<span class="keyword">char</span> msg[])</span></span><br><span class="line"></span>&#123;</span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">"Message read: %s\n"</span>, msg);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">char</span> quote[] = <span class="string">"Cookies make you fat"</span>;</span><br><span class="line">fortune_cookie(quote);</span><br></pre></td></tr></table></figure>
 <p>当你创建了一个数组后，数组的变量（这个例子里就是变量quote），会被指向数组内存中的第一个字符，所以此时数组变量被用作指针。代码中只要出现变量quote，计算机就会用指向数组第一个字符的指针来替代它。所以说，数组变量看上去有点像指针。</p>
 <blockquote>
-<p>But array variables aren't quite pointers</p>
+<p>But array variables aren’t quite pointers</p>
 </blockquote>
 <p>但是，数组变量又不完全是指针。几个意思？还是看代码</p>
-<p><figure class="highlight sml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">char</span> s<span class="literal">[]</span> = <span class="string">"How big is it?"</span>;</span><br><span class="line"><span class="built_in">char</span> *t = s;</span><br></pre></td></tr></table></figure></p>
+<figure class="highlight sml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">char</span> s<span class="literal">[]</span> = <span class="string">"How big is it?"</span>;</span><br><span class="line"><span class="built_in">char</span> *t = s;</span><br></pre></td></tr></table></figure>
 <p>第一，s是数组变量，如果使用sizeof操作符，得到的sizeof(s)结果为15，因为结束符<code>\0</code>也算一位。而变量t是指向变量s代表的这个数组中的第一个字符，它是指针。sizeof(t)的结果在我的电脑上为8，也就是说一个指针（也就是内存地址）的长度占8个字节。这个结果取决于你电脑的操作系统是64位还是32位的。所谓的64位或者32位，实际上指的就是一个内存地址的长度，在64位系统里一个内存地址就是占8个字节长度，而在32位系统里就是占4个字节长度。所以说，数组的长度和指针的长度是不一样的。</p>
 <p>第二，数组变量s的地址就是它本身。我们可以使用&amp;地址操作符来获取数组变量s的地址，结果发现&amp;s == s。但是指针变量t对它用&amp;地址操作符后会发现，&amp;t != t。所以说，数组的地址就是数组变量本身，而指针变量的地址和它指向的地址是不一样的。</p>
 <p>第三，数组变量s没办法被指定为其它地址。当你创建一个指针变量的时候，机器会分配4个或8个字节来存储指针变量。但是，如果你创建的是一个数组呢？电脑会分配内存空间来存储数组，但是不会分配任何内存空间来存储数组变量。因为数组变量自身就是数组的地址，第二点已经提过，计算机不会额外去开销任何内存空间来存储这个数组的地址，也就是数组变量。所以，言下之意就是你没办法给数组变量指定为其它值。</p>
 <p>比如，s == t，编译的时候会报错。数组变量s不能作为左值。左值的意思指的就是内存空间，右值的意思指的是内存空间里的值。我是这么理解的。</p>
-<h3>指针的衰变</h3>
-<p>当你把数组变量赋值给指针变量的时候，需要特别小心。因为指针变量只会包含指向数组的地址，而不知道任何关于数组的大小的信息。这个丢失的信息就叫做指针衰变。每当向函数传递数组的时候，数组就会衰变成指针，这是不可避免的。衰变后如果操作不当，是极容易引起数组越界等问题的，所以需要你特别注意。</p>
+<h3 id="指针的衰变">指针的衰变</h3><p>当你把数组变量赋值给指针变量的时候，需要特别小心。因为指针变量只会包含指向数组的地址，而不知道任何关于数组的大小的信息。这个丢失的信息就叫做指针衰变。每当向函数传递数组的时候，数组就会衰变成指针，这是不可避免的。衰变后如果操作不当，是极容易引起数组越界等问题的，所以需要你特别注意。</p>
 
   </section>
 </article>

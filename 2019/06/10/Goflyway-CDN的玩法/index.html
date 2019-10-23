@@ -43,33 +43,29 @@
   <section class="article-entry">
     <p>Goflyway是一款支持HTTP、WebSocket、CDN以及KCP协议的软件。下面来说说它的CDN玩法。</p>
 <ol>
-<li>
-<p>首先你要有一台的VPS</p>
+<li><p>首先你要有一台的VPS</p>
 </li>
-<li>
-<p>其次你要有一个域名，这里推荐<a href="https://freenom.com" target="_blank" rel="external">freenom</a>，注册后购买一个免费域名，最多可以使用一年，快到期前可以再续，仍然免费。</p>
+<li><p>其次你要有一个域名，这里推荐<a href="https://freenom.com" target="_blank" rel="external">freenom</a>，注册后购买一个免费域名，最多可以使用一年，快到期前可以再续，仍然免费。</p>
 </li>
-<li>
-<p>接下来注册Cloudflare账号后，然后填写你申请的域名。套餐选择Free版本，然后将freenom的NameServer修改为Cloudflare分配给你的NameServer。</p>
+<li><p>接下来注册Cloudflare账号后，然后填写你申请的域名。套餐选择Free版本，然后将freenom的NameServer修改为Cloudflare分配给你的NameServer。</p>
 </li>
-<li>
-<p>创建一条A记录，IP指向你的VPS IP。</p>
+<li><p>创建一条A记录，IP指向你的VPS IP。</p>
 </li>
 </ol>
 <p>接下来就是等待，等待CDN生效。使用命令<code>ipconfig /flushdns</code>可以刷新本地DNS，然后<code>ping 域名</code>看看IP是否发生了变化。还可以使用<code>nslookup set types=ns 域名</code>命令查看域名服务器。</p>
 <p>注意，<strong>在Cloudflare的DNS记录里，Status如果为橙色，代表该解析走CDN，如果为灰色，代表解析不走CDN，而是直连</strong>。</p>
 <p>好了，到这里CDN算是配置好了。接下来就要推荐主角Goflyway登场了。目前支持套用CDN的软件里，貌似只有Goflyway和V2Ray两款。我用的是Goflyway，首先介绍服务端。SSH登陆了之后，执行以下命令</p>
 <blockquote>
-<p>wget -N --no-check-certificate https://raw.githubusercontent.com/ToyoDAdoubi/doubi/master/goflyway.sh &amp;&amp; chmod +x goflyway.sh &amp;&amp; bash goflyway.sh</p>
+<p>wget -N –no-check-certificate <a href="https://raw.githubusercontent.com/ToyoDAdoubi/doubi/master/goflyway.sh" target="_blank" rel="external">https://raw.githubusercontent.com/ToyoDAdoubi/doubi/master/goflyway.sh</a> &amp;&amp; chmod +x goflyway.sh &amp;&amp; bash goflyway.sh</p>
 </blockquote>
 <p>这是国人写的一个Goflyway的一键安装脚本，由于我使用的VPS不支持中文，导致中文部分都是乱码，无奈之下只能把该goflyway.sh文件下载下来看它的代码。</p>
 <p>第一次安装的话，默认选择1，就是安装Goflyway程序。然后是<strong>端口号</strong>，默认为8880。Cloudflare支持的端口号有</p>
 <p>HTTP 端口：80，8080，8880，2052，2082，2086，2095</p>
 <p>HTTPS 端口：443，2053，2083，2087，2096，8443</p>
 <p>由于要伪装或者套CDN，所以端口有限制，只能使用以上的HTTP端口。端口确认之后是<strong>密码</strong>，密码输入之后是要<strong>伪装的网站</strong>。所有这些都确认完成之后，服务端就运行起来了。为了方便自己查询，这里列出脚本的所有命令</p>
-<p><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">0</span> <span class="comment">//更新脚本</span></span><br><span class="line"><span class="number">1</span> <span class="comment">//安装Goflyway</span></span><br><span class="line"><span class="number">2</span> <span class="comment">//更新Goflyway</span></span><br><span class="line"><span class="number">3</span> <span class="comment">//卸载Goflyway</span></span><br><span class="line"><span class="number">4</span> <span class="comment">//启动Goflyway</span></span><br><span class="line"><span class="number">5</span> <span class="comment">//停止Goflyway</span></span><br><span class="line"><span class="number">6</span> <span class="comment">//重启Goflyway</span></span><br><span class="line"><span class="number">7</span> <span class="comment">//设置Goflyway</span></span><br><span class="line"><span class="number">8</span> <span class="comment">//查看Goflyway</span></span><br><span class="line"><span class="number">9</span> <span class="comment">//查看日志</span></span><br><span class="line"><span class="number">10</span> <span class="comment">//查看用户连接情况</span></span><br></pre></td></tr></table></figure></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">0</span> <span class="comment">//更新脚本</span></span><br><span class="line"><span class="number">1</span> <span class="comment">//安装Goflyway</span></span><br><span class="line"><span class="number">2</span> <span class="comment">//更新Goflyway</span></span><br><span class="line"><span class="number">3</span> <span class="comment">//卸载Goflyway</span></span><br><span class="line"><span class="number">4</span> <span class="comment">//启动Goflyway</span></span><br><span class="line"><span class="number">5</span> <span class="comment">//停止Goflyway</span></span><br><span class="line"><span class="number">6</span> <span class="comment">//重启Goflyway</span></span><br><span class="line"><span class="number">7</span> <span class="comment">//设置Goflyway</span></span><br><span class="line"><span class="number">8</span> <span class="comment">//查看Goflyway</span></span><br><span class="line"><span class="number">9</span> <span class="comment">//查看日志</span></span><br><span class="line"><span class="number">10</span> <span class="comment">//查看用户连接情况</span></span><br></pre></td></tr></table></figure>
 <p>服务端启动完成之后，接下来就是客户端了。前往<a href="https://github.com/coyove/goflyway/releases" target="_blank" rel="external">goflyway</a>下载对应的最新版本，解压之后新建一个run.bat文件（针对Windows系统），内容如下：</p>
-<p><figure class="highlight stata"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">goflyway.exe -up=<span class="string">"cf://go.yourdomain.com:8880"</span> -k=<span class="string">"password"</span> -<span class="keyword">l</span>=<span class="string">":8100"</span></span><br><span class="line"><span class="keyword">pause</span>&gt;nul</span><br></pre></td></tr></table></figure></p>
+<figure class="highlight stata"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">goflyway.exe -up=<span class="string">"cf://go.yourdomain.com:8880"</span> -k=<span class="string">"password"</span> -<span class="keyword">l</span>=<span class="string">":8100"</span></span><br><span class="line"><span class="keyword">pause</span>&gt;nul</span><br></pre></td></tr></table></figure>
 <p>其中8100就是本地代理的端口了，模式选择HTTP连接。</p>
 <p>实测下来，套了CDN的VPS速度并不像网友说的那样慢，相反比我之前直连VPS还更快一点，而且是在不同运营商的情况下。使用至今，只发生过一次服务端莫名退出，如果不放心的话，可以写一个自动重启的脚本，这里就不赘述了。</p>
 
