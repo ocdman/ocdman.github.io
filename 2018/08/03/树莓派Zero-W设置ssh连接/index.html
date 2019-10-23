@@ -43,23 +43,23 @@
   <section class="article-entry">
     <p>上一章讲了如何配置Zero W连接无线网络，这一章来讲讲，如何给Zero W配置ssh连接，以后可以用笔记本远程连接Zero W，这样就可以把Zero W当作一台Linux服务器来用。</p>
 <p>要ssh远程Zero W，首先要打开Zero W上的ssh服务</p>
-<figure class="highlight dos"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo /etc/init.d/ssh <span class="built_in">start</span></span><br></pre></td></tr></table></figure>
+<p><figure class="highlight dos"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo /etc/init.d/ssh <span class="built_in">start</span></span><br></pre></td></tr></table></figure></p>
 <p>然后查看一下Zero W的IP地址</p>
-<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ifconfig</span><br></pre></td></tr></table></figure>
+<p><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ifconfig</span><br></pre></td></tr></table></figure></p>
 <p>尝试在电脑上连接Zero W</p>
-<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh pi@<span class="number">192.168</span><span class="class">.X</span><span class="class">.X</span></span><br></pre></td></tr></table></figure>
+<p><figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ssh pi@<span class="number">192.168</span><span class="class">.X</span><span class="class">.X</span></span><br></pre></td></tr></table></figure></p>
 <p>结果报错</p>
 <blockquote>
 <p>no hostkey alg</p>
 </blockquote>
 <p>查看一下ssh的状态</p>
-<figure class="highlight fortran"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo /etc/init.d/ssh <span class="keyword">status</span></span><br></pre></td></tr></table></figure>
+<p><figure class="highlight fortran"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo /etc/init.d/ssh <span class="keyword">status</span></span><br></pre></td></tr></table></figure></p>
 <p>发现报错</p>
 <blockquote>
 <p>key_load_public: invalid format</p>
 </blockquote>
 <p>网上搜了一圈找到了解决方案</p>
-<figure class="highlight crystal"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">/<span class="regexp">/停止ssh服务</span><br><span class="line">sudo /etc</span><span class="regexp">/init.d/ssh</span> stop</span><br><span class="line">/<span class="regexp">/删除原ssh密钥</span><br><span class="line">sudo rm /etc</span><span class="regexp">/ssh/ssh</span>_host*</span><br><span class="line"><span class="regexp">//</span>重新生成ssh密钥</span><br><span class="line">sudo dpkg-reconfigure openssh-server</span><br></pre></td></tr></table></figure>
+<p><figure class="highlight crystal"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">/<span class="regexp">/停止ssh服务</span><br><span class="line">sudo /etc</span><span class="regexp">/init.d/ssh</span> stop</span><br><span class="line">/<span class="regexp">/删除原ssh密钥</span><br><span class="line">sudo rm /etc</span><span class="regexp">/ssh/ssh</span>_host*</span><br><span class="line"><span class="regexp">//</span>重新生成ssh密钥</span><br><span class="line">sudo dpkg-reconfigure openssh-server</span><br></pre></td></tr></table></figure></p>
 <p>再次打开ssh服务后，电脑能够ssh连上Zero W了。</p>
 <p>造成上述错误的原因可能是，ssh初始化了一个错误的ssh密钥，导致ssh一直无法认证登陆过程，从而导致ssh登陆失败。只需要删除原密钥，重新生成一次ssh密钥即可解决。</p>
 

