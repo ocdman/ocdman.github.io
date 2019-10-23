@@ -42,19 +42,27 @@
 
   <section class="article-entry">
     <p>电信送的路由器，华为HG255D，作为一级路由的配置我不必赘述。现在我想使用HG255D作为二级路由，在没有刷机的前提之下，实现上网。</p>
-<p><strong>什么是二级路由？</strong><br>所谓的二级路由，其实是在一台拨号上网的路由器上，挂接了其它的路由，这些路由被称之为二级路由。二级路由之上再挂接路由，就是三级，以此类推。</p>
-<p><strong>二级路由有什么好处？</strong><br>一级路由发射出来的信号有可能被墙阻隔，房间里接收不到，如果此时房间里有一级路由的LAN端口接出来的网线接口，通过该接口和另一台路由器的WAN接口相连，设置网关之后，房间里即能连上网了，信号又好。</p>
-<p><strong>如何破解HG255D，拿到超级用户权限？</strong><br>电信给的用户账号的权限不足以实现HG255D作为二级路由上网的功能，所以第一件要做的事情，就是拿到超级用户的权限。网上有很多这方面的帖子，这里不再赘述，参考<a href="http://www.codelast.com/%E5%8E%9F%E5%88%9B%E5%8D%8E%E4%B8%BAhg255d%E5%AE%B6%E5%BA%AD%E7%BD%91%E5%85%B3%E7%9A%84%E7%A0%B4%E8%A7%A3%E4%BD%BF%E7%94%A8%E5%85%B6%E4%BB%96%E6%97%A0%E7%BA%BF%E8%B7%AF%E7%94%B1%E5%99%A8%E6%A1%A5/" target="_blank" rel="external">华为HG255d家庭网关的破解</a></p>
-<p><strong>如何修改网关？</strong><br>HG255D默认的网关是<em>192.168.1.1</em>，这和我的一级路由的网关是冲突的，作为二级路由挂接的话，需要修改二级路由的网关。</p>
+<p><strong>什么是二级路由？</strong>
+所谓的二级路由，其实是在一台拨号上网的路由器上，挂接了其它的路由，这些路由被称之为二级路由。二级路由之上再挂接路由，就是三级，以此类推。</p>
+<p><strong>二级路由有什么好处？</strong>
+一级路由发射出来的信号有可能被墙阻隔，房间里接收不到，如果此时房间里有一级路由的LAN端口接出来的网线接口，通过该接口和另一台路由器的WAN接口相连，设置网关之后，房间里即能连上网了，信号又好。</p>
+<p><strong>如何破解HG255D，拿到超级用户权限？</strong>
+电信给的用户账号的权限不足以实现HG255D作为二级路由上网的功能，所以第一件要做的事情，就是拿到超级用户的权限。网上有很多这方面的帖子，这里不再赘述，参考<a href="http://www.codelast.com/%E5%8E%9F%E5%88%9B%E5%8D%8E%E4%B8%BAhg255d%E5%AE%B6%E5%BA%AD%E7%BD%91%E5%85%B3%E7%9A%84%E7%A0%B4%E8%A7%A3%E4%BD%BF%E7%94%A8%E5%85%B6%E4%BB%96%E6%97%A0%E7%BA%BF%E8%B7%AF%E7%94%B1%E5%99%A8%E6%A1%A5/" target="_blank" rel="external">华为HG255d家庭网关的破解</a></p>
+<p><strong>如何修改网关？</strong>
+HG255D默认的网关是<em>192.168.1.1</em>，这和我的一级路由的网关是冲突的，作为二级路由挂接的话，需要修改二级路由的网关。</p>
 <ol>
-<li><p>在不连接HG255D的WAN口和一级路由的LAN口情况下，WIFI连接上HG255D的网络，以刚才拿到的超级用户的身份登录<em>192.168.1.1</em>。</p>
+<li>
+<p>在不连接HG255D的WAN口和一级路由的LAN口情况下，WIFI连接上HG255D的网络，以刚才拿到的超级用户的身份登录<em>192.168.1.1</em>。</p>
 </li>
-<li><p>在<strong><em>网络</em></strong>-&gt;<strong><em>LAN侧地址配置</em></strong>里，修改<strong>本地网络配置</strong>里的<strong>IP地址</strong>，改为<em>192.168.X.1</em>。X为2～255的数字。<img src="/img/modify-gateway.png" width="100%"></p>
+<li>
+<p>在<strong><em>网络</em></strong>-&gt;<strong><em>LAN侧地址配置</em></strong>里，修改<strong>本地网络配置</strong>里的<strong>IP地址</strong>，改为<em>192.168.X.1</em>。X为2～255的数字。&lt;img src=&quot;/img/modify-gateway.png&quot; width=&quot;100%&quot; /&gt;</p>
 </li>
-<li><p>在<strong><em>网络</em></strong>-&gt;<strong><em>宽带设置</em></strong>里，选择<strong>INTERNET_R<em>VID</em></strong>，默认情况下，该连接方式采用DHCP动态获取IP。我们改为Static静态分配IP的方式。IP地址写<em>192.168.1.X</em>，X为2～255的数字，网关和DNS服务器都写<em>192.168.1.1</em>。<img src="/img/configure-a-static-ip.png" width="100%"></p>
+<li>
+<p>在<strong><em>网络</em></strong>-&gt;<strong><em>宽带设置</em></strong>里，选择<strong>INTERNET_R_VID_</strong>，默认情况下，该连接方式采用DHCP动态获取IP。我们改为Static静态分配IP的方式。IP地址写<em>192.168.1.X</em>，X为2～255的数字，网关和DNS服务器都写<em>192.168.1.1</em>。&lt;img src=&quot;/img/configure-a-static-ip.png&quot; width=&quot;100%&quot; /&gt;</p>
 </li>
 </ol>
-<p><strong>总结</strong><br>作为二级路由所有的配置如上所述，关键还是在于<strong>给二级路由分配一个静态的IP地址</strong>。之前一直以为应该用桥接模式，但事实上却是路由模式。最后是成功上网的<strong><em>网络侧信息</em></strong>。<img src="/img/net-information.png" width="100%"></p>
+<p><strong>总结</strong>
+作为二级路由所有的配置如上所述，关键还是在于<strong>给二级路由分配一个静态的IP地址</strong>。之前一直以为应该用桥接模式，但事实上却是路由模式。最后是成功上网的<strong><em>网络侧信息</em></strong>。&lt;img src=&quot;/img/net-information.png&quot; width=&quot;100%&quot; /&gt;</p>
 
   </section>
 </article>
