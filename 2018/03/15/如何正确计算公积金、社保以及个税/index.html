@@ -43,16 +43,13 @@
   <section class="article-entry">
     <p>每当发工资的时候，一旦数目和上个月的对不上，就会问财务要个工资条，然后自己再算一遍，生怕财务给算错了。</p>
 <p>也正是因为几个月才算一次，每次计算工资的时候，都想不起来是一个什么样的公式。趁着现在记忆还余热，赶紧记下来。</p>
-<h3>社保</h3>
-<p>不同地区每年的社保比例可能都会有相应的调整。以上海来讲，2017年-2018年社保缴费比例，养老保险个人缴8%，医疗保险个人缴2%，失业保险个人缴0.5%，其余的生育保险以及工伤保险个人都不缴。</p>
+<h3 id="社保">社保</h3><p>不同地区每年的社保比例可能都会有相应的调整。以上海来讲，2017年-2018年社保缴费比例，养老保险个人缴8%，医疗保险个人缴2%，失业保险个人缴0.5%，其余的生育保险以及工伤保险个人都不缴。</p>
 <p>每个公司的社保缴费都有一个基数，以我们公司为例，我们的社保缴费基数是4300。那么个人承担的社保费用就是</p>
-<p><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">4300</span> * (<span class="number">8</span>% + <span class="number">2</span>% + <span class="number">0.5</span>%) = <span class="number">451.5</span></span><br></pre></td></tr></table></figure></p>
-<h3>公积金</h3>
-<p>公积金和社保一样，也都是每年在调，目前2018年上海个人承担公积金为7%，我们公司的公积金缴费基数是2828。那么个人承担的公积金费用就是</p>
-<p><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">2828</span> * <span class="number">7</span>% = <span class="number">198</span></span><br></pre></td></tr></table></figure></p>
-<h3>个税</h3>
-<p>假设我的税前工资是10000，那么我的<strong>应纳税所得额 ＝ 税前工资 － 社保 － 公积金 － 起征点</strong>。目前的起征点为3500，未来可能会上调为5000。</p>
-<p><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">应纳税所得额 ＝ <span class="number">10000</span> - <span class="number">451.5</span> - <span class="number">198</span> - <span class="number">3500</span> = <span class="number">5850.5</span></span><br></pre></td></tr></table></figure></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">4300</span> * (<span class="number">8</span>% + <span class="number">2</span>% + <span class="number">0.5</span>%) = <span class="number">451.5</span></span><br></pre></td></tr></table></figure>
+<h3 id="公积金">公积金</h3><p>公积金和社保一样，也都是每年在调，目前2018年上海个人承担公积金为7%，我们公司的公积金缴费基数是2828。那么个人承担的公积金费用就是</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">2828</span> * <span class="number">7</span>% = <span class="number">198</span></span><br></pre></td></tr></table></figure>
+<h3 id="个税">个税</h3><p>假设我的税前工资是10000，那么我的<strong>应纳税所得额 ＝ 税前工资 － 社保 － 公积金 － 起征点</strong>。目前的起征点为3500，未来可能会上调为5000。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">应纳税所得额 ＝ <span class="number">10000</span> - <span class="number">451.5</span> - <span class="number">198</span> - <span class="number">3500</span> = <span class="number">5850.5</span></span><br></pre></td></tr></table></figure>
 <p>目前2018年个税税率表为</p>
 <table>
 <thead>
@@ -109,13 +106,11 @@
 </tbody>
 </table>
 <p>上表看到应纳税所得额5850.5属于第3级别，<strong>应纳税额 ＝ 应纳税所得额 ＊ 税率 － 速算扣除数</strong></p>
-<p><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">应纳税额 ＝ <span class="number">5850.5</span> ＊ <span class="number">20</span>% － <span class="number">555</span> ＝ <span class="number">615.1</span></span><br></pre></td></tr></table></figure></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">应纳税额 ＝ <span class="number">5850.5</span> ＊ <span class="number">20</span>% － <span class="number">555</span> ＝ <span class="number">615.1</span></span><br></pre></td></tr></table></figure>
 <p>最后，个税 ＝ 615.1</p>
-<h3>税后工资</h3>
-<p>税后工资也就是实发工资，<strong>税后工资＝ 税前工资 － 社保 － 公积金 － 个税</strong></p>
-<p><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">税后工资 ＝ <span class="number">10000</span> － <span class="number">451.5</span> － <span class="number">198</span> － <span class="number">615.1</span> ＝ <span class="number">8735.4</span></span><br></pre></td></tr></table></figure></p>
-<h3>总结</h3>
-<p>公式就这些，其实并不复杂，主要是一些基数以及税率一直在调整，其它的也没什么。</p>
+<h3 id="税后工资">税后工资</h3><p>税后工资也就是实发工资，<strong>税后工资＝ 税前工资 － 社保 － 公积金 － 个税</strong></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">税后工资 ＝ <span class="number">10000</span> － <span class="number">451.5</span> － <span class="number">198</span> － <span class="number">615.1</span> ＝ <span class="number">8735.4</span></span><br></pre></td></tr></table></figure>
+<h3 id="总结">总结</h3><p>公式就这些，其实并不复杂，主要是一些基数以及税率一直在调整，其它的也没什么。</p>
 
   </section>
 </article>

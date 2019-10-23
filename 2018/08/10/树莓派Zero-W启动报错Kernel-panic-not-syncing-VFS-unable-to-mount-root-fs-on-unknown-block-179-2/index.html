@@ -54,13 +54,13 @@
 </ol>
 <p>因为我的主机是Mac系统，不兼容EXT3、EXT4格式的盘符，我又不想安装一个Linux虚拟机。好在我之前还有一台安装了OpenSUSE的笔记本电脑，在家吃灰了很久，可以拿来一用。</p>
 <p>打开电脑，进入Linux系统，在终端中输入命令</p>
-<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">fdisk <span class="operator">-l</span></span><br></pre></td></tr></table></figure></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">fdisk <span class="operator">-l</span></span><br></pre></td></tr></table></figure>
 <p>查看SD卡的分区。一般情况下，引导盘都是位于<code>/dev/sdb1</code>，而树莓派系统位于<code>/dev/sdb2</code>，这是我个人的情况，不代表所有。执行命令</p>
-<p><figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="title">df</span> -hT</span><br></pre></td></tr></table></figure></p>
+<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="title">df</span> -hT</span><br></pre></td></tr></table></figure>
 <p>看看系统是否自动装载了<code>/dev/sdb2</code>，如果装载了把它卸载了，卸载命令</p>
-<p><figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">umount <span class="regexp">/dev/</span>sdb2</span><br></pre></td></tr></table></figure></p>
+<figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">umount <span class="regexp">/dev/</span>sdb2</span><br></pre></td></tr></table></figure>
 <p>接下来就是修复磁盘了，上面的<code>df -hT</code>命令可以查看磁盘格式，我的树莓派磁盘<code>/dev/sdb2</code>格式是EXT4，执行<code>fsck.ext4</code>命令修复</p>
-<p><figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">fsck<span class="class">.ext4</span> -y /dev/sdb2 	<span class="comment">//修复ext4格式的磁盘</span></span><br><span class="line">fsck -y /dev/sdb2		<span class="comment">//修复ext格式的磁盘</span></span><br><span class="line">fsck<span class="class">.ext2</span> -y /dev/sdb2	<span class="comment">//修复ext2格式的磁盘</span></span><br><span class="line">fsck<span class="class">.ext3</span> -y /dev/sdb2 	<span class="comment">//修复ext3格式的磁盘</span></span><br></pre></td></tr></table></figure></p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">fsck<span class="class">.ext4</span> -y /dev/sdb2 	<span class="comment">//修复ext4格式的磁盘</span></span><br><span class="line">fsck -y /dev/sdb2		<span class="comment">//修复ext格式的磁盘</span></span><br><span class="line">fsck<span class="class">.ext2</span> -y /dev/sdb2	<span class="comment">//修复ext2格式的磁盘</span></span><br><span class="line">fsck<span class="class">.ext3</span> -y /dev/sdb2 	<span class="comment">//修复ext3格式的磁盘</span></span><br></pre></td></tr></table></figure>
 <p>将修复好的SD卡重新插上树莓派，连上电源，接上显示器发现系统虽然启动了，但是很多之前引起启动错误的inode都被删除了，最后进入系统后，pi用户的目录<code>/home/pi</code>被删除了，也就是我之前存放了很多个脚本都没了。</p>
 <p>虽然解决了报错问题，不至于完全格式化SD卡，但是就启动后的结果而言，我感觉和格式化也没差了，我写了好多个脚本都没了。看样子以后要经常备份重要的脚本，以防那天树莓派再次断电，又复现这个问题。</p>
 

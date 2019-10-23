@@ -43,13 +43,11 @@
   <section class="article-entry">
     <p>之前为家里的树莓派分配了一个域名，由于公网IP是可变的，一旦重启光猫后，公网IP就会发生变化，从而导致域名无法访问。解决办法是使用DDNS，可以借助网上开源的代码来实现。</p>
 <p>问题是重新绑定了新IP地址的域名，在别的电脑上仍旧无法访问，原因是因为DNS缓存的缘故，缓存了之前域名绑定的旧IP地址。清除域名DNS缓存的方法很简单</p>
-<h3>Windows平台</h3>
-<p>在命令行中执行</p>
-<p><figure class="highlight dos"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="winutils">ipconfig</span> /flushdns</span><br></pre></td></tr></table></figure></p>
+<h3 id="Windows平台">Windows平台</h3><p>在命令行中执行</p>
+<figure class="highlight dos"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="winutils">ipconfig</span> /flushdns</span><br></pre></td></tr></table></figure>
 <p>就能刷新域名DNS缓存了。</p>
-<h3>Linux平台</h3>
-<p>命令行执行</p>
-<p><figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo <span class="regexp">/etc/i</span>nit.d<span class="regexp">/nscd restart</span></span><br></pre></td></tr></table></figure></p>
+<h3 id="Linux平台">Linux平台</h3><p>命令行执行</p>
+<figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo <span class="regexp">/etc/i</span>nit.d<span class="regexp">/nscd restart</span></span><br></pre></td></tr></table></figure>
 <p>重启nscd服务，即能刷新域名缓存了。</p>
 
   </section>

@@ -41,48 +41,44 @@
   </section>
 
   <section class="article-entry">
-    <p>之前VPS上一直用的是Let's Encrypt的证书，除了偶尔有几次证书无法被电信识别以外，大部分时间下还是正常的。Let's Encrypt证书有几个好处</p>
+    <p>之前VPS上一直用的是Let’s Encrypt的证书，除了偶尔有几次证书无法被电信识别以外，大部分时间下还是正常的。Let’s Encrypt证书有几个好处</p>
 <ul>
 <li>开源</li>
 <li>免费</li>
 <li>适合个人网站</li>
 </ul>
 <p>虽然树莓派也分配了域名，也支持离线下载了，但问题是这一切都是建立在http协议基础上，为了保证自己信息的安全性，我有必要为树莓派安装letsencrypt证书。</p>
-<h3>安装certbot</h3>
-<p>certbot是letsencrypt安装证书的自动化工具。执行命令安装</p>
-<p><figure class="highlight actionscript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-<span class="keyword">get</span> install certbot</span><br></pre></td></tr></table></figure></p>
+<h3 id="安装certbot">安装certbot</h3><p>certbot是letsencrypt安装证书的自动化工具。执行命令安装</p>
+<figure class="highlight actionscript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-<span class="keyword">get</span> install certbot</span><br></pre></td></tr></table></figure>
 <p>系统会提示你，需要安装一些python的脚本。由于树莓派默认是安装了Python2以及Python3的最新版，所以不需要顾虑其他的因素。不像我的VPS是CentOS 6系统，装个Python3版本费尽周折还不成功，最后装回了Python2版本。</p>
 <p>切记在证书安装前，需要关闭80以及443端口的程序。因为letsencrypt会用到这两个端口来更新证书。</p>
 <p>然后我参考了以前VPS上安装证书的命令</p>
-<p><figure class="highlight applescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo certbot certonly <span class="comment">--standalone -d yourdomain</span></span><br></pre></td></tr></table></figure></p>
+<figure class="highlight applescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo certbot certonly <span class="comment">--standalone -d yourdomain</span></span><br></pre></td></tr></table></figure>
 <p>没想到报错</p>
 <blockquote>
-<p>letsencrypt Timeout during connect (likely firewall problem)</p>
+<p>letsencrypt Timeout during connect (likely firewall problem) </p>
 </blockquote>
 <p>经过一番查询之后发现，原来是电信封锁了80端口引起的。但创建证书跟80端口有什么关系呢？</p>
-<h3>letsencrypt获取证书的原理</h3>
-<p>原来我们在使用letsencrypt获取免费的https证书的时候，letsencrypt需要对域名进行验证，默认的验证方式是这样的</p>
+<h3 id="letsencrypt获取证书的原理">letsencrypt获取证书的原理</h3><p>原来我们在使用letsencrypt获取免费的https证书的时候，letsencrypt需要对域名进行验证，默认的验证方式是这样的</p>
 <ol>
 <li>certbot程序在web目录的根目录下放置一个文件</li>
 <li>letsencrypt服务器通过域名来访问这个文件，来验证你申请的域名是属于你的</li>
 </ol>
 <p>而验证这个过程就是通过80端口来进行访问的，然而电信封锁了80端口，就会导致letsencrypt服务器访问不到该验证文件，于是就报上面的错。</p>
-<h3>DNS验证获取证书</h3>
-<p>既然80端口这条路走不通了，那还有别的办法获取证书吗？答案是有的，letsencrypt不光提供了一条路来获取证书，它还支持DNS验证来获取证书，具体步骤如下</p>
+<h3 id="DNS验证获取证书">DNS验证获取证书</h3><p>既然80端口这条路走不通了，那还有别的办法获取证书吗？答案是有的，letsencrypt不光提供了一条路来获取证书，它还支持DNS验证来获取证书，具体步骤如下</p>
 <p>首先在命令行输入命令</p>
-<p><figure class="highlight brainfuck"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">sudo</span> <span class="comment">certbot</span> <span class="literal">-</span><span class="literal">-</span><span class="comment">manual</span> <span class="literal">-</span><span class="literal">-</span><span class="comment">preferred</span><span class="literal">-</span><span class="comment">challenges</span> <span class="comment">dns</span> <span class="comment">certonly</span></span><br></pre></td></tr></table></figure></p>
+<figure class="highlight brainfuck"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">sudo</span> <span class="comment">certbot</span> <span class="literal">-</span><span class="literal">-</span><span class="comment">manual</span> <span class="literal">-</span><span class="literal">-</span><span class="comment">preferred</span><span class="literal">-</span><span class="comment">challenges</span> <span class="comment">dns</span> <span class="comment">certonly</span></span><br></pre></td></tr></table></figure>
 <p>系统会提示你输入域名并同意后，certbot会给你一个提示，例如</p>
-<p><figure class="highlight asciidoc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="code">-------------------------------------------------------------------------------</span><br><span class="line">Please deploy a DNS TXT record under the name</span><br><span class="line">_acme-challenge.example.com with the following value:</span><br><span class="line"></span><br><span class="line">IMdfdsfsJDqBRyRaaEgPPQlEuvtxJQAgWZTIVbLuzDi8U</span><br><span class="line"></span><br><span class="line">Once this is deployed,</span><br><span class="line">-------------------------------------------------------------------------------</span></span><br><span class="line">Press Enter to Continue</span><br></pre></td></tr></table></figure></p>
+<figure class="highlight asciidoc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="code">-------------------------------------------------------------------------------</span><br><span class="line">Please deploy a DNS TXT record under the name</span><br><span class="line">_acme-challenge.example.com with the following value:</span><br><span class="line"></span><br><span class="line">IMdfdsfsJDqBRyRaaEgPPQlEuvtxJQAgWZTIVbLuzDi8U</span><br><span class="line"></span><br><span class="line">Once this is deployed,</span><br><span class="line">-------------------------------------------------------------------------------</span></span><br><span class="line">Press Enter to Continue</span><br></pre></td></tr></table></figure>
 <p>这个时候certbot会停止，等待我们去域名供应商去添加一条DNS记录</p>
 <p>去域名供应商的DNS管理页面下，添加一条<code>TXT</code>记录，值是certbot提示给你的一串hash值。</p>
-<p>&lt;img src=&quot;/img/2018083103.png&quot; width=&quot;630px&quot;/&gt;</p>
+<p><img src="/img/2018083103.png" width="630px"></p>
 <p>值添加好之后，先别急着在certbot程序中按下Enter键，域名供应商需要一点时间来进行更新。可以在别的终端窗口里，使用命令来查看域名是否生效</p>
-<p><figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">dig -t txt _acme-challenge<span class="class">.example</span><span class="class">.com</span></span><br></pre></td></tr></table></figure></p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">dig -t txt _acme-challenge<span class="class">.example</span><span class="class">.com</span></span><br></pre></td></tr></table></figure>
 <p>如果能够看到那串hash值，说明域名生效，可以在certbot程序中按下回车键了。接下来就等着证书生成吧。</p>
-<h3>Nginx配置SSL证书</h3>
-<p>我的Nginx配置文件位于<code>/etc/nginx/sites-available/default</code>目录，打开Nginx配置文件</p>
+<h3 id="Nginx配置SSL证书">Nginx配置SSL证书</h3><p>我的Nginx配置文件位于<code>/etc/nginx/sites-available/default</code>目录，打开Nginx配置文件</p>
 <p>添加</p>
-<p><figure class="highlight dust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="xml">server </span><span class="expression">&#123;</span><br><span class="line">	##<span class="begin-block"># </span>新增部分</span><br><span class="line">    <span class="variable">listen</span> 443 <span class="variable">ssl</span> <span class="variable"><span class="keyword">default</span></span>_<span class="variable">server</span>;</span><br><span class="line">    <span class="variable">listen</span> [::]:443 <span class="variable">ssl</span> <span class="variable"><span class="keyword">default</span></span>_<span class="variable">server</span>;</span><br><span class="line"></span><br><span class="line">    <span class="variable">ssl</span> <span class="variable">on</span>;</span><br><span class="line">    <span class="variable">ssl</span>_<span class="variable">certificate</span> <span class="end-block">/etc</span><span class="end-block">/letsencrypt</span><span class="end-block">/live</span><span class="end-block">/yourdomain</span><span class="end-block">/fullchain.pem</span>;</span><br><span class="line">    <span class="variable">ssl</span>_<span class="variable">certificate</span>_<span class="variable">key</span> <span class="end-block">/etc</span><span class="end-block">/letsencrypt</span><span class="end-block">/live</span><span class="end-block">/yourdomain</span><span class="end-block">/privkey.pem</span>;</span><br><span class="line">    ##<span class="begin-block"># </span>新增部分 </span><br><span class="line">&#125;</span><span class="xml"></span></span><br></pre></td></tr></table></figure></p>
+<figure class="highlight dust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="xml">server </span><span class="expression">&#123;</span><br><span class="line">	##<span class="begin-block"># </span>新增部分</span><br><span class="line">    <span class="variable">listen</span> 443 <span class="variable">ssl</span> <span class="variable"><span class="keyword">default</span></span>_<span class="variable">server</span>;</span><br><span class="line">    <span class="variable">listen</span> [::]:443 <span class="variable">ssl</span> <span class="variable"><span class="keyword">default</span></span>_<span class="variable">server</span>;</span><br><span class="line"></span><br><span class="line">    <span class="variable">ssl</span> <span class="variable">on</span>;</span><br><span class="line">    <span class="variable">ssl</span>_<span class="variable">certificate</span> <span class="end-block">/etc</span><span class="end-block">/letsencrypt</span><span class="end-block">/live</span><span class="end-block">/yourdomain</span><span class="end-block">/fullchain.pem</span>;</span><br><span class="line">    <span class="variable">ssl</span>_<span class="variable">certificate</span>_<span class="variable">key</span> <span class="end-block">/etc</span><span class="end-block">/letsencrypt</span><span class="end-block">/live</span><span class="end-block">/yourdomain</span><span class="end-block">/privkey.pem</span>;</span><br><span class="line">    ##<span class="begin-block"># </span>新增部分 </span><br><span class="line">&#125;</span><span class="xml"></span></span><br></pre></td></tr></table></figure>
 <p>重启Nginx，在路由器上配置NAT映射，映射端口443。庆幸电信没有封锁443端口。接下来看看你的网站是不是支持https协议了呢。</p>
 
   </section>
@@ -103,7 +99,7 @@
   class="twitter-share-button"
   data-size="large"
   data-via="DrakeLeung"
-  href="https://twitter.com/intent/tweet?text=之前VPS上一直用的是Let's Enc"
+  href="https://twitter.com/intent/tweet?text=之前VPS上一直用的是Let’s Enc"
 >
   Tweet
 </a>
