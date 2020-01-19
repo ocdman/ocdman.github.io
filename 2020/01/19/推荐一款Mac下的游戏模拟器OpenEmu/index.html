@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="utf-8">
+  <title>推荐一款Mac下的游戏模拟器OpenEmu | chilihotpot</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <link rel="shortcut icon" href="/chili.ico">
+  <link rel="stylesheet" href="/css/app.css" type="text/css">
+  <!-- <link rel='stylesheet' href='http://fonts.useso.com/css?family=Source+Code+Pro'> --><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</head>
+
+<body>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><nav class="app-nav">
+  
+    
+      <a href="/.">home</a>
+    
+  
+    
+      <a href="/archives">archive</a>
+    
+  
+    
+      <a href="/tags">tag</a>
+    
+  
+    
+      <a href="/categories">category</a>
+    
+  
+</nav>
+
+  <main class="post">
+  <article>
+  <h1 class="article-title">
+    <a href="/2020/01/19/推荐一款Mac下的游戏模拟器OpenEmu/">推荐一款Mac下的游戏模拟器OpenEmu</a>
+  </h1>
+
+  <section class="article-meta">
+    <p class="article-date">January 19 2020</p>
+  </section>
+
+  <section class="article-entry">
+    <p>其实我已经告别游戏很久了，主要是以前没有自制力，所以后来索性就完全不玩。</p>
+<p>那为什么这次我要推荐一款游戏模拟器呢？一来，我不想失去一些东西，因为我发现作为90后我好像活得像60后，这让我活得太孤独了，和同龄人的共同语言太少了。二来，现在的自己比起以前来，至少在自制力方面有了不少的提升，就算重拾游戏我也能克制得住。最后，对于好的游戏，我还是会跃跃欲试的，比如刷b站的时候被安利的游戏，《幽灵诡计》（ghost trick）。但这次我上手的游戏不是它，是同一作者，巧舟，的另一部作品，《逆转裁判1-3》系列。我现在玩的就是逆转1，豆瓣评分相当高。</p>
+<p>但是光有游戏不行，我还缺一个模拟器，我想在Mac上安装。貌似OpenEmu是最受欢迎的Mac上的游戏模拟器，它的功能足够强大，可以模拟很多种游戏机，从<code>Atari 2600</code>到<code>NDS</code>，游戏机种类足够多。于是我兴冲冲地下载了最新版，安装后却发现需要OSX 10.14版本以上才行。我的系统太旧了，好在OpenEmu是开源的，在github上有以前的历史版本可以下载。最后我找到了OpenEmu 1.0.4版本，可以安装在OSX 10.10系统上。</p>
+<p>接下来是下载逆转1的汉化版本，该游戏是GBA平台下的，找起来也不麻烦。但问题是当我导入游戏准备玩的时候，提示我</p>
+<blockquote>
+<p>The operation couldn’t be completed. OpenEmu could not find a Core to launch the game make sure your internet connection is active and download a suitable core.</p>
+</blockquote>
+<p>一开始我以为是我版本下错了，又装了一遍OpenEMU 1.0.4 experimental版本，结果还是一样的错误。于是我就去网上查，但是推荐的答案寥寥无几。有的说是github的证书<code>DigiCert High Assurance EV Root CA</code>的问题，我看了一下证书并没有过期，而且我还设置为完全信任，也是同样的错误。有的说是需要重启的，也不行。</p>
+<p>最后实在没办法了，只能漫无目的地查看OpenEmu选项以及github上的<a href="https://github.com/OpenEmu/OpenEmu/wiki/User-Guide:-Preferences:-Cores" target="_blank" rel="external">Wiki</a>。无意中发现在<code>Preferences</code>的<code>Library</code>选项卡下有个<code>Available Libraries</code>，所有的模拟器都是黄色警告，说明缺少库。再联系到错误提示，我突然发现<code>Preferences</code>里还有个叫<code>Cores</code>的选项卡，对比网上成功运行的<code>Cores</code>选项卡截图，我却一个Core都没有。</p>
+<p>抱着试试看的心态，我谷歌搜索了<code>OpenEmu GBA Core</code>，竟然给我搜到了。就在github的OpenEmu项目下，我下载了<a href="https://github.com/OpenEmu/VisualBoyAdvance-Core" target="_blank" rel="external">VisualBoyAdvance-Core</a>，版本为1.8.0。双击之后，会自动添加到<code>Cores</code>选项卡中。之后的一切，就变得水到渠成了。</p>
+
+  </section>
+</article>
+
+  <div class="sharing grid">
+  <section class="profile grid-item grid">
+    <img class="avatar" src="/images/chili.png" alt="avatar" />
+    <div class="grid-item">
+      <p class="title"> chilihotpot </p>
+      <p class="subtitle"> You Are The JavaScript In My HTML </p>
+    <div>
+  </section>
+
+  <section class="share-btns">
+    <!-- <p> share it if you like it~ </p> -->
+    <a
+  class="twitter-share-button"
+  data-size="large"
+  data-via="DrakeLeung"
+  href="https://twitter.com/intent/tweet?text=其实我已经告别游戏很久了，主要是以前没有"
+>
+  Tweet
+</a>
+
+<script>
+  window.twttr = (function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0],
+    t = window.twttr || {};
+  if (d.getElementById(id)) return t;
+  js = d.createElement(s);
+  js.id = id;
+  js.src = "https://platform.twitter.com/widgets.js";
+  js.async = true;
+  fjs.parentNode.insertBefore(js, fjs);
+
+  t._e = [];
+  t.ready = function(f) {
+    t._e.push(f);
+  };
+
+  return t;
+}(document, "script", "twitter-wjs"));
+</script>
+
+  </section>
+</div>
+
+
+  
+</main><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+</body>
+</html>
