@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="utf-8">
+  <title>Go1.13的新变化 | chilihotpot</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <link rel="shortcut icon" href="/chili.ico">
+  <link rel="stylesheet" href="/css/app.css" type="text/css">
+  <!-- <link rel='stylesheet' href='http://fonts.useso.com/css?family=Source+Code+Pro'> --><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</head>
+
+<body>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><nav class="app-nav">
+  
+    
+      <a href="/.">home</a>
+    
+  
+    
+      <a href="/archives">archive</a>
+    
+  
+    
+      <a href="/tags">tag</a>
+    
+  
+    
+      <a href="/categories">category</a>
+    
+  
+</nav>
+
+  <main class="post">
+  <article>
+  <h1 class="article-title">
+    <a href="/2020/02/12/Go1-13的新变化/">Go1.13的新变化</a>
+  </h1>
+
+  <section class="article-meta">
+    <p class="article-date">February 12 2020</p>
+  </section>
+
+  <section class="article-entry">
+    <p>之前在研究Gost源码的时候，我写过一篇<a href="https://ocdman.github.io/2019/06/28/Go1-11%E6%96%B0%E7%89%B9%E6%80%A7Module/" target="_blank" rel="external">Go1.11新特性Module</a>，这一次轮到V2Ray了，环境变成了Go1.13+。</p>
+<p>说起来，如果我能深入研究Gost下去的话，现在我应该已经非常熟悉Go语言了，包括代理这方面的知识，可惜啊浅尝辄止了。希望这一次，我能够坚持下去。</p>
+<p>本文参考自<a href="https://tonybai.com/2019/10/27/some-changes-in-go-1-13/" target="_blank" rel="external">Go 1.13中值得关注的几个变化</a>。</p>
+<h3>语言</h3>
+<ul>
+<li>增加了数字字面量的表达能力</li>
+</ul>
+<blockquote>
+<p>增加二进制数字字面量，以0b或0B开头</p>
+<p>在保留以<code>0</code>开头的八进制数字字面量形式的同时，增加<code>0o</code>或<code>0O</code>开头的八进制数字字面量形式</p>
+<p>增加十六进制形式的浮点数字面量，以<code>0x</code>或<code>0X</code>开头，形如0x10.24p+3的浮点数</p>
+<p>为提升可读性，在数字字面量中增加数字分隔符<code>_</code>。分隔符可以用来分隔数字（起到分组提高可读性作用），也可以用来分隔前缀与第一个数字</p>
+</blockquote>
+<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">a := <span class="number">5</span>_3    <span class="comment">// 53</span></span><br><span class="line">b := <span class="number">0</span>o700  <span class="comment">// 448</span></span><br><span class="line">b1 := <span class="number">0</span>O700 <span class="comment">// 448</span></span><br><span class="line">b2 := <span class="number">0</span>_700 <span class="comment">// 448</span></span><br><span class="line">b3 := <span class="number">0</span>o_700 <span class="comment">// 448</span></span><br><span class="line">c := <span class="number">0</span>b111  <span class="comment">// 7</span></span><br><span class="line">c1 := <span class="number">0</span>B111 <span class="comment">// 7</span></span><br><span class="line">c2 := <span class="number">0</span>b_111 <span class="comment">// 7</span></span><br><span class="line">f1 := <span class="number">0x10</span><span class="number">.1</span>p+<span class="number">0</span> <span class="comment">// 16.0625（小数点后的位数N可以看作16^(-N)，p+M可以看成结果*(M+1)次）</span></span><br><span class="line">f2 := <span class="number">0x10</span><span class="number">.1</span>p+<span class="number">1</span> <span class="comment">// 32.125</span></span><br><span class="line">f3 := <span class="number">0x10</span>.p-<span class="number">1</span>  <span class="comment">// 8 (p-M可以看成结果/M次)</span></span><br><span class="line">f4 := <span class="number">0x10</span>.p-<span class="number">2</span>  <span class="comment">// 4</span></span><br></pre></td></tr></table></figure></p>
+<ul>
+<li>取消了移位操作的无符号数的限制</li>
+</ul>
+<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> i <span class="typename">int</span> = <span class="number">5</span></span><br><span class="line"></span><br><span class="line">fmt.Println(<span class="number">2</span> &lt;&lt; <span class="typename">uint</span>(i)) <span class="comment">// 64(1.13以前)</span></span><br><span class="line">fmt.Println(<span class="number">2</span> &lt;&lt; i)       <span class="comment">// 64(1.13以后)</span></span><br><span class="line">fmt.Println(<span class="number">64</span> &gt;&gt; <span class="typename">uint</span>(i)) <span class="comment">// 2</span></span><br><span class="line">fmt.Println(<span class="number">64</span> &gt;&gt; i)      <span class="comment">// 2</span></span><br></pre></td></tr></table></figure></p>
+<p>注意，<strong>只有在go.mod中的go version指示字段为go 1.13及以后的版本，上述语言特性变更才会生效</strong>。当然，<strong>如果repo下没有go.mod或者单独在某个没有go.mod的目录下使用go 1.13编译器运行上述代码，也是没有问题的</strong>。</p>
+<h3>Go Module机制的优化</h3>
+<ul>
+<li>GO111MODULE=auto的行为变化</li>
+</ul>
+<p>Go1.12版本中，GO111MODULE默认值为auto。在auto模式下，GOPATH/src下的repo以及在GOPATH之外的repo依然使用GOPATH mode，不使用go.mod来管理依赖。</p>
+<p>Go1.13版本中，module mode优先级提升，GO111MODULE的默认值仍然是auto，但在这个auto下，无论是在GOPATH/src下的repo还是GOPATH之外的repo，只要目录下有go.mod，go编译器都会使用go module来管理依赖。</p>
+<ul>
+<li>GOPROXY有默认值且支持设置多个代理</li>
+</ul>
+<p>之前的版本，GOPROXY环境变量默认为空。go编译器直接与类似github.com这样的代码托管站点通信并获取相关依赖库的数据。一些第三方的GOPROXY服务发布后，迁移到go module的gopher们发现，大多数情况下通过proxy获取依赖包数据的速度要远高于直接从代码托管站点获取的速度，因此GOPROXY总是会配置上一个值。Go核心团队也希望Go能有一个项nodejs那样的中心化的module仓库为大家提供服务。于是Go1.13中将<code>https://proxy.golang.org</code>作为GOPROXY环境变量的默认值，这也是Go官方提供的GOPROXY服务。</p>
+<p>同时GOPROXY支持设置多个proxy的列表（多个之间采用<code>,</code>分隔），Go编译器会按顺序尝试列表中的proxy以获取依赖包，但是当有proxy server服务不可达或者返回http状态码不为404也不是410时，go会终止数据获取。</p>
+<p>Go1.13中，GOPROXY的默认值为<code>https://proxy.golang.org,direct</code>。当官方代理返回404或410时，Go编译器会尝试直接连接依赖module的代码托管站点。</p>
+<p>由于国内无法访问Go官方的proxy，可以使用自己搭建的代理，也可以用国内gopher们搭建的代理</p>
+<p><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">export GOPROXY=https://goproxy.cn,&#33258;&#24049;&#25645;&#24314;&#30340;&#22269;&#22806;VPS&#30340;&#20195;&#29702;,direct</span><br></pre></td></tr></table></figure></p>
+<ul>
+<li>GOSUMDB</li>
+</ul>
+<p>go在go module启用时在本地建立一个go.sum文件，用来储存依赖包特定版本的加密校验和。同时，Go维护下载的软件包的缓存，并在下载时计算并记录每个软件包的加密校验和。在正常操作中，go命令对照这些预先计算的校验和去检查某repo下的go.sum文件，而不是每次命令调用时都重新计算它们。</p>
+<p>日常开发中，特定module版本的校验和永远不会改变。每次运行或构建时，go命令都会通过本地的go.sum去检查其本地缓存副本的校验和是否一致。如果校验和不匹配，则go命令将报告安全错误，并拒绝允许构建或运行。在这种情况下，重要的是找出正确的校验和，确定是go.sum错误还是下载的代码是错误的。如果go.sum中尚未包含已下载的module，并且该模块是公共module，则go命令将查询Go校验和数据库以获取正确的校验和数据存入go.sum。如果下载的代码与校验和不匹配，则go命令将报告不匹配并退出。</p>
+<p>Go1.13提供了GOSUMDB环境变量用于配置Go校验和数据库的服务地址（和公钥）。其默认值为<code>sum.golang.org</code>，这也是Go官方提供的校验和数据库服务（大陆gopher可以使用sum.golang.google.cn）。出于安全考虑，建议保持GOSUMDB开启。如果因为某些因素无法访问GOSUMDB，可以通过下面命令将其关闭</p>
+<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">go env -w GOSUMDB=off</span><br></pre></td></tr></table></figure></p>
+<p>GOSUMDB关闭后，仅能使用本地的go.sum进行包的校验和校验了。</p>
+<ul>
+<li>面向私有模块的GOPRIVATE</li>
+</ul>
+<p>有了GOPROXY后，公共module的数据获取变得容易多了。但是如果依赖的是企业内部module或者托管站点上的private库，通过GOPROXY获取显然会失败，除非你搭建了自己的公私均可的goproxy server，并将其设置到GOPROXY中。</p>
+<p>Go1.13提供了GOPRIVATE变量，用于知识哪些仓库下的module是私有，不需要通过GOPROXY下载，也不需要通过GOSUMDB去验证其校验和。不过要注意的是GONOPROXY和GONOSUMDB可以重写GOPRIVATE中的设置，因此设置时要谨慎。</p>
+<h3>Go错误处理优化</h3>
+<p>在Go1.13中Go核心团队落实了两点错误处理优化问题</p>
+<blockquote>
+<p>通过标准库增加了errors.ls和As函数来解决error value比较问题</p>
+<p>增加errors.Unwrap来解决error unwrap问题</p>
+</blockquote>
+<p>并且Go通过fmt.Errorf中新增<code>%w</code>动词来协助gopher快速创建一个包装错误，创建的error变了实现了下面的接口</p>
+<p><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//匿名接口</span></span><br><span class="line"><span class="keyword">interface</span> &#123; </span><br><span class="line">  Unwrap() error</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h3>性能</h3>
+<ul>
+<li>defer性能提升</li>
+</ul>
+<p>defer语法让gopher在进行资源（文件、锁）释放的过程中变得优雅很多，也不容易出错。但在性能敏感的应用中，defer带来的性能负担也是gopher必须要权衡的问题。在Go1.13中，Go核心团队对defer性能做了大幅优化。</p>
+<ul>
+<li>优化后的逃逸分析</li>
+</ul>
+<p>逃逸分析（escape analysis）让编译器在选择究竟将变了分配在栈上还是堆上的时候更精确。在以前版本分配到堆上的变量，在Go1.13中可能就会分配到栈上，从而减少内存分配的次数，一定程度上减轻GC的压力，达到性能提升的目的。</p>
+<ul>
+<li>sync包中的Mutex、RWMutex的方法的inline化</li>
+</ul>
+<h3>其它变化</h3>
+<ul>
+<li>Go1.13支持Andriod10le ，对MacOS的需求至少10.11版本（我的Yosemite系统终于无法安装Go1.13了，但是我可以用虚拟机里的Win10来安装Go1.13）</li>
+<li>godoc不再和go、gofmt放入go release版中，需要godoc的，单独从golang.org/x/tools/cmd/godoc中下载安装</li>
+<li>crypto/tls默认开启tls1.3支持</li>
+<li>unicode包支持的unicode标准从10.0升级到11.0版本</li>
+</ul>
+<h3>总结</h3>
+<p>老实将，大部分的变化我看到的还是云里雾里的。总之，还是先从Go基础开始学起吧。</p>
+
+  </section>
+</article>
+
+  <div class="sharing grid">
+  <section class="profile grid-item grid">
+    <img class="avatar" src="/images/chili.png" alt="avatar" />
+    <div class="grid-item">
+      <p class="title"> chilihotpot </p>
+      <p class="subtitle"> You Are The JavaScript In My HTML </p>
+    <div>
+  </section>
+
+  <section class="share-btns">
+    <!-- <p> share it if you like it~ </p> -->
+    <a
+  class="twitter-share-button"
+  data-size="large"
+  data-via="DrakeLeung"
+  href="https://twitter.com/intent/tweet?text=之前在研究Gost源码的时候，我写过一篇"
+>
+  Tweet
+</a>
+
+<script>
+  window.twttr = (function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0],
+    t = window.twttr || {};
+  if (d.getElementById(id)) return t;
+  js = d.createElement(s);
+  js.id = id;
+  js.src = "https://platform.twitter.com/widgets.js";
+  js.async = true;
+  fjs.parentNode.insertBefore(js, fjs);
+
+  t._e = [];
+  t.ready = function(f) {
+    t._e.push(f);
+  };
+
+  return t;
+}(document, "script", "twitter-wjs"));
+</script>
+
+  </section>
+</div>
+
+
+  
+</main><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+</body>
+</html>

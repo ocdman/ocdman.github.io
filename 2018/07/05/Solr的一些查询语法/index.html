@@ -43,36 +43,43 @@
   <section class="article-entry">
     <p>Solr是一款基于Apache Lucene服务器的开源的搜索引擎，它支持分词切割，官方的描述是</p>
 <blockquote>
-<p>Solr is highly reliable, scalable and fault tolerant, providing distributed indexing, replication and load-balanced querying, automated failover and recovery, centralized configuration and more. Solr powers the search and navigation features of many of the world’s largest internet sites.</p>
+<p>Solr is highly reliable, scalable and fault tolerant, providing distributed indexing, replication and load-balanced querying, automated failover and recovery, centralized configuration and more. Solr powers the search and navigation features of many of the world's largest internet sites.</p>
 </blockquote>
 <p>作为一款开源的软件，其功能之强大，配置之灵活，用于搜索业务再好不过。不过今天在这里要扯的不是怎么配置Solr，而是Solr查询过程中的一些语法。</p>
-<h3 id="关键字匹配">关键字匹配</h3><p>查询匹配title字段中值为”foo”的对象</p>
-<figure class="highlight avrasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="label">title:</span>foo</span><br></pre></td></tr></table></figure>
-<p>查询匹配title字段中值为”foo bar”的对象</p>
-<figure class="highlight avrasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="label">title:</span><span class="string">"foo bar"</span></span><br></pre></td></tr></table></figure>
-<p>查询匹配title字段中值为”foo bar”，并且body字段中值为”quick fox”的对象</p>
-<figure class="highlight avrasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="label">title:</span><span class="string">"foo bar"</span> <span class="keyword">AND</span> body:<span class="string">"quick fox"</span></span><br></pre></td></tr></table></figure>
-<p>查询同时满足title字段中值为”foo bar”以及body字段中值为”quick fox”的对象，或者查询title字段中值为”fox”的对象</p>
-<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(<span class="string">title:</span><span class="string">"foo bar"</span> AND <span class="string">body:</span><span class="string">"quick fox"</span>) OR <span class="string">title:</span>fox</span><br></pre></td></tr></table></figure>
-<p>查询匹配title字段中的值既包含”foo”关键字又不包含”bar”关键字的单对象</p>
-<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">title:</span>foo -<span class="string">title:</span>bar</span><br></pre></td></tr></table></figure>
-<h3 id="模糊查询">模糊查询</h3><p>查询title字段中任何以”foo”开头的单词</p>
-<figure class="highlight avrasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="label">title:</span>foo*</span><br></pre></td></tr></table></figure>
-<p>查询title字段中任何以”foo”开头并且以”bar”结尾的单词</p>
-<figure class="highlight avrasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="label">title:</span>foo*bar</span><br></pre></td></tr></table></figure>
+<h3>关键字匹配</h3>
+<p>查询匹配title字段中值为&quot;foo&quot;的对象</p>
+<p><figure class="highlight avrasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="label">title:</span>foo</span><br></pre></td></tr></table></figure></p>
+<p>查询匹配title字段中值为&quot;foo bar&quot;的对象</p>
+<p><figure class="highlight avrasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="label">title:</span><span class="string">"foo bar"</span></span><br></pre></td></tr></table></figure></p>
+<p>查询匹配title字段中值为&quot;foo bar&quot;，并且body字段中值为&quot;quick fox&quot;的对象</p>
+<p><figure class="highlight avrasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="label">title:</span><span class="string">"foo bar"</span> <span class="keyword">AND</span> body:<span class="string">"quick fox"</span></span><br></pre></td></tr></table></figure></p>
+<p>查询同时满足title字段中值为&quot;foo bar&quot;以及body字段中值为&quot;quick fox&quot;的对象，或者查询title字段中值为&quot;fox&quot;的对象</p>
+<p><figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(<span class="string">title:</span><span class="string">"foo bar"</span> AND <span class="string">body:</span><span class="string">"quick fox"</span>) OR <span class="string">title:</span>fox</span><br></pre></td></tr></table></figure></p>
+<p>查询匹配title字段中的值既包含&quot;foo&quot;关键字又不包含&quot;bar&quot;关键字的单对象</p>
+<p><figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">title:</span>foo -<span class="string">title:</span>bar</span><br></pre></td></tr></table></figure></p>
+<h3>模糊查询</h3>
+<p>查询title字段中任何以&quot;foo&quot;开头的单词</p>
+<p><figure class="highlight avrasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="label">title:</span>foo*</span><br></pre></td></tr></table></figure></p>
+<p>查询title字段中任何以&quot;foo&quot;开头并且以&quot;bar&quot;结尾的单词</p>
+<p><figure class="highlight avrasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="label">title:</span>foo*bar</span><br></pre></td></tr></table></figure></p>
 <p>注意，Lucene不支持以*作为开头的值的查询。</p>
-<h3 id="范围查询">范围查询</h3><p>查询Price字段中价格位于200到300之间的对象</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Price:[<span class="number">200</span> TO <span class="number">300</span>]</span><br></pre></td></tr></table></figure>
+<h3>范围查询</h3>
+<p>查询Price字段中价格位于200到300之间的对象</p>
+<p><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Price:[<span class="number">200</span> TO <span class="number">300</span>]</span><br></pre></td></tr></table></figure></p>
 <p>查询Price字段中价格低于200的对象</p>
-<figure class="highlight accesslog"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Price:<span class="string">[* TO 200]</span></span><br></pre></td></tr></table></figure>
+<p><figure class="highlight accesslog"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Price:<span class="string">[* TO 200]</span></span><br></pre></td></tr></table></figure></p>
 <p>查询Price字段中价格高于300的对象</p>
-<figure class="highlight accesslog"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Price:<span class="string">[300 TO *]</span></span><br></pre></td></tr></table></figure>
-<h3 id="查询参数">查询参数</h3><p>参数<code>fl</code>（field list）指定了返回结果字段。例如，<a href="http://localhost:8080/solr/core/select?q=*:*&amp;fl=id,name,score" target="_blank" rel="external">http://localhost:8080/solr/core/select?q=*:*&amp;fl=id,name,score</a></p>
+<p><figure class="highlight accesslog"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Price:<span class="string">[300 TO *]</span></span><br></pre></td></tr></table></figure></p>
+<h3>查询参数</h3>
+<p>参数<code>fl</code>（field list）指定了返回结果字段。例如，http://localhost:8080/solr/core/select?q=<em>:</em>&amp;fl=id,name,score</p>
 <p>参数<code>fq</code>（filter query）指过滤查询，有点类似于<code>q</code>查询，但是两者还是有差别的。StackOverflow上给出的建议是</p>
 <blockquote>
-<p>It’s preferable to use Filter Query over normal Query wherever possible.<br>FilterQuery is able to take advantage of the FilterCache, which would be a huge performance boost in comparison to your querie<br>当然，还有其它的差别有待于发掘</p>
+<p>It's preferable to use Filter Query over normal Query wherever possible.
+FilterQuery is able to take advantage of the FilterCache, which would be a huge performance boost in comparison to your querie
+当然，还有其它的差别有待于发掘</p>
 </blockquote>
-<h3 id="总结">总结</h3><p>以上的内容并不是全部的Solr查询语法，未来会慢慢补充。</p>
+<h3>总结</h3>
+<p>以上的内容并不是全部的Solr查询语法，未来会慢慢补充。</p>
 
   </section>
 </article>

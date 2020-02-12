@@ -43,7 +43,8 @@
   <section class="article-entry">
     <p>表和表之间的联接，即join操作是SQL里很重要的操作之一。理解了联接，就能有效地关联关系型数据。</p>
 <p>Join操作一共分为3种：</p>
-<h3 id="1-_交叉联接">1. 交叉联接</h3><p>这是所有联接中最基础也是必须执行的第一个步骤，SQL语法称为<code>cross join</code>。</p>
+<h3>1. 交叉联接</h3>
+<p>这是所有联接中最基础也是必须执行的第一个步骤，SQL语法称为<code>cross join</code>。</p>
 <p>假设A表有m条数据，m = 2</p>
 <table>
 <thead>
@@ -120,9 +121,10 @@
 </tbody>
 </table>
 <p><strong>这就是我们常说的笛卡尔积</strong>。要联接的两表的行数越多，笛卡尔积的结果集也就越大。</p>
-<h3 id="2-_内联接">2. 内联接</h3><p>交叉联接将所有的组合可能性都考虑到了，并汇集到了一个结果集里。内联接就是操作这个结果集，筛选出满足联接条件的行。SQL语法称为<code>inner join</code>。</p>
+<h3>2. 内联接</h3>
+<p>交叉联接将所有的组合可能性都考虑到了，并汇集到了一个结果集里。内联接就是操作这个结果集，筛选出满足联接条件的行。SQL语法称为<code>inner join</code>。</p>
 <p>假设前面的例子，要筛选出满足A表的AId等于B表的BId的行，SQL写法为</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="operator"><span class="keyword">select</span> A.*, B.*</span><br><span class="line"><span class="keyword">from</span> A</span><br><span class="line"><span class="keyword">inner</span> <span class="keyword">join</span> B</span><br><span class="line"><span class="keyword">on</span> A.AId = B.BId</span></span><br></pre></td></tr></table></figure>
+<p><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="operator"><span class="keyword">select</span> A.*, B.*</span><br><span class="line"><span class="keyword">from</span> A</span><br><span class="line"><span class="keyword">inner</span> <span class="keyword">join</span> B</span><br><span class="line"><span class="keyword">on</span> A.AId = B.BId</span></span><br></pre></td></tr></table></figure></p>
 <p>这里的<code>A.AId = B.BId</code>就是联接条件，当有联接条件时必须加上<code>on</code>谓词。如果还有其它联接条件只要用<code>and</code>连接即可。结果为</p>
 <table>
 <thead>
@@ -143,8 +145,9 @@
 </tbody>
 </table>
 <p>换句话说，<strong>内联接就是起过滤行的作用</strong>，过滤的对象是满足过滤条件的由交叉连接产生的结果集。</p>
-<h3 id="3-_左（右）联接">3. 左（右）联接</h3><p>左联接比起内联接来，区别只多出了一个步骤，在内联接的基础之上补充左表被内联接过滤掉的那些行，右表的行的数据以NULL替代。什么意思，用上面的例子来解释，A表左联接B表，筛选条件为AId = BId，SQL写法为</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="operator"><span class="keyword">select</span> A.*, B.*</span><br><span class="line"><span class="keyword">from</span> A</span><br><span class="line"><span class="keyword">left</span> <span class="keyword">join</span> B</span><br><span class="line"><span class="keyword">on</span> A.AId = B.BId</span></span><br></pre></td></tr></table></figure>
+<h3>3. 左（右）联接</h3>
+<p>左联接比起内联接来，区别只多出了一个步骤，在内联接的基础之上补充左表被内联接过滤掉的那些行，右表的行的数据以NULL替代。什么意思，用上面的例子来解释，A表左联接B表，筛选条件为AId = BId，SQL写法为</p>
+<p><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="operator"><span class="keyword">select</span> A.*, B.*</span><br><span class="line"><span class="keyword">from</span> A</span><br><span class="line"><span class="keyword">left</span> <span class="keyword">join</span> B</span><br><span class="line"><span class="keyword">on</span> A.AId = B.BId</span></span><br></pre></td></tr></table></figure></p>
 <p>结果</p>
 <table>
 <thead>
@@ -173,7 +176,8 @@
 <p>A（左）表AId为1的行，原本是不满足过滤条件的，也就是被内联接过滤掉的行，但是<strong>左联接会将左表被内联接过滤掉的行，添加到结果集的最后，右表的数据则用NULL替代</strong>。</p>
 <p>换句话说，左表会返回所有行，不满足联接条件的右表返回NULL。</p>
 <p>右联接（<code>right join</code>）以及全联接（<code>full join</code>）原理同左联接。</p>
-<h3 id="总结">总结</h3><p>为什么我要写下这篇文章，因为工作的时候，使用左联接查询，以为返回的结果集行数就应该等于左表的行数。后来才发现我忘了交叉连接的存在，如果联接条件是一对多的话，左联接产生的结果集行数大于左表的行数。也是提醒自己，不要忘了交叉联接的存在，它是所有联接的基础。</p>
+<h3>总结</h3>
+<p>为什么我要写下这篇文章，因为工作的时候，使用左联接查询，以为返回的结果集行数就应该等于左表的行数。后来才发现我忘了交叉连接的存在，如果联接条件是一对多的话，左联接产生的结果集行数大于左表的行数。也是提醒自己，不要忘了交叉联接的存在，它是所有联接的基础。</p>
 <p>为什么我要写这篇文章，原因是因为一开始理解左联接的时候，容易被左表返回所有行</p>
 
   </section>
