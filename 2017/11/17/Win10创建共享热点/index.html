@@ -41,27 +41,24 @@
   </section>
 
   <section class="article-entry">
-    <h3>创建热点</h3>
-<p>win10自带的热点功能，试了几次都无法连接上。无奈之下只能再找别的办法。</p>
+    <h3 id="创建热点">创建热点</h3><p>win10自带的热点功能，试了几次都无法连接上。无奈之下只能再找别的办法。</p>
 <p><a href="https://www.windowscentral.com/how-turn-your-windows-10-pc-wireless-hotspot" target="_blank" rel="external">这篇文章</a>用命令行创建热点，简单方便，推荐。</p>
 <p>首先检查自己的电脑是否支持WIFI模块。执行命令</p>
-<p><figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="title">netsh</span> wlan show drivers</span><br></pre></td></tr></table></figure></p>
-<p>&lt;img src=&quot;/img/netsh-show-drviers-hosted.jpg&quot; width=&quot;670px&quot; /&gt;</p>
+<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="title">netsh</span> wlan show drivers</span><br></pre></td></tr></table></figure>
+<p><img src="/img/netsh-show-drviers-hosted.jpg" width="670px"></p>
 <p>如果宿主网络支持WIFI的话，执行命令来创建热点</p>
-<p><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">NETSH WLAN <span class="operator"><span class="keyword">set</span> hostednetwork <span class="keyword">mode</span>=<span class="keyword">allow</span> ssid=Your_SSID <span class="keyword">key</span>=Your_Passphrase</span></span><br></pre></td></tr></table></figure></p>
-<p>&lt;img src=&quot;/img/set-hostednetwork-windows-10.jpg&quot; width=&quot;670px&quot; /&gt;</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">NETSH WLAN <span class="operator"><span class="keyword">set</span> hostednetwork <span class="keyword">mode</span>=<span class="keyword">allow</span> ssid=Your_SSID <span class="keyword">key</span>=Your_Passphrase</span></span><br></pre></td></tr></table></figure>
+<p><img src="/img/set-hostednetwork-windows-10.jpg" width="670px"></p>
 <p>然后执行命令激活刚刚创建的热点，</p>
-<p><figure class="highlight dos"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">NETSH WLAN <span class="built_in">start</span> hostednetwork</span><br></pre></td></tr></table></figure></p>
+<figure class="highlight dos"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">NETSH WLAN <span class="built_in">start</span> hostednetwork</span><br></pre></td></tr></table></figure>
 <p>到这一步，命令行的工作算是完成了。</p>
 <p>接下来需要配置一下网络适配器。打开<strong>网络连接</strong>，找到以太网或者无线网，右键属性</p>
-<p>&lt;img src=&quot;/img/network-connections-ethernet-properties.jpg&quot; width=&quot;670px&quot; /&gt;</p>
+<p><img src="/img/network-connections-ethernet-properties.jpg" width="670px"></p>
 <p>找到<strong>共享</strong>标签，<strong>勾选允许其它网络用户通过此电脑连接上网</strong>，在下拉列表里选择<strong>Local Area Connection</strong>，即创建了一个wifi热点。</p>
 <p><img src="/img/internet-connection-sharing-windows-10.jpg" alt="netsh-show-drviers-hosted"></p>
 <p>接下来就连接一下试试看吧。</p>
-<h3>长久连接</h3>
-<p>如果需要长久连接热点的话，打开<strong>计算机管理</strong>，找到<strong>设备管理</strong>，然后选择<strong>网络适配器</strong>，在里面找到无线网卡，右键属性，<strong>电源管理</strong>，将<strong>允许计算机关闭此设备以节约电源选项勾除</strong>。最后在<strong>电源选项</strong>里，<strong>接通电源使计算机进入休眠选择从不</strong>就能确保热点一直开着了。</p>
-<h3>开机自启</h3>
-<p>如果想开机自启热点的话，创建一个.bat文件，输入以下内容</p>
+<h3 id="长久连接">长久连接</h3><p>如果需要长久连接热点的话，打开<strong>计算机管理</strong>，找到<strong>设备管理</strong>，然后选择<strong>网络适配器</strong>，在里面找到无线网卡，右键属性，<strong>电源管理</strong>，将<strong>允许计算机关闭此设备以节约电源选项勾除</strong>。最后在<strong>电源选项</strong>里，<strong>接通电源使计算机进入休眠选择从不</strong>就能确保热点一直开着了。</p>
+<h3 id="开机自启">开机自启</h3><p>如果想开机自启热点的话，创建一个.bat文件，输入以下内容</p>
 <blockquote>
 <p>netsh wlan start hostednetwork</p>
 </blockquote>
@@ -72,7 +69,7 @@
 </blockquote>
 <p>其实不用，之前的操作已经记录下热点信息了，这么写反而不能自动打开热点，包括加上pause，加上延时，都无法自启热点。貌似只能输入<code>netsh wlan start hostednetwork</code>一行代码。</p>
 <p>最后把创建的.bat文件放入<strong>启动目录</strong>，启动目录的地址是</p>
-<p><figure class="highlight dos"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="envvar">%AppData%</span>\Microsoft\Windows\<span class="built_in">Start</span> Menu\Programs\Startup</span><br></pre></td></tr></table></figure></p>
+<figure class="highlight dos"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="envvar">%AppData%</span>\Microsoft\Windows\<span class="built_in">Start</span> Menu\Programs\Startup</span><br></pre></td></tr></table></figure>
 <p>就行啦。下次开机自启热点，懒人癌万岁～</p>
 
   </section>
@@ -93,8 +90,7 @@
   class="twitter-share-button"
   data-size="large"
   data-via="DrakeLeung"
-  href="https://twitter.com/intent/tweet?text=>创建热点</h3>
-<p>win10自"
+  href="https://twitter.com/intent/tweet?text= id="创建热点">创建热点</h3>"
 >
   Tweet
 </a>

@@ -48,46 +48,33 @@
 </blockquote>
 <p>那么如何让GV主动拨打电话或者发送短信呢？我是参考了这篇文章，<a href="https://op.ci/779.html" target="_blank" rel="external">无需IFTTT 零成本为Google Voice保号 2020 新方法</a>。文章的主要思路就是编写Google Apps Script脚本，向一个可自动回复短信的美国号码，定期主动发送短信。下面说说具体操作方式。</p>
 <ol>
-<li>
-<p>将GV短信转发到同一账号下的Gmail邮箱。登录Google Voice，设置 &gt; 消息 &gt; 将消息转发到电子邮件，点击启用。</p>
+<li><p>将GV短信转发到同一账号下的Gmail邮箱。登录Google Voice，设置 &gt; 消息 &gt; 将消息转发到电子邮件，点击启用。</p>
 </li>
-<li>
-<p>登录Google Voice，向Cloudflare查询域名IP的电话号码： (833) 672-1001 发送域名IP查询短信，如直接发送“cloudflare.com”，即可立即给收到该域名对应的IP地址回复短信。</p>
+<li><p>登录Google Voice，向Cloudflare查询域名IP的电话号码： (833) 672-1001 发送域名IP查询短信，如直接发送“cloudflare.com”，即可立即给收到该域名对应的IP地址回复短信。</p>
 </li>
-<li>
-<p>转到Gmail当中，查看刚刚接收到的短信是否也以邮件的形式在你的收件箱中，复制该邮件的发送方xxx@txt.voice.google.com。</p>
+<li><p>转到Gmail当中，查看刚刚接收到的短信是否也以邮件的形式在你的收件箱中，复制该邮件的发送方xxx@txt.voice.google.com。</p>
 </li>
-<li>
-<p>登录Google Drive，我的云端硬盘 &gt; 更多 &gt; 关联更多应用 &gt; Google Apps Script，点击关联。</p>
+<li><p>登录Google Drive，我的云端硬盘 &gt; 更多 &gt; 关联更多应用 &gt; Google Apps Script，点击关联。</p>
 </li>
-<li>
-<p>回到云端硬盘主页面，再次点击新建 &gt; 更多，选择Google Apps Scripts，新建一个后缀名为<code>.gs</code>的项目，添加一个项目名称。</p>
+<li><p>回到云端硬盘主页面，再次点击新建 &gt; 更多，选择Google Apps Scripts，新建一个后缀名为<code>.gs</code>的项目，添加一个项目名称。</p>
 </li>
-<li>
-<p>代码部分用以下内容替换，xxx@txt.voice.google.com用第3步中的邮件发送方进行替换</p>
-<p><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">myFunction</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  MailApp.sendEmail(<span class="string">"xxx@txt.voice.google.com"</span>, <span class="string">""</span>, <span class="string">"cloudflare.com"</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<li><p>代码部分用以下内容替换，xxx@txt.voice.google.com用第3步中的邮件发送方进行替换</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">myFunction</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">  MailApp.sendEmail(<span class="string">"xxx@txt.voice.google.com"</span>, <span class="string">""</span>, <span class="string">"cloudflare.com"</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 </li>
-<li>
-<p>点击文件 &gt; 保存，将你修改的内容进行保存。</p>
+<li><p>点击文件 &gt; 保存，将你修改的内容进行保存。</p>
 </li>
-<li>
-<p>点击运行，系统会让你选择对应的Google账户来进行授权，在弹出窗口内选择对应的账户授权，此时系统提示<strong>此应用未经过验证</strong>，点击下方的高级，允许项目访问你的Google账号即可实现授权。</p>
+<li><p>点击运行，系统会让你选择对应的Google账户来进行授权，在弹出窗口内选择对应的账户授权，此时系统提示<strong>此应用未经过验证</strong>，点击下方的高级，允许项目访问你的Google账号即可实现授权。</p>
 </li>
-<li>
-<p>看下有没有收到新的邮件，如果有，那么脚本这一环节就设置正确。</p>
+<li><p>看下有没有收到新的邮件，如果有，那么脚本这一环节就设置正确。</p>
 </li>
-<li>
-<p>回到刚才的项目中，点击修改 &gt; 当前项目触发器，浏览器会自动打开新的页面进入触发器设定界面。</p>
+<li><p>回到刚才的项目中，点击修改 &gt; 当前项目触发器，浏览器会自动打开新的页面进入触发器设定界面。</p>
 </li>
-<li>
-<p>点击创建新的触发器，在选择活动来源处选择时间驱动，选择触发器时间类型中选择月定时器（不建议太过频繁发送查询短信，有用的资源要珍惜），其它看自己喜好选择，最后点击保存即可。</p>
+<li><p>点击创建新的触发器，在选择活动来源处选择时间驱动，选择触发器时间类型中选择月定时器（不建议太过频繁发送查询短信，有用的资源要珍惜），其它看自己喜好选择，最后点击保存即可。</p>
 </li>
-<li>
-<p>如果不确定定时器是否会准确触发的，可以先将触发器时间类型改为分钟定时器进行验证。如果验证成功再将触发器时间类型改回月定时器。</p>
+<li><p>如果不确定定时器是否会准确触发的，可以先将触发器时间类型改为分钟定时器进行验证。如果验证成功再将触发器时间类型改回月定时器。</p>
 </li>
 </ol>
-<h3>总结</h3>
-<p>至此，GV保号的步骤都已经完成。其中，最重要的一步就是要对GS脚本操作Google邮箱进行授权，不然无法发送邮件，同样也无法触发定时器。过段时间会收到一封来自Google安全建议的邮件，在安全检查中只要完全信任你的GS脚本就行了。</p>
+<h3 id="总结">总结</h3><p>至此，GV保号的步骤都已经完成。其中，最重要的一步就是要对GS脚本操作Google邮箱进行授权，不然无法发送邮件，同样也无法触发定时器。过段时间会收到一封来自Google安全建议的邮件，在安全检查中只要完全信任你的GS脚本就行了。</p>
 
   </section>
 </article>

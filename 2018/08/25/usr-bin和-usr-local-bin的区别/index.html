@@ -45,7 +45,7 @@
 <p>通常，<code>/usr/bin</code>目录下都是系统预装的可执行程序，会随着系统的升级而改变。</p>
 <p>而<code>/usr/local/bin</code>目录是给用户放置自己的可执行程序的地方，它不会随着系统的升级而覆盖同名的文件，所以比较适合放自己的脚本，还能够全局执行。</p>
 <p>如果两个目录下有相同的可执行程序，执行的优先级取决于PATH环境变量，排前面的目录会优先被执行。比如</p>
-<p><figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">echo $PATH</span><br><span class="line"><span class="regexp">/usr/</span>local<span class="regexp">/bin:/</span>usr<span class="regexp">/bin:/</span><span class="string">bin:</span><span class="regexp">/usr/</span><span class="string">sbin:</span>/sbin</span><br></pre></td></tr></table></figure></p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">echo $PATH</span><br><span class="line"><span class="regexp">/usr/</span>local<span class="regexp">/bin:/</span>usr<span class="regexp">/bin:/</span><span class="string">bin:</span><span class="regexp">/usr/</span><span class="string">sbin:</span>/sbin</span><br></pre></td></tr></table></figure>
 <p><code>/usr/local/bin</code>会优先于<code>/usr/bin</code>执行。</p>
 
   </section>
