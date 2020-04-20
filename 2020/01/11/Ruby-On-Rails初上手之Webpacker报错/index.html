@@ -44,25 +44,25 @@
     <p>最近在学习Ruby，想着做一个简单的项目练练手，于是就看起了Rails。MAC下安装Rails的过程是曲折的，尤其是我这个过时的操作系统，有一部分软件<code>brew</code>都不支持了，只能自己手动编译安装。</p>
 <p>首先，替换系统自带的ruby，因为原来的版本太低了。我原本想通过下载ruby的管理工具<code>rvm</code>进行安装，但是最新的<code>rvm</code>对操作系统有要求，拒绝了我的安装。我又尝试过源代码安装，虽然安装成功了，但是缺少<code>openssl</code>的支持，无法安装<code>rails</code>。即使编译时指定了<code>openssl</code>的路径，也以失败告终。最后，可能是从<code>brew</code>下载的<code>portable-ruby</code>包，具体我忘了，竟然可以直接使用，不用编译，完美支持<code>openssl</code>。ruby版本为<code>2.6.3</code>。</p>
 <p>因为新版本的ruby对<code>openssl</code>版本有要求，所以在替换ruby的过程中，顺便也替换了<code>openssl</code>，<code>openssl</code>是通过<code>brew</code>安装的，版本为<code>1.1.1</code>。替换使用的命令是</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">export</span> PATH=/usr/<span class="built_in">local</span>/opt/openssl/bin:<span class="variable">$&#123;PATH&#125;</span></span><br></pre></td></tr></table></figure>
-<p>然后使用命令<code>gem install rails</code>安装<code>rails</code>，版本为<code>6.0.2.1</code>。后续一切正常，直到修改了<code>config/routes.rb</code>文件，加了<code>root &#39;welcome#index&#39;</code>，报错</p>
+<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">export</span> PATH=/usr/<span class="built_in">local</span>/opt/openssl/bin:<span class="variable">$&#123;PATH&#125;</span></span><br></pre></td></tr></table></figure></p>
+<p>然后使用命令<code>gem install rails</code>安装<code>rails</code>，版本为<code>6.0.2.1</code>。后续一切正常，直到修改了<code>config/routes.rb</code>文件，加了<code>root 'welcome#index'</code>，报错</p>
 <blockquote>
 <p>Webpacker::Manifest::MissingEntryError in Welcome#index</p>
 </blockquote>
 <p>主要原因是因为找不到<code>public/packs/manifest.json</code>文件，于是我又去搜了一下怎么生成该文件。貌似要先安装<code>yarn</code>才行（一脸问号）。我在使用<code>brew</code>安装<code>yarn</code>的时候，因为<code>yarn</code>的依赖包太多，有些包会安装失败，所以可以选择加上<code>--ignore-dependencies</code>参数，忽略一些依赖包，只安装<code>yarn</code>本身。<code>yarn</code>安装之后的版本为<code>1.21.1</code>。</p>
 <p>光装了<code>yarn</code>还不行，还得安装<code>node</code>。因为我以前装过<code>nvm</code>管理工具，有一个版本为<code>9.3.0</code>的<code>node</code>环境，于是我就直接切换到该环境下。执行命令</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">bundle <span class="built_in">exec</span> rails webpacker:install</span><br></pre></td></tr></table></figure>
+<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">bundle <span class="built_in">exec</span> rails webpacker:install</span><br></pre></td></tr></table></figure></p>
 <p>安装成功，但是我还是没有找到<code>public/packs/manifest.json</code>。网上的方案是推荐执行命令</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">bundle <span class="built_in">exec</span> rails webpacker:compile</span><br></pre></td></tr></table></figure>
+<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">bundle <span class="built_in">exec</span> rails webpacker:compile</span><br></pre></td></tr></table></figure></p>
 <p>但是执行这句命令之后，发现报错</p>
 <blockquote>
-<p>Command “webpack” not found</p>
+<p>Command &quot;webpack&quot; not found</p>
 </blockquote>
 <p>说明缺少<code>webpack</code>包，需要使用<code>node</code>安装。<code>webpack 4.X</code>不止需要安装一个<code>webpack</code>，还得安装<code>webpack-cli</code>。</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">npm install webpack-cli</span><br><span class="line">npm install webpack</span><br></pre></td></tr></table></figure>
+<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">npm install webpack-cli</span><br><span class="line">npm install webpack</span><br></pre></td></tr></table></figure></p>
 <p>安装完毕后再次执行上面的<code>compile</code>命令，这次提示我编译失败，说是<code>node</code>的版本需要<code>8.X || &gt;=10.X</code>。我一口老血喷出来，唯独不支持<code>9.X</code>。没办法，只能使用<code>nvm</code>再次安装新的<code>node</code>版本，我选择了<code>13.6.0</code>版本的<code>node</code>进行安装。为什么不选择最新的<code>14.X</code>，因为我的系统太旧了，不支持最新的<code>node</code>。</p>
 <p><code>node</code>安装完毕，再次按照上面的步骤来时，这次给我报错</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Cannot find module <span class="string">'@rails/webpacker'</span></span><br></pre></td></tr></table></figure>
+<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Cannot find module <span class="string">'@rails/webpacker'</span></span><br></pre></td></tr></table></figure></p>
 <p>查下来确实缺少<code>@rails/webpacker</code>的<code>node</code>包，于是执行<code>npm install</code>命令进行安装。安装完毕后，结果还是提示我缺少<code>@rails/webpacker</code>的<code>node</code>包（我真的很无语）。</p>
 <p>尝试了网上的几种解决方案后发现还是不行。最后，我把整个<code>node_modules</code>文件夹全部删除，然后重新安装后，竟然神奇地通过了<code>compile</code>命令。我猜可能是跟我一开始使用的<code>node</code>版本有关系，我是半途才切换到的<code>13.6</code>的<code>node</code>版本。</p>
 <p>所以说，整个<code>webpacker</code>之路真的很曲折。其中可能有些步骤我记不太清楚了，可能表述的有问题。有些弯路可能我没有记在里面，总之花了我三个早晨的时间。</p>
