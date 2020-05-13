@@ -43,15 +43,13 @@
   <section class="article-entry">
     <p>C语言的字符串，使用<code>&quot;&quot;</code>括起来，在程序中被视作<code>char</code>类型的数组，只是这个数组被保存在了内存中的常量区。</p>
 <p>在C语言里，字符串常量赋值可以分为两种</p>
-<h5>字符串常量赋值给指针</h5>
-<p>举个书中的例子</p>
-<p><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">char</span> *cards = <span class="string">"JQK"</span>；</span><br></pre></td></tr></table></figure></p>
-<p>此时，cards指针变量虽然在栈上，但是它指向字符串常量&quot;JQK&quot;在内存常量区的地址。而常量是只读类型的，所以任何对常量的修改都会报错。言下之意，如果想修改cards指针变量所指针内存常量区的值，程序会报错。</p>
+<h5 id="字符串常量赋值给指针">字符串常量赋值给指针</h5><p>举个书中的例子</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">char</span> *cards = <span class="string">"JQK"</span>；</span><br></pre></td></tr></table></figure>
+<p>此时，cards指针变量虽然在栈上，但是它指向字符串常量”JQK”在内存常量区的地址。而常量是只读类型的，所以任何对常量的修改都会报错。言下之意，如果想修改cards指针变量所指针内存常量区的值，程序会报错。</p>
 <p>我们一般习惯在这种写法前加上<code>const</code>关键字，指明cards变量是只读类型。这样一旦我们尝试修改cards指针变量的内容时，在编译时就会得到报错。</p>
-<h5>字符串常量赋值给数组</h5>
-<p>还是上面的例子，只是把指针变成了数组</p>
-<p><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">char</span> cards[] = <span class="string">"JQK"</span>;</span><br></pre></td></tr></table></figure></p>
-<p>此时，cards数组变量所指向的并不是字符串常量&quot;JQK&quot;的内存常量区地址，而是字符串常量&quot;JQK&quot;在栈上的内容的拷贝的地址。此地址非常量区地址，所以，此时的cards数组变量可以修改其内容。</p>
+<h5 id="字符串常量赋值给数组">字符串常量赋值给数组</h5><p>还是上面的例子，只是把指针变成了数组</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">char</span> cards[] = <span class="string">"JQK"</span>;</span><br></pre></td></tr></table></figure>
+<p>此时，cards数组变量所指向的并不是字符串常量”JQK”的内存常量区地址，而是字符串常量”JQK”在栈上的内容的拷贝的地址。此地址非常量区地址，所以，此时的cards数组变量可以修改其内容。</p>
 <p>这就是字符串常量在赋值的时候容易遇到的错误。</p>
 
   </section>

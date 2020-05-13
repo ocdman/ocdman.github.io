@@ -43,13 +43,13 @@
   <section class="article-entry">
     <p>由于要做电信外网端口映射到内网的树莓派上，我怕ssh默认的22端口，会被电信屏蔽，索性修改一下树莓派的ssh端口得了。</p>
 <p>打开<code>/etc/ssh/sshd_config</code>文件</p>
-<p><figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo vi <span class="regexp">/etc/</span>ssh<span class="regexp">/sshd_config</span></span><br></pre></td></tr></table></figure></p>
+<figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo vi <span class="regexp">/etc/</span>ssh<span class="regexp">/sshd_config</span></span><br></pre></td></tr></table></figure>
 <p>找到<code>Port=22</code>这一行，将其前面的注释去掉，并修改端口号，比如2222</p>
-<p><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Port=<span class="number">2222</span></span><br></pre></td></tr></table></figure></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Port=<span class="number">2222</span></span><br></pre></td></tr></table></figure>
 <p>重启ssh服务</p>
-<p><figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="title">sudo</span> service ssh restart</span><br></pre></td></tr></table></figure></p>
+<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="title">sudo</span> service ssh restart</span><br></pre></td></tr></table></figure>
 <p>退出后就可以以2222端口来进行ssh远程操作了</p>
-<p><figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="title">ssh</span> username<span class="variable">@ip</span> -p <span class="number">2222</span></span><br></pre></td></tr></table></figure></p>
+<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="title">ssh</span> username<span class="variable">@ip</span> -p <span class="number">2222</span></span><br></pre></td></tr></table></figure>
 
   </section>
 </article>

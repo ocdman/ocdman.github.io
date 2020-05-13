@@ -42,50 +42,32 @@
 
   <section class="article-entry">
     <p>以往使用git命令的时候，多数情况下只是使用master主分支。但是在读一些别人的代码，甚至上传自己写的代码时，往往要利用到分支。下面就来介绍一下git远程分支操作</p>
-<h3>创建本地分支</h3>
-<p>在创建本地分支之前，需要先克隆一个本地库，以goproxy为例</p>
-<p><figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git clone <span class="string">https:</span><span class="comment">//github.com/ocdman/goproxy.git</span></span><br></pre></td></tr></table></figure></p>
+<h3 id="创建本地分支">创建本地分支</h3><p>在创建本地分支之前，需要先克隆一个本地库，以goproxy为例</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git clone <span class="string">https:</span><span class="comment">//github.com/ocdman/goproxy.git</span></span><br></pre></td></tr></table></figure>
 <p>接下来，查看本地与远程分支的情况</p>
-<p><figure class="highlight armasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="label">git</span> <span class="keyword">branch </span>-a</span><br></pre></td></tr></table></figure></p>
+<figure class="highlight armasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="label">git</span> <span class="keyword">branch </span>-a</span><br></pre></td></tr></table></figure>
 <blockquote>
 <p>* master</p>
-<p>remotes/origin/HEAD -&gt; origin/master
-remotes/origin/master
-remotes/origin/orphan
-remotes/origin/server.gae
-remotes/origin/server.php
-remotes/origin/server.php-go
-remotes/origin/server.vps
-remotes/origin/wiki</p>
+<p>remotes/origin/HEAD -&gt; origin/master<br>remotes/origin/master<br>remotes/origin/orphan<br>remotes/origin/server.gae<br>remotes/origin/server.php<br>remotes/origin/server.php-go<br>remotes/origin/server.vps<br>remotes/origin/wiki</p>
 </blockquote>
 <p>可以看到目前使用的是master分支，如果我想创建一个本地server.vps分支的话，只需要执行命令</p>
-<p><figure class="highlight axapta"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git checkout <span class="keyword">server</span>.vps</span><br></pre></td></tr></table></figure></p>
+<figure class="highlight axapta"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git checkout <span class="keyword">server</span>.vps</span><br></pre></td></tr></table></figure>
 <blockquote>
 <p>master</p>
-<p>* server.vps
-remotes/origin/HEAD -&gt; origin/master
-remotes/origin/master
-remotes/origin/orphan
-remotes/origin/server.gae
-remotes/origin/server.php
-remotes/origin/server.php-go
-remotes/origin/server.vps
-remotes/origin/wiki</p>
+<p>* server.vps<br>remotes/origin/HEAD -&gt; origin/master<br>remotes/origin/master<br>remotes/origin/orphan<br>remotes/origin/server.gae<br>remotes/origin/server.php<br>remotes/origin/server.php-go<br>remotes/origin/server.vps<br>remotes/origin/wiki</p>
 </blockquote>
 <p>这样，一个和远程分支同名的本地分支就创建完成了，而且本地已经切换到server.vps分支了。</p>
 <p>切换分支的命令为</p>
-<p><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git checkout <span class="tag">&lt;<span class="title">branchname</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
-<h3>上传本地分支到远程分支</h3>
-<p>修改之前先拉取一份分支的最新代码，保证代码同步</p>
-<p><figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="title">git</span> pull</span><br></pre></td></tr></table></figure></p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git checkout <span class="tag">&lt;<span class="title">branchname</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<h3 id="上传本地分支到远程分支">上传本地分支到远程分支</h3><p>修改之前先拉取一份分支的最新代码，保证代码同步</p>
+<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="title">git</span> pull</span><br></pre></td></tr></table></figure>
 <p>如果有修改，提交之后上传也很简单</p>
-<p><figure class="highlight avrasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git <span class="keyword">push</span></span><br></pre></td></tr></table></figure></p>
+<figure class="highlight avrasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git <span class="keyword">push</span></span><br></pre></td></tr></table></figure>
 <p>###删除本地以及远程分支</p>
 <p>当某个远程分支你不再需要了，删除它也很简单</p>
-<p><figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git <span class="keyword">push</span> origin --<span class="keyword">delete</span> &lt;branchname&gt;</span><br></pre></td></tr></table></figure></p>
+<figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git <span class="keyword">push</span> origin --<span class="keyword">delete</span> &lt;branchname&gt;</span><br></pre></td></tr></table></figure>
 <p>如果要删除本地分支的话，可以先切换到主分支，再删除你不需要的本地分支</p>
-<p><figure class="highlight armasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="label">git</span> checkout master</span><br><span class="line"><span class="label">git</span> <span class="keyword">branch </span>-D &lt;<span class="keyword">branchname&gt;</span></span><br></pre></td></tr></table></figure></p>
-
+<figure class="highlight armasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="label">git</span> checkout master</span><br><span class="line"><span class="label">git</span> <span class="keyword">branch </span>-D &lt;<span class="keyword">branchname&gt;</span></span><br></pre></td></tr></table></figure>
   </section>
 </article>
 

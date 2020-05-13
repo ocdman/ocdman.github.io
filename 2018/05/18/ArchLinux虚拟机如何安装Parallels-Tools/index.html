@@ -43,13 +43,10 @@
   <section class="article-entry">
     <p>Parallels里安装的ArchLinux虚拟机，如何才能访问主机Mac下的目录呢？</p>
 <p>先把结果说在前面，我没有成功访问到主机目录，是由于我的Parallels版本较低，而和安装Parallels Tools相关的ArchLinux下的linux以及linux-header版本滚动积极，没有匹配较低版本的Parallels Tools，导致Paralles Tools安装报错。我尝试降级到4.12.3-1的linux以及linux-header的较低版本，依然没有成功，可能版本还不够低。希望未来ArchLinux可以匹配低版本的Parallels Tools吧。这里介绍一下ArchLinux虚拟机安装Parallels Tools的过程吧。</p>
-<h6>步骤一</h6>
-<p>首先确保Parallels选择操作》配置》硬件》CD/DVD1》断开源，不能在有镜像的情况下安装Parallels Tools。</p>
-<h6>步骤二</h6>
-<p>然后Parallels选择操作》安装Parallels Tools。</p>
-<h6>步骤三</h6>
-<p>进入ArchLinux系统，装载安装CDROM。</p>
-<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">mount /dev/cdrom /mnt</span><br><span class="line"><span class="built_in">cd</span> /mnt</span><br><span class="line">./install</span><br></pre></td></tr></table></figure></p>
+<h6 id="步骤一">步骤一</h6><p>首先确保Parallels选择操作》配置》硬件》CD/DVD1》断开源，不能在有镜像的情况下安装Parallels Tools。</p>
+<h6 id="步骤二">步骤二</h6><p>然后Parallels选择操作》安装Parallels Tools。</p>
+<h6 id="步骤三">步骤三</h6><p>进入ArchLinux系统，装载安装CDROM。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">mount /dev/cdrom /mnt</span><br><span class="line"><span class="built_in">cd</span> /mnt</span><br><span class="line">./install</span><br></pre></td></tr></table></figure>
 <p>之后就会进入一个类图形化界面，让你安装Parallels Tools。如果安装失败的话，还会提示你到<code>/var/log/parallels-tools-install.log</code>日志文件下去查看失败原因。我就是这一步没有过，导致没有成功安装Parallels Tools。</p>
 <p>如果安装成功的话，可以通过目录<code>/media/psf/Home</code>，来访问主机目录，我的另一台RedHat 7虚拟机就是这样来访问主机目录的。</p>
 
