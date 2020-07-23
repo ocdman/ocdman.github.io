@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="utf-8">
+  <title>Linux系统使用Docker部署ASP.NET Core应用程序 | chilihotpot</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <link rel="shortcut icon" href="/chili.ico">
+  <link rel="stylesheet" href="/css/app.css" type="text/css">
+  <!-- <link rel='stylesheet' href='http://fonts.useso.com/css?family=Source+Code+Pro'> --><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</head>
+
+<body>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><nav class="app-nav">
+  
+    
+      <a href="/.">home</a>
+    
+  
+    
+      <a href="/archives">archive</a>
+    
+  
+    
+      <a href="/tags">tag</a>
+    
+  
+    
+      <a href="/categories">category</a>
+    
+  
+</nav>
+
+  <main class="post">
+  <article>
+  <h1 class="article-title">
+    <a href="/2020/07/24/Linux系统使用Docker部署ASP-NET-Core应用程序/">Linux系统使用Docker部署ASP.NET Core应用程序</a>
+  </h1>
+
+  <section class="article-meta">
+    <p class="article-date">July 24 2020</p>
+  </section>
+
+  <section class="article-entry">
+    <p>好久没有写关于配置的文章了，今天来说一下怎么在Linux系统下使用Docker部署ASP.NET Core的应用程序。</p>
+<p>首先Linux使用的版本为Ubuntu，并且要安装好Docker。开发工具使用的是Visual Studio 2019。应用程序的.NET Core版本为ASP.NET Core 3.1。</p>
+<h3 id="编写Dockerfile">编写Dockerfile</h3><p>Docker中的最小单位为容器，而Dockerfile是定义单个容器的内容和启动行为的文本文件。假设应用程序名称为WebApplication2，以下是开发工具自动生成的Dockerfile</p>
+<figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#See https://aka.ms/containerfastmode to understand how Visual Studio uses this Dockerfile to build your images for faster debugging.</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">FROM</span> mcr.microsoft.com/dotnet/core/aspnet:<span class="number">3.1</span>-buster-slim AS base</span><br><span class="line"><span class="built_in">WORKDIR</span> <span class="bash">/app</span><br><span class="line"></span><span class="built_in">EXPOSE</span> <span class="number">80</span></span><br><span class="line"><span class="built_in">EXPOSE</span> <span class="number">443</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">FROM</span> mcr.microsoft.com/dotnet/core/sdk:<span class="number">3.1</span>-buster AS build</span><br><span class="line"><span class="built_in">WORKDIR</span> <span class="bash">/src</span><br><span class="line"></span><span class="built_in">COPY</span> <span class="bash">[<span class="string">"WebApplication2/WebApplication2.csproj"</span>, <span class="string">"WebApplication2/"</span>]</span><br><span class="line"></span><span class="built_in">RUN</span> <span class="bash">dotnet restore <span class="string">"WebApplication2/WebApplication2.csproj"</span></span><br><span class="line"></span><span class="built_in">COPY</span> <span class="bash">. .</span><br><span class="line"></span><span class="built_in">WORKDIR</span> <span class="bash"><span class="string">"/src/WebApplication2"</span></span><br><span class="line"></span><span class="built_in">RUN</span> <span class="bash">dotnet build <span class="string">"WebApplication2.csproj"</span> -c Release -o /app/build</span><br><span class="line"></span></span><br><span class="line"><span class="built_in">FROM</span> build AS publish</span><br><span class="line"><span class="built_in">RUN</span> <span class="bash">dotnet publish <span class="string">"WebApplication2.csproj"</span> -c Release -o /app/publish</span><br><span class="line"></span></span><br><span class="line"><span class="built_in">FROM</span> base AS final</span><br><span class="line"><span class="built_in">WORKDIR</span> <span class="bash">/app</span><br><span class="line"></span><span class="built_in">COPY</span> <span class="bash">--from=publish /app/publish .</span><br><span class="line"></span><span class="built_in">ENTRYPOINT</span> <span class="bash">[<span class="string">"dotnet"</span>, <span class="string">"WebApplication2.dll"</span>]</span></span><br></pre></td></tr></table></figure>
+<p>里面有一些build、publish、restore命令，帮助我们快速使用命令行来执行生成、发布、还原等操作。这里我们不用自动生成的Dockerfile，使用自己的Dockerfile</p>
+<figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 使用运行时镜像</span></span><br><span class="line"><span class="built_in">FROM</span> mcr.microsoft.com/dotnet/core/aspnet:<span class="number">3.1</span>-buster-slim</span><br><span class="line"><span class="comment"># 设置工作目录</span></span><br><span class="line"><span class="built_in">WORKDIR</span> <span class="bash">/app</span><br><span class="line"></span><span class="comment"># 把目录下的内容都复制到当前目录下</span></span><br><span class="line"><span class="built_in">COPY</span> <span class="bash">. .</span><br><span class="line"></span><span class="comment"># 暴露80端口</span></span><br><span class="line"><span class="built_in">EXPOSE</span> <span class="number">80</span></span><br><span class="line"><span class="comment"># 运行镜像入口命令和可执行文件名称</span></span><br><span class="line">ENTRYPOINT [<span class="string">"dotnet"</span>, <span class="string">"WebApplication2.dll"</span>]</span><br></pre></td></tr></table></figure>
+<p>然后修改Dockerfile的文件属性，<strong>复制到输出目录</strong>一栏选择<strong>始终复制</strong>。保证Dockerfile文件可以随程序一起发布。</p>
+<h3 id="生成Docker镜像">生成Docker镜像</h3><p>使用POWERSHELL自带的scp命令将开发工具发布的publish文件夹上传到Linux服务器，然后使用ssh进入服务器下的该目录。publish文件夹中的内容主要包括以下内容，</p>
+<p>publish</p>
+<p>​    |- Dockerfile</p>
+<p>​    |- web.config</p>
+<p>​    |- appsettings.json</p>
+<p>​    |- WebApplication2.dll</p>
+<p>​    | - WebApplication2.exe</p>
+<p>​    |- WebApplication2.deps.json</p>
+<p>​    |- WebApplication2.runtimeconfig.json</p>
+<p>使用下面的命令生成Docker镜像，注意全部小写</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker build -t webapplication2 .</span><br></pre></td></tr></table></figure>
+<p>docker build命令会根据Dockerfile中的配置，依次执行每一条命令。第一次执行<code>FROM mcr.microsoft.com/dotnet/core/aspnet:3.1-buster-slim</code>命令的时候，会检查docker镜像中是否已存在名为<code>mcr.microsoft.com/dotnet/core/aspnet</code>，Tag为<code>3.1-buster-slim</code>的镜像，如果没有则自动下载该镜像。</p>
+<p>等待下载完毕后，如果生成Docker镜像成功的话，可以执行命令来查看镜像</p>
+<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="title">docker</span> images</span><br></pre></td></tr></table></figure>
+<h3 id="运行Docker镜像">运行Docker镜像</h3><p>Docker镜像生成之后，接下来就是运行容器镜像了。执行以下命令</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run --name=webapplication2 -p <span class="number">5000</span>:<span class="number">80</span> <span class="operator">-d</span> webapplication2</span><br></pre></td></tr></table></figure>
+<p>以下是一些可选参数，及其说明</p>
+<ul>
+<li><code>--name</code>：指定容器的别名</li>
+<li><code>-p</code>：将Linux服务器上的<code>5000</code>端口映射到容器中的默认<code>80</code>端口，端口映射关系<code>host:container</code></li>
+<li><code>-d</code>：将容器以后台进程的方式启动</li>
+<li><code>-it</code>：将容器以交互模式运行容器，方便调试以及查看输出</li>
+<li><code>--rm</code>：在容器退出后自动删除当前容器，开发模式下的常用参数</li>
+<li><code>--restart</code>：指定容器非正常退出时的重启策略，如果设置为<code>--restart=always</code>，表示非正常退出的情况下，始终重新启动容器</li>
+<li><code>webapplication2</code>：要启动的本地镜像名称</li>
+</ul>
+
+  </section>
+</article>
+
+  <div class="sharing grid">
+  <section class="profile grid-item grid">
+    <img class="avatar" src="/images/chili.png" alt="avatar" />
+    <div class="grid-item">
+      <p class="title"> chilihotpot </p>
+      <p class="subtitle"> You Are The JavaScript In My HTML </p>
+    <div>
+  </section>
+
+  <section class="share-btns">
+    <!-- <p> share it if you like it~ </p> -->
+    <a
+  class="twitter-share-button"
+  data-size="large"
+  data-via="DrakeLeung"
+  href="https://twitter.com/intent/tweet?text=好久没有写关于配置的文章了，今天来说一下"
+>
+  Tweet
+</a>
+
+<script>
+  window.twttr = (function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0],
+    t = window.twttr || {};
+  if (d.getElementById(id)) return t;
+  js = d.createElement(s);
+  js.id = id;
+  js.src = "https://platform.twitter.com/widgets.js";
+  js.async = true;
+  fjs.parentNode.insertBefore(js, fjs);
+
+  t._e = [];
+  t.ready = function(f) {
+    t._e.push(f);
+  };
+
+  return t;
+}(document, "script", "twitter-wjs"));
+</script>
+
+  </section>
+</div>
+
+
+  
+</main><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+</body>
+</html>
