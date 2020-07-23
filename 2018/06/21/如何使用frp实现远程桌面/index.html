@@ -49,14 +49,20 @@
 <p>frp 是一个可用于内网穿透的高性能的反向代理应用，支持 tcp, udp, http, https 协议。</p>
 </blockquote>
 <p>访问内网的网站、ssh连接以及远程桌面都需要建立在tcp协议基础之上，可以看到frp是支持tcp协议的。这篇文章主要讲讲frp实现外网远程内网桌面。</p>
-<h3 id="前提">前提</h3><p>VPS一台，最好是国内的，国外的VPS延时太大。本文以CentOS 6为例。</p>
-<h3 id="frp服务端(frps)配置">frp服务端(frps)配置</h3><h5 id="1-_下载文件">1. 下载文件</h5><p>VPS上下载对应的Release版本的frp，<a href="https://github.com/fatedier/frp/releases" target="_blank" rel="external">下载地址</a>。</p>
-<figure class="highlight crystal"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wget <span class="symbol">https:</span>/<span class="regexp">/github.com/fatedier</span><span class="regexp">/frp/releases</span><span class="regexp">/download/v</span>0.<span class="number">20.0</span>/frp_0.<span class="number">20.0_</span>linux_386.tar.gz</span><br></pre></td></tr></table></figure>
-<h5 id="2-_解压文件">2. 解压文件</h5><figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">tar</span> <span class="tag">zxvf</span> <span class="tag">frp_0</span><span class="class">.20</span><span class="class">.0_linux_386</span><span class="class">.tar</span><span class="class">.gz</span></span><br></pre></td></tr></table></figure>
-<h5 id="3-_编辑配置文件">3. 编辑配置文件</h5><p>解压后的frp文件夹包含了客户端(frpc)和服务端(frps)的所有配置以及执行文件。找到frps.ini配置文件，可以看到其内容为</p>
-<figure class="highlight armasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[<span class="preprocessor">common</span>]</span><br><span class="line"><span class="keyword">bind_port </span>= <span class="number">7000</span></span><br></pre></td></tr></table></figure>
+<h3>前提</h3>
+<p>VPS一台，最好是国内的，国外的VPS延时太大。本文以CentOS 6为例。</p>
+<h3>frp服务端(frps)配置</h3>
+<h5>1. 下载文件</h5>
+<p>VPS上下载对应的Release版本的frp，<a href="https://github.com/fatedier/frp/releases" target="_blank" rel="external">下载地址</a>。</p>
+<p><figure class="highlight crystal"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wget <span class="symbol">https:</span>/<span class="regexp">/github.com/fatedier</span><span class="regexp">/frp/releases</span><span class="regexp">/download/v</span>0.<span class="number">20.0</span>/frp_0.<span class="number">20.0_</span>linux_386.tar.gz</span><br></pre></td></tr></table></figure></p>
+<h5>2. 解压文件</h5>
+<p><figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">tar</span> <span class="tag">zxvf</span> <span class="tag">frp_0</span><span class="class">.20</span><span class="class">.0_linux_386</span><span class="class">.tar</span><span class="class">.gz</span></span><br></pre></td></tr></table></figure></p>
+<h5>3. 编辑配置文件</h5>
+<p>解压后的frp文件夹包含了客户端(frpc)和服务端(frps)的所有配置以及执行文件。找到frps.ini配置文件，可以看到其内容为</p>
+<p><figure class="highlight armasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[<span class="preprocessor">common</span>]</span><br><span class="line"><span class="keyword">bind_port </span>= <span class="number">7000</span></span><br></pre></td></tr></table></figure></p>
 <p>bind_port是客户端和服务端进行通信的端口，默认端口号为7000。</p>
-<h5 id="4-_启动服务端">4. 启动服务端</h5><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./frps -<span class="built_in">c</span> frps.ini</span><br></pre></td></tr></table></figure>
+<h5>4. 启动服务端</h5>
+<p><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./frps -<span class="built_in">c</span> frps.ini</span><br></pre></td></tr></table></figure></p>
 <p>执行这段命令之后，即可看到服务端的启动输出</p>
 <blockquote>
 <p>frps tcp listen on 0.0.0.0:7000</p>
@@ -64,48 +70,55 @@
 </blockquote>
 <p>但是以这种方式启动，一旦和VPS的ssh连接断开，frps服务就会退出。所以需要对frps服务加入后台进程中。</p>
 <p>创建frps.sh文件，内容如下</p>
-<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nohup ./frps -c frps<span class="class">.ini</span> &gt;log<span class="class">.txt</span> <span class="number">2</span>&gt;&amp;<span class="number">1</span> &amp;</span><br></pre></td></tr></table></figure>
+<p><figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">nohup ./frps -c frps<span class="class">.ini</span> &gt;log<span class="class">.txt</span> <span class="number">2</span>&gt;&amp;<span class="number">1</span> &amp;</span><br></pre></td></tr></table></figure></p>
 <p>然后修改frps.sh的权限</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">chmod <span class="number">775</span> fprs.sh</span><br></pre></td></tr></table></figure>
+<p><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">chmod <span class="number">775</span> fprs.sh</span><br></pre></td></tr></table></figure></p>
 <p>最后运行该脚本</p>
-<figure class="highlight stata"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./fprs.<span class="keyword">sh</span></span><br></pre></td></tr></table></figure>
+<p><figure class="highlight stata"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./fprs.<span class="keyword">sh</span></span><br></pre></td></tr></table></figure></p>
 <p>frps服务以后台方式启动，并且输出日志到log.txt文件中。</p>
-<h3 id="frp客户端(frpc)配置">frp客户端(frpc)配置</h3><p>以内网的电脑作为客户端，也就是你要远程的那台内网主机。</p>
-<h5 id="1-_下载文件-1">1. 下载文件</h5><p>因为我要远程的内网主机是Windows系统，所以我的客户端下载的是<code>frp_0.20.0_windows_amd64.zip</code>压缩文件，将其解压。</p>
-<h5 id="2-_编辑配置文件">2. 编辑配置文件</h5><p>找到frpc.ini配置文件，修改如下</p>
-<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="title">[common]</span></span><br><span class="line"><span class="setting">server_addr = <span class="value">X.X.X.X</span></span></span><br><span class="line"><span class="setting">server_port = <span class="value"><span class="number">7000</span></span></span></span><br><span class="line"><span class="title"></span><br><span class="line">[RDP]</span></span><br><span class="line"><span class="setting">type = <span class="value">tcp</span></span></span><br><span class="line"><span class="setting">local_ip = <span class="value"><span class="number">127.0</span>.<span class="number">0.1</span></span></span></span><br><span class="line"><span class="setting">local_port = <span class="value"><span class="number">3389</span></span></span></span><br><span class="line"><span class="setting">remote_port = <span class="value"><span class="number">6000</span></span></span></span><br></pre></td></tr></table></figure>
+<h3>frp客户端(frpc)配置</h3>
+<p>以内网的电脑作为客户端，也就是你要远程的那台内网主机。</p>
+<h5>1. 下载文件</h5>
+<p>因为我要远程的内网主机是Windows系统，所以我的客户端下载的是<code>frp_0.20.0_windows_amd64.zip</code>压缩文件，将其解压。</p>
+<h5>2. 编辑配置文件</h5>
+<p>找到frpc.ini配置文件，修改如下</p>
+<p><figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="title">[common]</span></span><br><span class="line"><span class="setting">server_addr = <span class="value">X.X.X.X</span></span></span><br><span class="line"><span class="setting">server_port = <span class="value"><span class="number">7000</span></span></span></span><br><span class="line"><span class="title"></span><br><span class="line">[RDP]</span></span><br><span class="line"><span class="setting">type = <span class="value">tcp</span></span></span><br><span class="line"><span class="setting">local_ip = <span class="value"><span class="number">127.0</span>.<span class="number">0.1</span></span></span></span><br><span class="line"><span class="setting">local_port = <span class="value"><span class="number">3389</span></span></span></span><br><span class="line"><span class="setting">remote_port = <span class="value"><span class="number">6000</span></span></span></span><br></pre></td></tr></table></figure></p>
 <p>server_addr是VPS主机的IP，server_port和frps.ini中的bind_port一致。RDP为远程桌面的配置，连接类型为tcp，local_ip保持不变，local_port需要注意，默认远程桌面的端口号为3389，你也可以通过修改注册表的方式修改远程桌面端口号。</p>
 <blockquote>
 <p>修改远程桌面的服务端口：</p>
 <p>1： Run - Regedit;</p>
-<p>2：找到 HKEY_LOCAL_MACHINE/ SYSTEM/ CurrentControlSet/ Control/ Terminal Server/ Wds/ rdpwd/ Tds/ tcp/ PortNumber子键, 默认为3389, 修改成想要的值，比如1234; </p>
+<p>2：找到 HKEY_LOCAL_MACHINE/ SYSTEM/ CurrentControlSet/ Control/ Terminal Server/ Wds/ rdpwd/ Tds/ tcp/ PortNumber子键, 默认为3389, 修改成想要的值，比如1234;</p>
 <p>3：找到 HKEY_LOCAL_MACHINE/ SYSTEM/ CurrentControlSet/ Control/ Terminal Server/ Winstations/ RDP-Tcp/ PortNumber子键, 默认为3389, 修改成想要的值，比如1234;</p>
-<p> 重启才能生效，可先不重启。</p>
+<p>重启才能生效，可先不重启。</p>
 </blockquote>
 <p>remote_port是远程连接时的端口号，它和frps里的bind_port有什么区别呢？frps里的bind_port是VPS和内网电脑进行ssh隧道连接的端口号，而remote_port则是反向代理端口号，通过VPS的IP地址以及该端口号，我们就能远程到内网主机。remote_port默认为6000。</p>
-<h5 id="3-_启动客户端">3. 启动客户端</h5><p>在cmd里运行一下命令</p>
-<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">frpc</span><span class="class">.exe</span> <span class="tag">-c</span> <span class="tag">frpc</span><span class="class">.ini</span></span><br></pre></td></tr></table></figure>
+<h5>3. 启动客户端</h5>
+<p>在cmd里运行一下命令</p>
+<p><figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">frpc</span><span class="class">.exe</span> <span class="tag">-c</span> <span class="tag">frpc</span><span class="class">.ini</span></span><br></pre></td></tr></table></figure></p>
 <p>看到如下输出</p>
 <blockquote>
 <p>login to server success, get run id [], server udp port [0]</p>
 <p>[ssh] start proxy success</p>
 </blockquote>
 <p>恭喜你，客户端和服务端的ssh隧道连接成功。</p>
-<h5 id="4-_设置自启服务">4. 设置自启服务</h5><p>由于frpc每次都是以命令窗口方式启动，一旦命令窗口被关闭，整个frpc服务也就随之停止。建议将frpc服务以Windows服务的方式在后台运行。这里需要使用<code>winsw.exe</code>工具，该工具可以将任何.exe文件，作为Windows服务在后台启动。</p>
+<h5>4. 设置自启服务</h5>
+<p>由于frpc每次都是以命令窗口方式启动，一旦命令窗口被关闭，整个frpc服务也就随之停止。建议将frpc服务以Windows服务的方式在后台运行。这里需要使用<code>winsw.exe</code>工具，该工具可以将任何.exe文件，作为Windows服务在后台启动。</p>
 <p>首先下载<code>winsw.exe</code>对应的Release版本。我下载的是<code>WinSW.NET4.exe</code>，<a href="https://github.com/kohsuke/winsw/releases" target="_blank" rel="external">下载地址</a>。</p>
 <p>然后将该<code>WinSW.NET4.exe</code>和<code>frpc.exe</code>放在同一目录下，在同一个目录下创建一个<code>WinSW.NET.xml</code>文件，内容如下</p>
-<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="title">service</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="title">id</span>&gt;</span>frp<span class="tag">&lt;/<span class="title">id</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="title">name</span>&gt;</span>frp<span class="tag">&lt;/<span class="title">name</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="title">description</span>&gt;</span>用frp发布本地电脑网站到外网<span class="tag">&lt;/<span class="title">description</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="title">executable</span>&gt;</span>frpc<span class="tag">&lt;/<span class="title">executable</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="title">arguments</span>&gt;</span>-c frpc.ini<span class="tag">&lt;/<span class="title">arguments</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="title">logmode</span>&gt;</span>reset<span class="tag">&lt;/<span class="title">logmode</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="title">service</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="title">service</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="title">id</span>&gt;</span>frp<span class="tag">&lt;/<span class="title">id</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="title">name</span>&gt;</span>frp<span class="tag">&lt;/<span class="title">name</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="title">description</span>&gt;</span>用frp发布本地电脑网站到外网<span class="tag">&lt;/<span class="title">description</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="title">executable</span>&gt;</span>frpc<span class="tag">&lt;/<span class="title">executable</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="title">arguments</span>&gt;</span>-c frpc.ini<span class="tag">&lt;/<span class="title">arguments</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="title">logmode</span>&gt;</span>reset<span class="tag">&lt;/<span class="title">logmode</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="title">service</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
 <p>以管理员权限打开CMD，运行如下代码</p>
-<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">WinSW<span class="class">.NET4</span><span class="class">.exe</span> install</span><br></pre></td></tr></table></figure>
+<p><figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">WinSW<span class="class">.NET4</span><span class="class">.exe</span> install</span><br></pre></td></tr></table></figure></p>
 <p>安装成功会提示</p>
 <blockquote>
-<p>Installing the service with id ‘frp’</p>
+<p>Installing the service with id 'frp'</p>
 </blockquote>
 <p>打开服务，看看是不是多了frp服务。启动frp服务，在<code>WinSW.NET4.out.log</code>文件中可以看输出日志。</p>
-<h3 id="配置Mac上的MRD配置">配置Mac上的MRD配置</h3><p>终于可以在Mac上测试了，打开MRD，添加如下配置，进行连接</p>
-<p><img src="/img/2018062101.png" width="670px"></p>
+<h3>配置Mac上的MRD配置</h3>
+<p>终于可以在Mac上测试了，打开MRD，添加如下配置，进行连接</p>
+<p>&lt;img src=&quot;/img/2018062101.png&quot; width=&quot;670px&quot;/&gt;</p>
 <p>正常情况下，只要提示证书就说明远程桌面成功了。由于我的VPS处于国外，在远程桌面的时候卡顿很明显，再次推荐使用国内VPS。</p>
-<h3 id="总结">总结</h3><p>frp为什么说是一个反向代理呢？因为对于Mac这样的客户端而言，暴露给我的只是VPS的地址以及frps里配置的remote_port端口号，内网主机它的外网IP对于我是未知的，我也不需要知道。这就是反向代理。</p>
+<h3>总结</h3>
+<p>frp为什么说是一个反向代理呢？因为对于Mac这样的客户端而言，暴露给我的只是VPS的地址以及frps里配置的remote_port端口号，内网主机它的外网IP对于我是未知的，我也不需要知道。这就是反向代理。</p>
 <p>千万不要把frp客户端以及Mac客户端搞混了。frp客户端是我的内网主机，Mac客户端是从外网进行远程桌面的电脑，frp服务端是我的VPS，这样就不会搞混了吧。</p>
 
   </section>

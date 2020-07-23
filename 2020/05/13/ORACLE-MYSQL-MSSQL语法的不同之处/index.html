@@ -42,21 +42,26 @@
 
   <section class="article-entry">
     <p>最近在研究Oracle/MySQL/MSSQL三种数据库的数据增删改。以此记录一些使用感受。</p>
-<h3 id="转义符">转义符</h3><p>每种数据库都有自己的关键字，比如<code>view</code>。当使用关键字作为表名时，需要使用转义符对关键字进行处理后才能创建对应的表，列名同理。</p>
+<h3>转义符</h3>
+<p>每种数据库都有自己的关键字，比如<code>view</code>。当使用关键字作为表名时，需要使用转义符对关键字进行处理后才能创建对应的表，列名同理。</p>
 <ul>
 <li>MSSQL中的转义符为<code>[]</code></li>
 <li>Oracle中的转义符为<code>&quot;</code></li>
 <li>MySQL中的转义符为```</li>
 </ul>
-<h3 id="大小写">大小写</h3><p>MSSQL和MySQL默认对大小写不敏感，所以在写这两个数据库的查询语句时，表名和列名不论大小写都支持。</p>
+<h3>大小写</h3>
+<p>MSSQL和MySQL默认对大小写不敏感，所以在写这两个数据库的查询语句时，表名和列名不论大小写都支持。</p>
 <p>Oracle是大小写敏感的，默认情况下，表名和列名都是大写。但是一旦用转义符<code>&quot;</code>引用表名或列名，此时就要注意表名和列名的大小写了。</p>
-<h3 id="临时表">临时表</h3><h5 id="MSSQL">MSSQL</h5><p>MSSQL中的临时表分为两种，<code>#</code>开头的为局部临时表，<code>##</code>开头的为全局临时表。它不存储在当前数据库内，而是存储在系统数据库<code>tempdb</code>里。</p>
+<h3>临时表</h3>
+<h5>MSSQL</h5>
+<p>MSSQL中的临时表分为两种，<code>#</code>开头的为局部临时表，<code>##</code>开头的为全局临时表。它不存储在当前数据库内，而是存储在系统数据库<code>tempdb</code>里。</p>
 <p>局部临时表只在当前会话中创建和访问，当退出当前会话后，局部临时表就不存在了。</p>
 <p>全局临时表一旦创建后，任何用户都可以连接访问。当创建这个临时表会话的用户中断连接后，且没有其他用户访问这个临时表，全局临时表才会被删除。</p>
 <p>一般情况下我们会先判断临时表是否存在，如果已存在则清空，如果不存在则创建。</p>
 <p>MSSQL语法</p>
-<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">IF OBJECT_ID(N&#39;tempdb.dbo.#temp_table&#39;) IS NOT NULL&#10;&#9;BEGIN&#10;&#9;&#9;TRUNCATE TABLE #temp_table;&#10;&#9;END&#10;ELSE&#10;&#9;BEGIN&#10;&#9;&#9;SELECT * INTO #temp_table FROM source_table;&#10;&#9;END</span><br></pre></td></tr></table></figure>
-<h5 id="Oracle">Oracle</h5><p>Oracle中的临时表有点不同，一旦创建后它的表结构会保留，不会随着用户连接断开而自动销毁。只是它存在的空间为临时的表空间，而非用户的表空间。Oracle临时表支持会话以及事务级别，只对当前的会话或事务可见。每个会话只能查看和修改自己的数据。</p>
+<p><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">IF OBJECT_ID(N&#39;tempdb.dbo.#temp_table&#39;) IS NOT NULL&#10;&#9;BEGIN&#10;&#9;&#9;TRUNCATE TABLE #temp_table;&#10;&#9;END&#10;ELSE&#10;&#9;BEGIN&#10;&#9;&#9;SELECT * INTO #temp_table FROM source_table;&#10;&#9;END</span><br></pre></td></tr></table></figure></p>
+<h5>Oracle</h5>
+<p>Oracle中的临时表有点不同，一旦创建后它的表结构会保留，不会随着用户连接断开而自动销毁。只是它存在的空间为临时的表空间，而非用户的表空间。Oracle临时表支持会话以及事务级别，只对当前的会话或事务可见。每个会话只能查看和修改自己的数据。</p>
 <ul>
 <li>ON COMMIT DELETE ROWS</li>
 </ul>
@@ -67,25 +72,33 @@
 <p>临时表的内容可以跨事务存在，只有当会话结束时，临时表的数据才会被丢弃。</p>
 <p>以上两种临时表，在事务或会话结束后，它的结构和元数据都还存储在用户的数据字典中。所以，一旦使用完临时表，最好立即删除，否则数据库残留很多临时表的表结构和元数据。</p>
 <p>Oracle创建临时表的语法</p>
-<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">CREATE  GLOBAL TEMPORARY TABLE temp_table (...) ON COMMIT DELETE/PRESERVE ROWS</span><br></pre></td></tr></table></figure>
+<p><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">CREATE  GLOBAL TEMPORARY TABLE temp_table (...) ON COMMIT DELETE/PRESERVE ROWS</span><br></pre></td></tr></table></figure></p>
 <p>需要注意的是，如果使用</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="operator"><span class="keyword">SELECT</span> * <span class="keyword">INTO</span> temp_table <span class="keyword">FROM</span> source_table;</span></span><br></pre></td></tr></table></figure>
+<p><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="operator"><span class="keyword">SELECT</span> * <span class="keyword">INTO</span> temp_table <span class="keyword">FROM</span> source_table;</span></span><br></pre></td></tr></table></figure></p>
 <p>来创建临时表的话，如果列为字符串类型，默认情况下，临时表对应的列的长度只有2。</p>
-<h5 id="MySQL">MySQL</h5><p>MySQL中的临时表和MSSQL的临时表功能的类似，只是创建临时表的语法不同</p>
-<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">CREATE TEMPORARY TABLE IF NOT EXISTS temp_table(...);</span><br></pre></td></tr></table></figure>
-<h3 id="Insert语法">Insert语法</h3><p>三个数据库都可以通用</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="operator"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> target_table(target_col1, target_col2, ...) <span class="keyword">SELECT</span> (source_col1, source_col2, ...) <span class="keyword">FROM</span> source_table;</span></span><br></pre></td></tr></table></figure>
-<h3 id="Update语法">Update语法</h3><h5 id="MSSQL-1">MSSQL</h5><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">UPDATE target_table SET ... FROM source_table WHERE condition;</span><br></pre></td></tr></table></figure>
-<h5 id="Oracle-1">Oracle</h5><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">UPDATE target_table SET (target_col1, target_col2, ...) = (SELECT source_col1, source_col2, ... FROM source_table WHERE condition);</span><br></pre></td></tr></table></figure>
-<h5 id="MySQL-1">MySQL</h5><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">UPDATE target_table INNER JOIN source_table ON condition SET ...;</span><br></pre></td></tr></table></figure>
-<h3 id="DELETE语法">DELETE语法</h3><p>三个数据库都可以通用</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="operator"><span class="keyword">DELETE</span> <span class="keyword">FROM</span> target_table <span class="keyword">WHERE</span> <span class="keyword">EXISTS</span> (<span class="keyword">SELECT</span> * <span class="keyword">FROM</span> source_table <span class="keyword">WHERE</span> condition);</span></span><br></pre></td></tr></table></figure>
-<h3 id="分页">分页</h3><p>MSSQL使用<code>TOP</code>关键字进行条数限制查询。语法为</p>
-<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SELECT TOP 1000 * FROM table;</span><br></pre></td></tr></table></figure>
+<h5>MySQL</h5>
+<p>MySQL中的临时表和MSSQL的临时表功能的类似，只是创建临时表的语法不同</p>
+<p><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">CREATE TEMPORARY TABLE IF NOT EXISTS temp_table(...);</span><br></pre></td></tr></table></figure></p>
+<h3>Insert语法</h3>
+<p>三个数据库都可以通用</p>
+<p><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="operator"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> target_table(target_col1, target_col2, ...) <span class="keyword">SELECT</span> (source_col1, source_col2, ...) <span class="keyword">FROM</span> source_table;</span></span><br></pre></td></tr></table></figure></p>
+<h3>Update语法</h3>
+<h5>MSSQL</h5>
+<p><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">UPDATE target_table SET ... FROM source_table WHERE condition;</span><br></pre></td></tr></table></figure></p>
+<h5>Oracle</h5>
+<p><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">UPDATE target_table SET (target_col1, target_col2, ...) = (SELECT source_col1, source_col2, ... FROM source_table WHERE condition);</span><br></pre></td></tr></table></figure></p>
+<h5>MySQL</h5>
+<p><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">UPDATE target_table INNER JOIN source_table ON condition SET ...;</span><br></pre></td></tr></table></figure></p>
+<h3>DELETE语法</h3>
+<p>三个数据库都可以通用</p>
+<p><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="operator"><span class="keyword">DELETE</span> <span class="keyword">FROM</span> target_table <span class="keyword">WHERE</span> <span class="keyword">EXISTS</span> (<span class="keyword">SELECT</span> * <span class="keyword">FROM</span> source_table <span class="keyword">WHERE</span> condition);</span></span><br></pre></td></tr></table></figure></p>
+<h3>分页</h3>
+<p>MSSQL使用<code>TOP</code>关键字进行条数限制查询。语法为</p>
+<p><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SELECT TOP 1000 * FROM table;</span><br></pre></td></tr></table></figure></p>
 <p>Oracle使用<code>ROWNUM</code>关键字进行条数限制查询。语法为</p>
-<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SELECT * FROM table WHERE ROWNUM &#60;= 1000;</span><br></pre></td></tr></table></figure>
+<p><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SELECT * FROM table WHERE ROWNUM &#60;= 1000;</span><br></pre></td></tr></table></figure></p>
 <p>MySQL使用<code>LIMIT</code>以及<code>OFFSET</code>关键字进行条数限制查询。语法为</p>
-<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SELECT * FROM table LIMIT 100 OFFSET 100</span><br></pre></td></tr></table></figure>
+<p><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SELECT * FROM table LIMIT 100 OFFSET 100</span><br></pre></td></tr></table></figure></p>
 
   </section>
 </article>

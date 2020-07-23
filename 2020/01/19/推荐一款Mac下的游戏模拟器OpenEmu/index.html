@@ -46,7 +46,7 @@
 <p>但是光有游戏不行，我还缺一个模拟器，我想在Mac上安装。貌似OpenEmu是最受欢迎的Mac上的游戏模拟器，它的功能足够强大，可以模拟很多种游戏机，从<code>Atari 2600</code>到<code>NDS</code>，游戏机种类足够多。于是我兴冲冲地下载了最新版，安装后却发现需要OSX 10.14版本以上才行。我的系统太旧了，好在OpenEmu是开源的，在github上有以前的历史版本可以下载。最后我找到了OpenEmu 1.0.4版本，可以安装在OSX 10.10系统上。</p>
 <p>接下来是下载逆转1的汉化版本，该游戏是GBA平台下的，找起来也不麻烦。但问题是当我导入游戏准备玩的时候，提示我</p>
 <blockquote>
-<p>The operation couldn’t be completed. OpenEmu could not find a Core to launch the game make sure your internet connection is active and download a suitable core.</p>
+<p>The operation couldn't be completed. OpenEmu could not find a Core to launch the game make sure your internet connection is active and download a suitable core.</p>
 </blockquote>
 <p>一开始我以为是我版本下错了，又装了一遍OpenEMU 1.0.4 experimental版本，结果还是一样的错误。于是我就去网上查，但是推荐的答案寥寥无几。有的说是github的证书<code>DigiCert High Assurance EV Root CA</code>的问题，我看了一下证书并没有过期，而且我还设置为完全信任，也是同样的错误。有的说是需要重启的，也不行。</p>
 <p>最后实在没办法了，只能漫无目的地查看OpenEmu选项以及github上的<a href="https://github.com/OpenEmu/OpenEmu/wiki/User-Guide:-Preferences:-Cores" target="_blank" rel="external">Wiki</a>。无意中发现在<code>Preferences</code>的<code>Library</code>选项卡下有个<code>Available Libraries</code>，所有的模拟器都是黄色警告，说明缺少库。再联系到错误提示，我突然发现<code>Preferences</code>里还有个叫<code>Cores</code>的选项卡，对比网上成功运行的<code>Cores</code>选项卡截图，我却一个Core都没有。</p>
