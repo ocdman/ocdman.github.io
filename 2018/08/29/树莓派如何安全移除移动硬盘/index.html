@@ -42,14 +42,14 @@
 
   <section class="article-entry">
     <p>树莓派卸载磁盘的命令为<code>umount</code>，比方说</p>
-<p><figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo umount <span class="regexp">/dev/</span>sda1</span><br></pre></td></tr></table></figure></p>
+<figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo umount <span class="regexp">/dev/</span>sda1</span><br></pre></td></tr></table></figure>
 <p>但是，如果是移动硬盘的话，用上述命令卸载后，移动硬盘还是在运转中，如果我想让磁盘停止转动，也就是安全移除移动硬盘的话，<code>umount</code>是没法实现的，这个时候就需要安装<code>udisks</code>包来实现</p>
-<p><figure class="highlight q"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-<span class="built_in">get</span> <span class="keyword">update</span></span><br><span class="line">sudo apt-<span class="built_in">get</span> install udisks</span><br></pre></td></tr></table></figure></p>
+<figure class="highlight q"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-<span class="built_in">get</span> <span class="keyword">update</span></span><br><span class="line">sudo apt-<span class="built_in">get</span> install udisks</span><br></pre></td></tr></table></figure>
 <p>安装完<code>udisks</code>之后，如果想要安全移除移动硬盘的话，只需要执行命令</p>
-<p><figure class="highlight applescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo udisks <span class="comment">--detach /dev/sda</span></span><br></pre></td></tr></table></figure></p>
+<figure class="highlight applescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo udisks <span class="comment">--detach /dev/sda</span></span><br></pre></td></tr></table></figure>
 <p>具体到你的移动硬盘的目录，比方说我的移动硬盘目录为<code>/dev/sda</code>。</p>
 <p>而且还能取代原来<code>umount</code>的命令</p>
-<p><figure class="highlight applescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo udisks <span class="comment">--unmount /dev/sda1</span></span><br></pre></td></tr></table></figure></p>
+<figure class="highlight applescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo udisks <span class="comment">--unmount /dev/sda1</span></span><br></pre></td></tr></table></figure>
 
   </section>
 </article>

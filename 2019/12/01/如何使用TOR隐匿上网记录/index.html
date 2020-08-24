@@ -42,38 +42,28 @@
 
   <section class="article-entry">
     <p>很多年前就听说过大名鼎鼎的Tor（The Onion Router），又名洋葱网络/洋葱路由。最近看<a href="https://program-think.blogspot.com/2013/11/tor-faq.html" target="_blank" rel="external">编程随想的博客</a>被安利了，所以也想试试看。虽然自己没有隐匿的需求，但是了解一下也是好的。</p>
-<h3>Tor的原理</h3>
-<p>Tor的内部需要进行三层中转，从入口节点－&gt;中间节点－&gt;出口节点。每个节点之间都是一种随机组合方式，所以理论上只要节点足够多，组合方式的可能性也就越多。事实上全世界的Tor节点数量确实相当可观，而且还在不断增加中。另外，Tor节点间的组合方式每隔一段时间就会发生变化，所以出口IP是一直在变的。</p>
+<h3 id="Tor的原理">Tor的原理</h3><p>Tor的内部需要进行三层中转，从入口节点－&gt;中间节点－&gt;出口节点。每个节点之间都是一种随机组合方式，所以理论上只要节点足够多，组合方式的可能性也就越多。事实上全世界的Tor节点数量确实相当可观，而且还在不断增加中。另外，Tor节点间的组合方式每隔一段时间就会发生变化，所以出口IP是一直在变的。</p>
 <p>所有节点中，出口节点的威胁最大，因为它直接跟你访问的目标网络相连。所以，如果目标网络是蜜罐节点（陷阱节点），那么该蜜罐就会窥探到你的上网行为。更糟糕的是，如果目标网站没有HTTPS加密，蜜罐就会知道你浏览页面的内容。</p>
-<h3>如何避免蜜罐节点</h3>
-<p>通过修改Tor的配置文件，规避一些不安全的国家节点就好了。</p>
+<h3 id="如何避免蜜罐节点">如何避免蜜罐节点</h3><p>通过修改Tor的配置文件，规避一些不安全的国家节点就好了。</p>
 <p>Tor的配置文件名叫<code>torrc</code>，可以通过全局搜索找到。Mac系统如果安装了<code>Tor Browser</code>，可以访问路径<code>~/Library/Application/Application Support/TorBrowser-Data/Tor/torrc</code>找到配置文件。</p>
 <p>在文件末尾加入一行（<code>ExcludeNodes</code> 表示排除这些国家/地区的节点，<code>StrictNodes</code> 表示强制执行）</p>
-<p><figure class="highlight mathematica"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ExcludeNodes  <span class="list">&#123;cn&#125;</span>,<span class="list">&#123;hk&#125;</span>,<span class="list">&#123;mo&#125;</span></span><br><span class="line">StrictNodes  <span class="number">1</span></span><br></pre></td></tr></table></figure></p>
+<figure class="highlight mathematica"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ExcludeNodes  <span class="list">&#123;cn&#125;</span>,<span class="list">&#123;hk&#125;</span>,<span class="list">&#123;mo&#125;</span></span><br><span class="line">StrictNodes  <span class="number">1</span></span><br></pre></td></tr></table></figure>
 <p>修改后的配置文件<code>torrc</code>如果要生效，需要重启Tor服务或者Tor Browser浏览器。</p>
-<h3>如何指定出口节点</h3>
-<p>有时候你要访问的网站有些内容对国家/地区IP有限制，比如Youtube和Netflix，这个时候就可以通过指定出口节点的国家/地区来绕过限制。方法同样是修改配置文件<code>torrc</code>，在<code>torrc</code>中加上一行（<code>ExitNodes</code>表示指定出口国家/地区的节点）</p>
-<p><figure class="highlight mathematica"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ExitNodes <span class="list">&#123;us&#125;</span></span><br></pre></td></tr></table></figure></p>
-<h3>Tor和Tor Browser有什么区别</h3>
-<p>Tor Browser是Tor和FireFox结合的产物，简单来说就是一个基于Tor隐匿身份的FireFox浏览器。大部分情况下，Tor Browser就已经可以满足我们隐匿身份的需求了，所以建议安装Tor Browser。Tor只是个命令行工具，对于新手不是很友好。两者最大的区别就是<strong>Tor对外监听的端口号为9050</strong>，而<strong>Tor Browser对外监听的端口号为9150</strong>，这点需要注意。</p>
-<h3>如何安装Tor Browser</h3>
-<p>访问<a href="https://www.torproject.org/download/" target="_blank" rel="external">Tor官网</a>下载对应操作系统的版本，前提是可以科学上网。</p>
-<h3>如何配置Tor Browser</h3>
-<p>因为墙的关系，Tor没法和自己的节点直接通信，虽然Tor Browser提供<code>obfs4</code>这种bridge，但是这种bridge实在是太慢了。因为Tor支持SOCKS4/SOCKS5/HTTP/HTTPS这些代理类型，所以可以考虑使用前置代理。如果你已经有一个稳定的科学上网工具了，比如V2Ray，那么可以将Tor的前置代理设置为本地V2Ray客户端监听的端口，默认端口为1080，默认代理类型为SOCKS5。</p>
+<h3 id="如何指定出口节点">如何指定出口节点</h3><p>有时候你要访问的网站有些内容对国家/地区IP有限制，比如Youtube和Netflix，这个时候就可以通过指定出口节点的国家/地区来绕过限制。方法同样是修改配置文件<code>torrc</code>，在<code>torrc</code>中加上一行（<code>ExitNodes</code>表示指定出口国家/地区的节点）</p>
+<figure class="highlight mathematica"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ExitNodes <span class="list">&#123;us&#125;</span></span><br></pre></td></tr></table></figure>
+<h3 id="Tor和Tor_Browser有什么区别">Tor和Tor Browser有什么区别</h3><p>Tor Browser是Tor和FireFox结合的产物，简单来说就是一个基于Tor隐匿身份的FireFox浏览器。大部分情况下，Tor Browser就已经可以满足我们隐匿身份的需求了，所以建议安装Tor Browser。Tor只是个命令行工具，对于新手不是很友好。两者最大的区别就是<strong>Tor对外监听的端口号为9050</strong>，而<strong>Tor Browser对外监听的端口号为9150</strong>，这点需要注意。</p>
+<h3 id="如何安装Tor_Browser">如何安装Tor Browser</h3><p>访问<a href="https://www.torproject.org/download/" target="_blank" rel="external">Tor官网</a>下载对应操作系统的版本，前提是可以科学上网。</p>
+<h3 id="如何配置Tor_Browser">如何配置Tor Browser</h3><p>因为墙的关系，Tor没法和自己的节点直接通信，虽然Tor Browser提供<code>obfs4</code>这种bridge，但是这种bridge实在是太慢了。因为Tor支持SOCKS4/SOCKS5/HTTP/HTTPS这些代理类型，所以可以考虑使用前置代理。如果你已经有一个稳定的科学上网工具了，比如V2Ray，那么可以将Tor的前置代理设置为本地V2Ray客户端监听的端口，默认端口为1080，默认代理类型为SOCKS5。</p>
 <p>通过前置代理，绕过墙的限制，Tor就可以和自己的节点进行通信了。</p>
-<h3>如何判断浏览器是否走在Tor的线路</h3>
-<p>Tor官网提供了一个<a href="https://check.torproject.org/" target="_blank" rel="external">测试界面</a>，通过该网址可以判断是否走在Tor的线路。</p>
-<h3>如何结合nc进行匿名网络安全诊断</h3>
-<p>nc全称netcat，是一个优秀的小而美的网络诊断工具，当然它不止于网络诊断。</p>
+<h3 id="如何判断浏览器是否走在Tor的线路">如何判断浏览器是否走在Tor的线路</h3><p>Tor官网提供了一个<a href="https://check.torproject.org/" target="_blank" rel="external">测试界面</a>，通过该网址可以判断是否走在Tor的线路。</p>
+<h3 id="如何结合nc进行匿名网络安全诊断">如何结合nc进行匿名网络安全诊断</h3><p>nc全称netcat，是一个优秀的小而美的网络诊断工具，当然它不止于网络诊断。</p>
 <p>设置别名，可以方便结合Tor，调用nc命令。注意这里的端口号9150，因为我用的是Tor Browser，默认监听的就是9150端口。</p>
-<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">alias</span> nc-tor=<span class="string">'nc -X 5 -x 127.0.0.1:9150'</span></span><br></pre></td></tr></table></figure></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">alias</span> nc-tor=<span class="string">'nc -X 5 -x 127.0.0.1:9150'</span></span><br></pre></td></tr></table></figure>
 <p>然后访问一个Google网址，可以看到连接成功的提示。</p>
-<p><figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">nc-tor -v google<span class="class">.com</span> <span class="number">443</span></span><br><span class="line"></span><br><span class="line">Connection to google<span class="class">.com</span> <span class="number">443</span> port [tcp/https] succeeded!</span><br></pre></td></tr></table></figure></p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">nc-tor -v google<span class="class">.com</span> <span class="number">443</span></span><br><span class="line"></span><br><span class="line">Connection to google<span class="class">.com</span> <span class="number">443</span> port [tcp/https] succeeded!</span><br></pre></td></tr></table></figure>
 <p>一般来说用nc进行网络探测时，隐匿自己的身份也是有必要的。这里只是借助工具nc，展示一下Tor Browser的代理使用方式。通过Tor Browser这种代理方式实现的访问叫做二层代理，因为调用Tor Browser之前还有一层前置代理。</p>
-<h3>Tor的应用场景</h3>
-<p>Tor的应用场景很简单，就是为了隐匿真实的IP。虽然Tor可以很好地隐匿自己的身份，但这也是把双刃剑，看过原理的都知道，Tor对于访问目标网站的速度会大打折扣。所以，Tor并不适合看视频、下载文件等大流量操作。使用Tor就是为了保护隐私，流畅度就不要考虑了，如果要求速度可以直接采用V2Ray代理。</p>
-<h3>总结</h3>
-<p>Tor是一款很有趣的工具，我目前想到的应用场景是一些对IP有次数限制的网站。通过Tor的出口IP变化特征，可以实现多次提交。</p>
+<h3 id="Tor的应用场景">Tor的应用场景</h3><p>Tor的应用场景很简单，就是为了隐匿真实的IP。虽然Tor可以很好地隐匿自己的身份，但这也是把双刃剑，看过原理的都知道，Tor对于访问目标网站的速度会大打折扣。所以，Tor并不适合看视频、下载文件等大流量操作。使用Tor就是为了保护隐私，流畅度就不要考虑了，如果要求速度可以直接采用V2Ray代理。</p>
+<h3 id="总结">总结</h3><p>Tor是一款很有趣的工具，我目前想到的应用场景是一些对IP有次数限制的网站。通过Tor的出口IP变化特征，可以实现多次提交。</p>
 
   </section>
 </article>

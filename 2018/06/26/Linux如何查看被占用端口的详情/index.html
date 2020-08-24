@@ -43,9 +43,9 @@
   <section class="article-entry">
     <p>自己的VPS上每次要查找某个后台程序或者端口占用的情况时，都要谷歌一遍Linux如何查看占用端口。感觉很不方便，索性把它记下来</p>
 <p>第一种查看端口占用的情况，可以输入后台程序的名称或者pid</p>
-<p><figure class="highlight 1c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 输入程序名称来查找端口</span></span><br><span class="line">ps -aux <span class="string">| grep goproxy</span></span><br><span class="line"><span class="comment">// 输入pid号来查找端口</span></span><br><span class="line">ps -aux <span class="string">| grep pid</span></span><br></pre></td></tr></table></figure></p>
+<figure class="highlight 1c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 输入程序名称来查找端口</span></span><br><span class="line">ps -aux <span class="string">| grep goproxy</span></span><br><span class="line"><span class="comment">// 输入pid号来查找端口</span></span><br><span class="line">ps -aux <span class="string">| grep pid</span></span><br></pre></td></tr></table></figure>
 <p>第二种查看端口占用的情况，如果知道端口号的话，直接输入</p>
-<p><figure class="highlight 1c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 比方说要查找的端口号为8080</span></span><br><span class="line">netstat -apn <span class="string">| grep 8080</span></span><br></pre></td></tr></table></figure></p>
+<figure class="highlight 1c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 比方说要查找的端口号为8080</span></span><br><span class="line">netstat -apn <span class="string">| grep 8080</span></span><br></pre></td></tr></table></figure>
 <p>以上两种方法，可以方便地查看端口占用情况。也做个笔记，省得我每次都去搜索。</p>
 
   </section>
