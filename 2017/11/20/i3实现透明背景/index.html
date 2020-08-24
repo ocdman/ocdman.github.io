@@ -43,41 +43,74 @@
   <section class="article-entry">
     <p>接着arch linux的教程，<a href="http://ocdman.github.io/2017/11/16/xwindow%E8%AE%BE%E7%BD%AE%E9%BB%98%E8%AE%A4%E5%88%86%E8%BE%A8%E7%8E%87/" target="_blank" rel="external">上一篇</a>讲到了如何给i3设置默认分辨率。这一节来讲讲i3如何实现透明背景。</p>
 <p>首先，需要安装的依赖有，<code>feh</code>、<code>xcompmgr</code>以及<code>urxvt</code>，执行命令安装</p>
-<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="title">sudo</span> pacman -S feh</span><br><span class="line">sudo pacman -S xcompmgr</span><br><span class="line">sudo pacman -S rxvt-unicode</span><br></pre></td></tr></table></figure>
-<h3 id="feh">feh</h3><blockquote>
+<p><figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="title">sudo</span> pacman -S feh</span><br><span class="line">sudo pacman -S xcompmgr</span><br><span class="line">sudo pacman -S rxvt-unicode</span><br></pre></td></tr></table></figure></p>
+<h3>feh</h3>
+<blockquote>
 <p>Feh是一个轻量级、强大的图像查看器，同时它也可以用来管理桌面壁纸，特别适合缺少这类特性的独立窗口管理器。</p>
 </blockquote>
 <p>简单来讲，<code>feh</code>的功能很强大，不仅可以用来设置i3的桌面壁纸，还可以用来查看图片，小巧方便。</p>
 <p>当需要查看图片时，只要执行命令</p>
-<figure class="highlight livecodeserver"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">feh -g <span class="number">640</span>x480 filename /path/<span class="built_in">to</span>/<span class="built_in">directory</span></span><br></pre></td></tr></table></figure>
+<p><figure class="highlight livecodeserver"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">feh -g <span class="number">640</span>x480 filename /path/<span class="built_in">to</span>/<span class="built_in">directory</span></span><br></pre></td></tr></table></figure></p>
 <ul>
 <li>-g 选项强制图像的显示大小不大于640x480</li>
 </ul>
 <p>更具体的用法可以参见<a href="https://wiki.archlinux.org/index.php/Feh" target="_blank" rel="external">Feh Wiki</a>。</p>
-<h3 id="xcompmgr">xcompmgr</h3><blockquote>
+<h3>xcompmgr</h3>
+<blockquote>
 <p><strong>Xcompmgr</strong>是一个简单的混合窗口管理器，可以实现阴影、原生窗口透明（配合<code>transset</code>工具）等特效。</p>
 </blockquote>
 <p><code>xcompmgr</code>用来设置i3窗口透明用的，需要搭配<code>urxvt</code>一起使用。具体用法参见</p>
 <p><a href="https://wiki.archlinux.org/index.php/Xcompmgr" target="_blank" rel="external">Xcompmgr Wiki</a>。</p>
-<h3 id="urxvt">urxvt</h3><p><code>urxvt</code>是<code>rxvt-unicode</code>的简写。是和<code>xterm</code>功能类似的终端模拟器。不过，urxvt支持透明、各种字体和颜色的设置，它是<code>i3-sensible-terminal</code>的首选。可以执行命令</p>
-<figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cat <span class="regexp">/usr/</span>bin<span class="regexp">/i3-sensible-terminal</span></span><br></pre></td></tr></table></figure>
+<h3>urxvt</h3>
+<p><code>urxvt</code>是<code>rxvt-unicode</code>的简写。是和<code>xterm</code>功能类似的终端模拟器。不过，urxvt支持透明、各种字体和颜色的设置，它是<code>i3-sensible-terminal</code>的首选。可以执行命令</p>
+<p><figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cat <span class="regexp">/usr/</span>bin<span class="regexp">/i3-sensible-terminal</span></span><br></pre></td></tr></table></figure></p>
 <p>来查看i3终端的设置。安装<code>urxvt</code>后，再执行<code>exec i3-sensible-terminal</code>，默认打开<code>urxvt</code>而不是<code>xterm</code>了。具体用法参见<a href="https://wiki.archlinux.org/index.php/rxvt-unicode" target="_blank" rel="external">rxvt-unicode Wiki</a>。</p>
-<h3 id="配置">配置</h3><p>以上三个依赖源介绍完毕后，接下来就是配置文件了。首先打开i3配置文件，执行命令</p>
-<figure class="highlight crystal"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vim ~<span class="regexp">/.config/i</span>3/config</span><br></pre></td></tr></table></figure>
+<h3>配置</h3>
+<p>以上三个依赖源介绍完毕后，接下来就是配置文件了。首先打开i3配置文件，执行命令</p>
+<p><figure class="highlight crystal"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vim ~<span class="regexp">/.config/i</span>3/config</span><br></pre></td></tr></table></figure></p>
 <p>在文件最上面添加三行</p>
-<figure class="highlight perl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">exec</span> --<span class="keyword">no</span>-startup-id feh --bg-scale /path/to/directory</span><br><span class="line"><span class="keyword">exec</span> --<span class="keyword">no</span>-startup-id xcompmgr &amp;</span><br><span class="line"><span class="keyword">exec</span> --<span class="keyword">no</span>-startup-id <span class="keyword">sleep</span> .<span class="number">2</span> &amp;&amp; transset-df -a</span><br></pre></td></tr></table></figure>
-<p><img src="/img/2017112001.png" width="670px"></p>
+<p><figure class="highlight perl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">exec</span> --<span class="keyword">no</span>-startup-id feh --bg-scale /path/to/directory</span><br><span class="line"><span class="keyword">exec</span> --<span class="keyword">no</span>-startup-id xcompmgr &amp;</span><br><span class="line"><span class="keyword">exec</span> --<span class="keyword">no</span>-startup-id <span class="keyword">sleep</span> .<span class="number">2</span> &amp;&amp; transset-df -a</span><br></pre></td></tr></table></figure></p>
+<p>&lt;img src=&quot;/img/2017112001.png&quot; width=&quot;670px&quot; /&gt;</p>
 <p>这里<code>sleep</code>0.2秒保证<code>transset-df</code>在<code>xcompmgr</code>之后启动。<code>transset-df</code> 需要另外安装，执行命令</p>
-<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="title">pacman</span> -S transset-df</span><br></pre></td></tr></table></figure>
+<p><figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="title">pacman</span> -S transset-df</span><br></pre></td></tr></table></figure></p>
 <p>命令参数<code>transset-df -a</code>用来设置所有窗口的透明度，但实际情况是，我执行<code>transset-df -a 0.5</code>命令，并不能指定所有窗口的透明度，只能使用默认的透明度。网上也没有找到很好的解决方法。如果要指定透明度，只能单个设置。</p>
 <p>接下来创建<code>~/.Xdefaults</code>文件，写入内容</p>
 <blockquote>
-<p>!!$HOME/.Xdefaults<br>URxvt.preeditType:Root<br>URxvt.inputMethod:ibus<br>URxvt.depth:32</p>
-<p>URxvt.title:Terminal<br>URxvt.background:[70]#000000<br>URxvt.foreground:#00FF00<br>URxvt.colorBD:Gray95<br>URxvt.colorUL:Green<br>URxvt.color1:Red2<br>URxvt.color4:RoyalBlue<br>URxvt.color5:Magenta2<br>URxvt.color8:Gray50<br>URxvt.color10:Green2<br>URxvt.color12:DodgerBlue<br>URxvt.color14:Cyan2<br>URxvt.color15:Gray95<br>URxvt.urlLauncher:chromium-browser<br>URxvt.matcher.button:1<br>Urxvt.perl-ext-common:matcher<br>URxvt.scrollBar:True<br>URxvt.scrollBar_right:True<br>URxvt.scrollBar_floating:False<br>URxvt.scrollstyle:plain<br>URxvt.mouseWheelScrollPage:True<br>URxvt.scrollTtyOutput:False<br>URxvt.scrollWithBuffer:True<br>URxvt.scrollTtyKeypress:True<br>URxvt.cursorBlink:True<br>URxvt.saveLines:3000<br>URxvt.borderLess:False</p>
+<p>!!$HOME/.Xdefaults
+URxvt.preeditType:Root
+URxvt.inputMethod:ibus
+URxvt.depth:32</p>
+<p>URxvt.title:Terminal
+URxvt.background:[70]#000000
+URxvt.foreground:#00FF00
+URxvt.colorBD:Gray95
+URxvt.colorUL:Green
+URxvt.color1:Red2
+URxvt.color4:RoyalBlue
+URxvt.color5:Magenta2
+URxvt.color8:Gray50
+URxvt.color10:Green2
+URxvt.color12:DodgerBlue
+URxvt.color14:Cyan2
+URxvt.color15:Gray95
+URxvt.urlLauncher:chromium-browser
+URxvt.matcher.button:1
+Urxvt.perl-ext-common:matcher
+URxvt.scrollBar:True
+URxvt.scrollBar_right:True
+URxvt.scrollBar_floating:False
+URxvt.scrollstyle:plain
+URxvt.mouseWheelScrollPage:True
+URxvt.scrollTtyOutput:False
+URxvt.scrollWithBuffer:True
+URxvt.scrollTtyKeypress:True
+URxvt.cursorBlink:True
+URxvt.saveLines:3000
+URxvt.borderLess:False</p>
 </blockquote>
 <p>我直接使用了<a href="https://github.com/Z-Shang/MyRC/blob/master/Xdefaults" target="_blank" rel="external">Z-Shang</a>的<code>urxvt</code>的配色，看着挺舒服。到这一步执行<code>startx</code>看看，是不是i3背景变透明了呢。不过在我这儿还有个瑕疵，<code>i3status bar</code>以及<code>i3title bar</code>的分辨率很低，跟urxvt的字体对比起来，明显模糊很多。</p>
 <p>不过有个方法解决，打开i3配置文件，执行命令</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">vim ~/.config/i3/config</span><br><span class="line"><span class="preprocessor">#font pango:monospace <span class="number">8</span></span></span><br><span class="line">font -misc-fixed-medium-r-normal--<span class="number">13</span>-<span class="number">120</span>-<span class="number">75</span>-<span class="number">75</span>-C-<span class="number">70</span>-iso10646-<span class="number">1</span></span><br></pre></td></tr></table></figure>
+<p><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">vim ~/.config/i3/config</span><br><span class="line"><span class="preprocessor">#font pango:monospace <span class="number">8</span></span></span><br><span class="line">font -misc-fixed-medium-r-normal--<span class="number">13</span>-<span class="number">120</span>-<span class="number">75</span>-<span class="number">75</span>-C-<span class="number">70</span>-iso10646-<span class="number">1</span></span><br></pre></td></tr></table></figure></p>
 <p>将原来的<code>font pango</code>注释，用<code>font</code>指定字体来代替。这么一来<code>i3status bar</code>的字体就比原来清晰多了，不过<code>i3title bar</code>的文字背景是透明的，我没有解决，我希望是不透明。除非我将字体再换过来，但是代价是<code>i3title bar</code>的字体会再次变模糊。</p>
 
   </section>

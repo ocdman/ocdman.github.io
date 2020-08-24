@@ -45,7 +45,7 @@
 <p>进一步研究这个问题后发现，每次修改本机时间，都会造成IIS返回的Http Response Header里的Date不再变化，只停留在修改时间的那一刻。这是一个很严重的问题，我以前从来没发现，原来服务器的响应头的时间还有不会变化的情况啊。这应该是IIS的问题，别的服务器我没发现过这种情况。</p>
 <p>网上搜索了这种情况的各种描述，终于被我定位到<a href="https://serverfault.com/questions/217343/date-header-returned-by-iis7-is-wrong" target="_blank" rel="external">Date header returned by IIS7 is wrong</a>这篇帖子。</p>
 <p>原来这是IIS上一个很著名的问题，我个人测试下来，不光是虚拟机上的时间同步，哪怕是本机上调整个时间，都会造成HTTP响应头Date不再变更的错误情况。<strong>解决办法是，必须重启HTTP服务</strong>。使用管理员身份打开CMD或者PowerShell，执行以下命令即可</p>
-<figure class="highlight livecodeserver"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">net <span class="built_in">stop</span> <span class="keyword">http</span></span><br><span class="line">net <span class="built_in">start</span> <span class="keyword">http</span></span><br><span class="line">iisreset</span><br></pre></td></tr></table></figure>
+<p><figure class="highlight livecodeserver"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">net <span class="built_in">stop</span> <span class="keyword">http</span></span><br><span class="line">net <span class="built_in">start</span> <span class="keyword">http</span></span><br><span class="line">iisreset</span><br></pre></td></tr></table></figure></p>
 <p>貌似执行一句<code>net stop http</code>很容易，但是我却费了很大周折。首先第一个错误</p>
 <blockquote>
 <p>发生系统错误 1051。</p>

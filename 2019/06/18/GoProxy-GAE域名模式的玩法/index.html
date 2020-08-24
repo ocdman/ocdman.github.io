@@ -44,49 +44,53 @@
     <p>GoProxy目前玩的人应该很少了，自从社长停更了项目之后，基本没什么人更新。而随着Google回收了大量的GAE前置IP，目前仅剩的IP大概也就几百个。一来搜IP的难度变大了，二来只要GFW把这几百个IP一封，GoProxy靠搜GAE IPV4的玩法基本就玩完了。除非你在Windows上开启Teredo隧道的IPV6功能，才有得一玩。这也是<a href="https://github.com/XX-net/XX-Net" target="_blank" rel="external">XX-NET</a>目前的主流玩法之一。</p>
 <p>不过，好在GoProxy还提供了GAE绑定域名的玩法，这个方法依然有效，我是参照<a href="https://black1ce.com/skill/gae-app-ssl.html" target="_blank" rel="external">这篇文章</a>来实现的。</p>
 <p>前面注册一个免费域名我就不提了，接下来进入<a href="https://console.cloud.google.com" target="_blank" rel="external">GAE控制台</a>，前提是你能科学上网。新建一个AppSpot的项目（现在这个入口隐藏得还挺深）</p>
-<p><img src="/img/2019061808.png" width="640px"></p>
+<p>&lt;img src=&quot;/img/2019061808.png&quot; width=&quot;640px&quot;/&gt;</p>
 <p>点击新建项目（New Project）</p>
-<p> <img src="/img/2019061803.png" width="640px"></p>
-<p> <img src="/img/2019061801.png" width="640px"></p>
+<p>&lt;img src=&quot;/img/2019061803.png&quot; width=&quot;640px&quot;/&gt;</p>
+<p>&lt;img src=&quot;/img/2019061801.png&quot; width=&quot;640px&quot;/&gt;</p>
 <p>输入项目名称（Project name），默认情况下项目ID（Project ID）和项目名称（Project name）相同，地点（Location）不用选。</p>
 <p>然后点击创建应用（Create Application）</p>
-<p> <img src="/img/2019061805.png" width="640px"></p>
+<p>&lt;img src=&quot;/img/2019061805.png&quot; width=&quot;640px&quot;/&gt;</p>
 <p>区域（Region）是指你的IP归属地位于哪里，默认美国，当然也可以选择亚洲，比如日本。一旦确定之后就不可变了，除非你把项目删了。</p>
-<p> <img src="/img/2019061806.png" width="640px"></p>
+<p>&lt;img src=&quot;/img/2019061806.png&quot; width=&quot;640px&quot;/&gt;</p>
 <p>接下来这一步是可选的，我们直接点击cancel就好了。</p>
-<p> <img src="/img/2019061804.png" width="640px"></p>
+<p>&lt;img src=&quot;/img/2019061804.png&quot; width=&quot;640px&quot;/&gt;</p>
 <p>下面依次点击左边的折叠菜单－App Engine－Settings，</p>
-<p> <img src="/img/2019061807.png" width="640px"></p>
+<p>&lt;img src=&quot;/img/2019061807.png&quot; width=&quot;640px&quot;/&gt;</p>
 <p>在自定义网域（Custom domains）中，点击添加自定义网域</p>
-<p> <img src="/img/2019061809.png" width="640px"></p>
+<p>&lt;img src=&quot;/img/2019061809.png&quot; width=&quot;640px&quot;/&gt;</p>
 <p>选择验证新域名（Verify a new domain），输入你注册的域名</p>
-<p> <img src="/img/2019061810.png" width="640px"></p>
+<p>&lt;img src=&quot;/img/2019061810.png&quot; width=&quot;640px&quot;/&gt;</p>
 <p>接下来会弹出一个验证域名提供商的网页，验证方式选择<strong>其他</strong>。<strong>页面不要关掉</strong></p>
-<p> <img src="/img/2019061811.png" width="640px"></p>
+<p>&lt;img src=&quot;/img/2019061811.png&quot; width=&quot;640px&quot;/&gt;</p>
 <p>打开你的域名提供商网站，根据提示，将上面给到的google-site-verification的TXT 记录添加到你的域名注册商的 DNS 配置中。</p>
 <p>最终在DNS配置中，需要创建，4条A记录，4条AAAA记录，1条CNAME记录，1条TXT记录。如图所示</p>
-<p> <img src="/img/2019061812.png" width="640px"></p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">A    <span class="number">216.239</span><span class="number">.32</span><span class="number">.21</span>    </span><br><span class="line">A    <span class="number">216.239</span><span class="number">.34</span><span class="number">.21</span>    </span><br><span class="line">A    <span class="number">216.239</span><span class="number">.36</span><span class="number">.21</span>    </span><br><span class="line">A    <span class="number">216.239</span><span class="number">.38</span><span class="number">.21</span>    </span><br><span class="line">AAAA     <span class="number">2001</span>:<span class="number">4860</span>:<span class="number">4802</span>:<span class="number">32</span>::<span class="number">15</span>    </span><br><span class="line">AAAA     <span class="number">2001</span>:<span class="number">4860</span>:<span class="number">4802</span>:<span class="number">34</span>::<span class="number">15</span>    </span><br><span class="line">AAAA     <span class="number">2001</span>:<span class="number">4860</span>:<span class="number">4802</span>:<span class="number">36</span>::<span class="number">15</span>    </span><br><span class="line">AAAA     <span class="number">2001</span>:<span class="number">4860</span>:<span class="number">4802</span>:<span class="number">38</span>::<span class="number">15</span>    </span><br><span class="line">CNAME    ghs.googlehosted.com    【别名www】</span><br><span class="line">TXT      google-site-verification=......</span><br></pre></td></tr></table></figure>
+<p>&lt;img src=&quot;/img/2019061812.png&quot; width=&quot;640px&quot;/&gt;</p>
+<p><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">A    <span class="number">216.239</span><span class="number">.32</span><span class="number">.21</span>    </span><br><span class="line">A    <span class="number">216.239</span><span class="number">.34</span><span class="number">.21</span>    </span><br><span class="line">A    <span class="number">216.239</span><span class="number">.36</span><span class="number">.21</span>    </span><br><span class="line">A    <span class="number">216.239</span><span class="number">.38</span><span class="number">.21</span>    </span><br><span class="line">AAAA     <span class="number">2001</span>:<span class="number">4860</span>:<span class="number">4802</span>:<span class="number">32</span>::<span class="number">15</span>    </span><br><span class="line">AAAA     <span class="number">2001</span>:<span class="number">4860</span>:<span class="number">4802</span>:<span class="number">34</span>::<span class="number">15</span>    </span><br><span class="line">AAAA     <span class="number">2001</span>:<span class="number">4860</span>:<span class="number">4802</span>:<span class="number">36</span>::<span class="number">15</span>    </span><br><span class="line">AAAA     <span class="number">2001</span>:<span class="number">4860</span>:<span class="number">4802</span>:<span class="number">38</span>::<span class="number">15</span>    </span><br><span class="line">CNAME    ghs.googlehosted.com    【别名www】</span><br><span class="line">TXT      google-site-verification=......</span><br></pre></td></tr></table></figure></p>
 <p>其中TXT记录是Google给到的，每个人都不同。其它的可以复制上面的。</p>
 <p>稍微解释一下，上面的A记录的IP是GHS（Google Hosted）的IP，对应你的根域名，而CNAME记录的作用也是分配GHS IP，不同之处在于GHS IP是由ghs.googlehosted.com来随机分配，对应你的www域名。GHS的IP虽然没有GAE的IP多，但是理论上只要GHS的IP不被GFW封掉，GoProxy的域名模式就可以一直玩下去。如果被封了也不怕，可以给你的域名套上CDN，然后在CDN里配置以上记录。亲测可用，这里就不介绍了。</p>
 <p>回到刚才的验证域名提供商的网页，点击验证按钮，新配置的DNS解析可能会比较慢，需要等待一会儿，如果验证没过，可以等会儿再验证。验证通过后，会给出如下提示</p>
-<p> <img src="/img/2019061813.png" width="640px"></p>
+<p>&lt;img src=&quot;/img/2019061813.png&quot; width=&quot;640px&quot;/&gt;</p>
 <p>接下来回到GAE控制台，点击刷新域名（Refresh domains），选择你的网站域名，然后点击继续（Continue）。</p>
 <p>第二步，将你的域名映射到你的AppSpot项目（包括了根域名以及www域名），点击保存映射（Save mappings），成功后点击继续（Continue）。</p>
 <p>最后一步，给你的DNS记录生成SSL证书，点击完成（Done）。这一步时长蛮久的，需要耐心等待。等到SSL security列里的转圈圈图标消失后，说明证书也创建成功了。（记得偶尔刷新下界面）</p>
 <p>现在打开GoProxy目录，将gae.json配置文件里的AppIDs的数组内容注释了，然后将CustomDomains数组里添加你申请的域名（可以是根域名也可以是www域名）</p>
-<figure class="highlight prolog"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">"AppIDs"</span>: [</span><br><span class="line">	//<span class="string">"goagent"</span></span><br><span class="line">],</span><br><span class="line"><span class="string">"CustomDomains"</span>: [</span><br><span class="line">	<span class="string">"yourdomain"</span></span><br><span class="line">]</span><br></pre></td></tr></table></figure>
+<p><figure class="highlight prolog"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">"AppIDs"</span>: [</span><br><span class="line">	//<span class="string">"goagent"</span></span><br><span class="line">],</span><br><span class="line"><span class="string">"CustomDomains"</span>: [</span><br><span class="line">	<span class="string">"yourdomain"</span></span><br><span class="line">]</span><br></pre></td></tr></table></figure></p>
 <p>启动GoProxy，配合SwitchOmega，代理协议为HTTP，代理服务器为127.0.0.1，代理端口为8087。看看是不是能上Google了呢？先别急，我遇到的情况是，虽然能上Google，但也仅仅只能上部分Google的网址。比如Google搜索以及Google邮箱，其它网址一律都是404报错。</p>
 <p>这就跟我之前遇到过的情况一模一样，自从Google撤了大部分的GAE前置IP后，被撤的那部分GAE IP放在GoProxy中也会出现以上的情况，只能访问部分Google网址，其余的都不行。原因是因为被撤的GAE IP并不是完全撤出，而是这部分IP的功能被限制为只能访问Google的部分网址。</p>
 <p>但是GoProxy域名模式并不是这个原因导致的，而是因为GAE服务端没有上传的关系。</p>
 <p>接下来就是上传GAE的服务端代码了。由于上传GAE服务的软件本身要求本机能科学上网，并且开启HTTP协议的8087端口，或者是支持SOCKS协议的1080端口。这种情况下，我建议用文章开始提到的<a href="https://github.com/XX-net/XX-Net" target="_blank" rel="external">XX-NET</a>来上传GAE服务。</p>
 <p>而要上传GAE服务，首先要能科学上网。XX-NET的科学上网，依赖于IPV6，可以参考我的<a href="https://ocdman.github.io/2019/04/11/Win10%E5%A6%82%E4%BD%95%E5%BC%80%E5%90%AFIPV6/" target="_blank" rel="external">这篇文章</a>开启。在确保XX-NET可以科学上网之后，在目录<code>code\default\gae_proxy\server</code>下找到<code>uploader.bat</code>文件双击打开，然后输入你之前注册的Project ID（注意Project ID和Project Name有可能不同），然后授权之后，等待上传完毕即可。接下来，如果要验证的话，打开<code>yourProjectID.appspot.com</code>，无需使用代理，看看是否有内容显示就知道上传成功与否了。</p>
-<p>接下来再打开GoProxy试试（注意GoProxy和XX-NET默认都使用8087端口，两个不能同时开，除非修改配置文件的端口号）。是不是能科学上网了呢？不过，我在使用GoProxy域名模式的时候经常会遇到一个问题，就是有时候启动GoProxy后打开不了Google，会报错连接超时，但是却能访问Google之外的网站。但是关了GoProxy后隔一段时间，再打开GoProxy，又能访问Google了。<del>我猜测可能跟GHS分配的IP有关，因为是随机分配的，</del>所以建议你一旦能上Google，就不要退出GoProxy了。当然我也会继续去找出这个问题的原因来，一旦找到第一时间更新在该篇文章的末尾。</p>
+<p>接下来再打开GoProxy试试（注意GoProxy和XX-NET默认都使用8087端口，两个不能同时开，除非修改配置文件的端口号）。是不是能科学上网了呢？不过，我在使用GoProxy域名模式的时候经常会遇到一个问题，就是有时候启动GoProxy后打开不了Google，会报错连接超时，但是却能访问Google之外的网站。但是关了GoProxy后隔一段时间，再打开GoProxy，又能访问Google了。~~我猜测可能跟GHS分配的IP有关，因为是随机分配的，~~所以建议你一旦能上Google，就不要退出GoProxy了。当然我也会继续去找出这个问题的原因来，一旦找到第一时间更新在该篇文章的末尾。</p>
 <p>一开始没想写这么详细，但是写着写着就停不下了。我已经好久没写有图片的文章了，主要是懒。GoProxy对我而言是一种情怀，虽然已经不更新了，但是始终在我所有的FQ玩具里占据着最重要的一个位置。</p>
-<h3 id="关于GoProxy域名模式启动后偶尔上不了Google的原因">关于GoProxy域名模式启动后偶尔上不了Google的原因</h3><p>总算是找着原因了，和GHS分配的IP没有关系。看了代码才知道，原来在<code>gae.json</code>配置文件中，和<code>SiteToAlias</code>和<code>HostMap</code>两个对象有关。如果要请求的网站域名和<code>SiteToAlias</code>里的通配符域名相匹配，比如www.google.com，就会走直连（此处的直连指的是和Google IP的直连）；如果不匹配，则走GAE，也就是你的域名对应的GHS IP。走直连的时候，会解析<code>HostMap</code>对象下的<code>google_hk</code>数组里的域名，该数组里的域名会分别随机分配一个Google IP，一旦某次GoProxy启动后，<code>google_hk</code>数组里的域名分配的Google IP正好都被封了，就会造成上不了Google的现象。<br>至于作者为什么要分直连和GAE，猜测可能和通过GAE访问某些网站会有问题有关，所以又分了一个直连出来。注意，<code>gae.json</code>配置中还有个<code>ForceGAE</code>对象，如果要请求的网站域名和该对象下的内容相匹配时，会强制走GAE。</p>
-<h3 id="解决办法">解决办法</h3><p>方法一、要么将<code>SiteToAlias</code>对象里的属性全部注释，干脆全部走GAE，一了百了。</p>
+<h3>关于GoProxy域名模式启动后偶尔上不了Google的原因</h3>
+<p>总算是找着原因了，和GHS分配的IP没有关系。看了代码才知道，原来在<code>gae.json</code>配置文件中，和<code>SiteToAlias</code>和<code>HostMap</code>两个对象有关。如果要请求的网站域名和<code>SiteToAlias</code>里的通配符域名相匹配，比如www.google.com，就会走直连（此处的直连指的是和Google IP的直连）；如果不匹配，则走GAE，也就是你的域名对应的GHS IP。走直连的时候，会解析<code>HostMap</code>对象下的<code>google_hk</code>数组里的域名，该数组里的域名会分别随机分配一个Google IP，一旦某次GoProxy启动后，<code>google_hk</code>数组里的域名分配的Google IP正好都被封了，就会造成上不了Google的现象。
+至于作者为什么要分直连和GAE，猜测可能和通过GAE访问某些网站会有问题有关，所以又分了一个直连出来。注意，<code>gae.json</code>配置中还有个<code>ForceGAE</code>对象，如果要请求的网站域名和该对象下的内容相匹配时，会强制走GAE。</p>
+<h3>解决办法</h3>
+<p>方法一、要么将<code>SiteToAlias</code>对象里的属性全部注释，干脆全部走GAE，一了百了。</p>
 <p>方法二、要么在<code>google_hk</code>数组下添加一些没被封的Google IP，就像AppID模式下，经常要把扫到的GAE IP写到该数组下那样。如何添加Google IP？比较简单的办法就是一直ping <code>google_hk</code>数组里的那几个域名，如果有ping通，就把对应的IP写到<code>google_hk</code>数组里。还可以借助<a href="https://github.com/Kisesy/gscan_quic" target="_blank" rel="external">gscan_quic</a>等扫描Google IP的工具来获取Google IP。</p>
-<h3 id="关于GHS_IP、GAE_IP和Google_IP的区别">关于GHS IP、GAE IP和Google IP的区别</h3><p>GHS IP指的是Google托管主机对应的IP，这些IP可以访问GAE服务。对应上文中的域名DNS配置中的4条A记录以及ghs.googlehosted.com随机分配的IP。</p>
+<h3>关于GHS IP、GAE IP和Google IP的区别</h3>
+<p>GHS IP指的是Google托管主机对应的IP，这些IP可以访问GAE服务。对应上文中的域名DNS配置中的4条A记录以及ghs.googlehosted.com随机分配的IP。</p>
 <p>GAE IP指的是GAE前置代理的IP，GoProxy AppID模式下就是利用GAE IP来访问GAE服务的。这些IP原来有很多，但是随着Google策略的调整，目前可用的只有几百个，而且很有可能都被GFW封了。</p>
 <p>Google IP指的是只能访问Google搜索、邮箱等基础功能的IP，这些IP不能访问GAE服务，但好在没有像GAE IP那样封得那么厉害。</p>
 
