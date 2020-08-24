@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="utf-8">
+  <title>CentOS8下如何安装K8S | chilihotpot</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <link rel="shortcut icon" href="/chili.ico">
+  <link rel="stylesheet" href="/css/app.css" type="text/css">
+  <!-- <link rel='stylesheet' href='http://fonts.useso.com/css?family=Source+Code+Pro'> --><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</head>
+
+<body>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><nav class="app-nav">
+  
+    
+      <a href="/.">home</a>
+    
+  
+    
+      <a href="/archives">archive</a>
+    
+  
+    
+      <a href="/tags">tag</a>
+    
+  
+    
+      <a href="/categories">category</a>
+    
+  
+</nav>
+
+  <main class="post">
+  <article>
+  <h1 class="article-title">
+    <a href="/2020/08/24/CentOS8下如何安装K8S/">CentOS8下如何安装K8S</a>
+  </h1>
+
+  <section class="article-meta">
+    <p class="article-date">August 24 2020</p>
+  </section>
+
+  <section class="article-entry">
+    <h3 id="什么是K8S">什么是K8S</h3><p>K8S，全称Kubernetes，在希腊语中代表了舵手的意思，是一个大规模的容器集群管理系统。它的前身是Google的Borg系统，所以可以认为是开源版本的Borg系统。2014年Google决定对其进行开源。</p>
+<p>###K8S有什么用 </p>
+<p>K8S可以实现容器集群的自动化部署、扩缩容、维护等功能。可以用来管理Docker。</p>
+<h3 id="K8S的架构">K8S的架构</h3><p>K8S系统，通常被称为K8S集群。这个集群包括了两部分组成：Master节点以及Node节点。Master节点用于管理和控制，Node节点用于工作负载、运行容器。</p>
+<p>用户可以通过API接口（UI本质上就是调用API）、命令行方式来访问Master节点。Master根据接收到的请求对Node中的容器进行新增、更新和删除等操作。</p>
+<h3 id="系统环境">系统环境</h3><ul>
+<li>CentOS 8</li>
+<li>内核版本 4.18.0-193.6.3.el8_2.x86_64</li>
+<li>系统版本 CentOS Linux release 8.2.2004 (Core)</li>
+</ul>
+<blockquote>
+<p><strong>为了使用方便，以下操作在root用户下执行，若非root用户，请自行加sudo</strong></p>
+</blockquote>
+<h3 id="查看系统版本">查看系统版本</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cat /etc/centos-release</span><br></pre></td></tr></table></figure>
+<h3 id="关闭Swap">关闭Swap</h3><p>关闭swap，并注释swap分区</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">swapoff <span class="operator">-a</span></span><br><span class="line">vim /etc/fstab</span><br><span class="line"></span><br><span class="line"><span class="comment"># /etc/fstab</span></span><br><span class="line"><span class="comment"># Created by anaconda on Tue Mar 31 22:44:34 2020</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># Accessible filesystems, by reference, are maintained under '/dev/disk/'.</span></span><br><span class="line"><span class="comment"># See man pages fstab(5), findfs(8), mount(8) and/or blkid(8) for more info.</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"><span class="comment"># After editing this file, run 'systemctl daemon-reload' to update systemd</span></span><br><span class="line"><span class="comment"># units generated from this file.</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line">/dev/mapper/cl-root     /                       xfs     defaults        <span class="number">0</span> <span class="number">0</span></span><br><span class="line">UUID=<span class="number">5</span>fecb240-<span class="number">379</span>b-<span class="number">4331</span>-ba04<span class="operator">-f</span>41338e81a6e /boot                   ext4    defaults        <span class="number">1</span> <span class="number">2</span></span><br><span class="line">/dev/mapper/cl-home     /home                   xfs     defaults        <span class="number">0</span> <span class="number">0</span></span><br><span class="line"><span class="comment">#/dev/mapper/cl-swap     swap                    swap    defaults        0 0</span></span><br></pre></td></tr></table></figure>
+<h3 id="配置主机名">配置主机名</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">vim /etc/hosts</span><br><span class="line"></span><br><span class="line"><span class="number">127.0</span>.<span class="number">0.1</span>   localhost localhost.localdomain localhost4 localhost4.localdomain4</span><br><span class="line">::<span class="number">1</span>         localhost localhost.localdomain localhost6 localhost6.localdomain6</span><br><span class="line"><span class="comment"># 添加在这里</span></span><br><span class="line"><span class="number">192.168</span>.<span class="number">20.238</span> master01</span><br></pre></td></tr></table></figure>
+<p>使主机名生效（或者登出再登录也会生效）</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hostnamectl <span class="built_in">set</span>-hostname master01</span><br></pre></td></tr></table></figure>
+<h3 id="安装Docker-CE">安装Docker-CE</h3><p>考虑到网速问题，建议使用阿里云仓库替换原生仓库</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> /etc/yum.repos.d/</span><br><span class="line">mv CentOS-Base.repo CentOS-Base.repo.bak</span><br><span class="line">curl -o /etc/yum.repos.d/CentOS-Base.repo http://mirrors.aliyun.com/repo/Centos-<span class="number">8</span>.repo</span><br></pre></td></tr></table></figure>
+<p>安装工具包以及添加Docker-CE仓库</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">yum install -y yum-utils device-mapper-persistent-data lvm2</span><br><span class="line">yum-config-manager --add-repo https://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo</span><br></pre></td></tr></table></figure>
+<p>安装docker-ce命令</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum -y install docker-ce</span><br></pre></td></tr></table></figure>
+<p>安装过程中如果遇到如下错误的话</p>
+<blockquote>
+<p>Error:<br> Problem: package docker-ce-3:19.03.8-3.el7.x86_64 requires containerd.io &gt;= 1.2.2-3, but none of the providers can be installed</p>
+<ul>
+<li>cannot install the best candidate for the job</li>
+<li>package containerd.io-1.2.10-3.2.el7.x86_64 is excluded</li>
+<li>package containerd.io-1.2.13-3.1.el7.x86_64 is excluded</li>
+<li>package containerd.io-1.2.2-3.3.el7.x86_64 is excluded</li>
+<li>package containerd.io-1.2.2-3.el7.x86_64 is excluded</li>
+<li>package containerd.io-1.2.4-3.1.el7.x86_64 is excluded</li>
+<li>package containerd.io-1.2.5-3.1.el7.x86_64 is excluded</li>
+<li>package containerd.io-1.2.6-3.3.el7.x86_64 is excluded<br>  (try to add ‘–skip-broken’ to skip uninstallable packages or ‘–nobest’ to use not only best candidate packages)</li>
+</ul>
+</blockquote>
+<p>这是因为<code>docker-ce-3:19.03.8-3.el7.x86_64</code>要求<code>containerd.io</code>版本大于等于<code>1.2.2-3</code>。手动安装新的<code>containerd.io</code>版本</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">wget https://download.docker.com/linux/centos/<span class="number">7</span>/x86_64/edge/Packages/containerd.io-<span class="number">1.2</span>.<span class="number">6</span>-<span class="number">3.3</span>.el7.x86_64.rpm</span><br><span class="line">yum install containerd.io-<span class="number">1.2</span>.<span class="number">6</span>-<span class="number">3.3</span>.el7.x86_64.rpm</span><br></pre></td></tr></table></figure>
+<p>然后再次执行安装docker-ce命令，即可成功。</p>
+<h3 id="运行Docker">运行Docker</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">systemctl <span class="built_in">enable</span> docker.service &amp;&amp; systemctl start docker.service</span><br><span class="line">systemctl start docker</span><br></pre></td></tr></table></figure>
+<h3 id="安装Kubeadm">安装Kubeadm</h3><p>使用阿里kubernetes仓库</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl <span class="operator">-s</span> https://mirrors.aliyun.com/kubernetes/yum/doc/rpm-package-key.gpg &gt; rpm-package-key.gpg</span><br></pre></td></tr></table></figure>
+<p>新建一个kubernetes.repo文件</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vim /etc/yum.repos.d/kubernetes.repo</span><br></pre></td></tr></table></figure>
+<p>文件内容</p>
+<blockquote>
+<p>[kubernetes]<br>name=Kubernetes<br>baseurl=<a href="https://mirrors.aliyun.com/kubernetes/yum/repos/kubernetes-el7-x86_64/" target="_blank" rel="external">https://mirrors.aliyun.com/kubernetes/yum/repos/kubernetes-el7-x86_64/</a><br>enabled=1<br>gpgcheck=1<br>repo_gpgcheck=1<br>gpgkey=<a href="https://mirrors.aliyun.com/kubernetes/yum/doc/yum-key.gpg" target="_blank" rel="external">https://mirrors.aliyun.com/kubernetes/yum/doc/yum-key.gpg</a> <a href="https://mirrors.aliyun.com/kubernetes/yum/doc/rpm-package-key.gpg" target="_blank" rel="external">https://mirrors.aliyun.com/kubernetes/yum/doc/rpm-package-key.gpg</a></p>
+</blockquote>
+<p>安装并启动kubernetes</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">setenforce <span class="number">0</span></span><br><span class="line">yum install -y kubelet kubeadm kubectl</span><br><span class="line">systemctl <span class="built_in">enable</span> kubelet &amp;&amp; systemctl start kubelet</span><br></pre></td></tr></table></figure>
+<h3 id="打开防火墙端口">打开防火墙端口</h3><p>kubenetes需要用到的默认端口号为:443、8443、6443、10250，如果有防火墙的情况下，需要打开</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">firewall-cmd --permanent --zone=public --add-port=<span class="number">443</span>/tcp</span><br><span class="line">firewall-cmd --permanent --zone=public --add-port=<span class="number">8443</span>/tcp</span><br><span class="line">firewall-cmd --permanent --zone=public --add-port=<span class="number">6443</span>/tcp</span><br><span class="line">firewall-cmd --permanent --zone=public --add-port=<span class="number">10250</span>/tcp</span><br><span class="line">firewall-cmd --reload</span><br></pre></td></tr></table></figure>
+<p>如果在内网环境下进行测试，可以直接关闭防火墙（生产环境下不可以这么操作）</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">systemctl stop firewalld.service</span><br></pre></td></tr></table></figure>
+<h3 id="设置Docker的cgroup_driver">设置Docker的cgroup     driver</h3><p>将<code>docker</code>的<code>cgroup driver</code>设置为推荐的<code>systemd</code>。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">cat &gt; /etc/docker/daemon.json &lt;&lt;EOF</span><br><span class="line">&#123;</span><br><span class="line">  <span class="string">"exec-opts"</span>: [<span class="string">"native.cgroupdriver=systemd"</span>],</span><br><span class="line">  <span class="string">"log-driver"</span>: <span class="string">"json-file"</span>,</span><br><span class="line">  <span class="string">"log-opts"</span>: &#123;</span><br><span class="line">    <span class="string">"max-size"</span>: <span class="string">"100m"</span></span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="string">"storage-driver"</span>: <span class="string">"overlay2"</span>,</span><br><span class="line">  <span class="string">"storage-opts"</span>: [</span><br><span class="line">    <span class="string">"overlay2.override_kernel_check=true"</span></span><br><span class="line">  ]</span><br><span class="line">&#125;</span><br><span class="line">EOF</span><br></pre></td></tr></table></figure>
+<p>重启Docker服务</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">systemctl daemon-reload</span><br><span class="line">systemctl restart docker</span><br></pre></td></tr></table></figure>
+<h3 id="初始化K8S集群">初始化K8S集群</h3><p>生成K8S默认的初始化配置</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubeadm config <span class="built_in">print</span> init-defaults &gt; ./init-defaults.yaml</span><br></pre></td></tr></table></figure>
+<p>修改默认配置，将<code>imageRepository</code>对应的默认镜像仓库地址<code>k8s.gcr.io</code>替换为阿里云镜像仓库地址<code>registry.cn-hangzhou.aliyuncs.com/google_containers</code></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sed -i <span class="string">"s/k8s.gcr.io/registry.cn-hangzhou.aliyuncs.com\/google_containers/g"</span> ./init-defaults.yaml</span><br></pre></td></tr></table></figure>
+<p>修改<code>localAPIEndpoint</code>地址为Master节点的IP，这里假设为<code>192.168.20.238</code></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sed -i <span class="string">"s/1.2.3.4/192.168.20.238/g"</span> ./init-defaults.yaml</span><br></pre></td></tr></table></figure>
+<p>先使用<code>dry-run</code>模式测试是否一切就绪</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubeadm init --config init-defaults.yaml --dry-run</span><br></pre></td></tr></table></figure>
+<p>如果提示没有异常，则可以正式进行初始化</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubeadm init --config init-defaults.yaml</span><br></pre></td></tr></table></figure>
+<p>初始化成功后会提示我们第一次使用kubernetes所用到的配置命令</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># To start using your cluster, you need to run the following as a regular user:</span></span><br><span class="line">mkdir -p <span class="variable">$HOME</span>/.kube</span><br><span class="line">sudo cp -i /etc/kubernetes/admin.conf <span class="variable">$HOME</span>/.kube/config</span><br><span class="line">sudo chown $(id -u):$(id -g) <span class="variable">$HOME</span>/.kube/config</span><br></pre></td></tr></table></figure>
+<p>同时kubeadm会生成一条指令，用来给Master节点添加Node节点，将它记录下来</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">kubeadm join <span class="number">192.168</span>.<span class="number">20.238</span>:<span class="number">6443</span> --token h72we2.i3dzt7i6i9bjyko7 \</span><br><span class="line">    --discovery-token-ca-cert-hash sha256:c512028981b8503576e9d94bd76c026d5a71155b1615f3f8a5035ed0b9691bb2</span><br></pre></td></tr></table></figure>
+<p>如果初始化过程中出现错误（如某些依赖缺失），修改完错误后，可继续执行命令</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubeadm init --ignore-preflight-errors=all --config init-defaults.yaml</span><br></pre></td></tr></table></figure>
+<p>如果想要重新安装kubeadm，可执行</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubeadm reset</span><br></pre></td></tr></table></figure>
+<p>在使用云服务器来安装K8S时，执行<code>kubeadm init</code>初始化命令后就报错</p>
+<blockquote>
+<p>[wait-control-plane] Waiting for the kubelet to boot up the control plane as static Pods from directory “/etc/kubernetes/manifests”. This can take up to 4m0s<br>[kubelet-check] Initial timeout of 40s passed.</p>
+<p>Unfortunately, an error has occurred:<br>​    timed out waiting for the condition</p>
+<p>This error is likely caused by:</p>
+<pre><code>- The kubelet <span class="keyword">is</span> <span class="keyword">not</span> <span class="property">running</span>
+- The kubelet <span class="keyword">is</span> unhealthy due <span class="keyword">to</span> a misconfiguration <span class="keyword">of</span> <span class="keyword">the</span> node <span class="keyword">in</span> <span class="keyword">some</span> way (required cgroups disabled)
+</code></pre></blockquote>
+<p>执行查看错误日志命令</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">journalctl -u kubelet</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>Dec 17 07:23:06 master01 kubelet[8677]: E1217 07:23:06.438404    8677 kubelet.go:2267] node “master01” not found<br>Dec 17 07:23:08 master01 kubelet[8677]: W1217 07:23:08.920952    8677 cni.go:237] Unable to update cni config: no networks found in /etc/cni/net.d<br>Dec 17 07:23:09 master01 kubelet[8677]: E1217 07:23:09.668733    8677 kubelet.go:2187] Container runtime network not ready: NetworkReady=false reason:NetworkPluginNotReady message:docker: network plugin</p>
+</blockquote>
+<p>通过为<code>kubeadm init</code> 命令添加 <code>--v=6</code> 参数，可以查看更详细的日志</p>
+<blockquote>
+<p>[kubelet-check] Initial timeout of 40s passed.<br>I1217 08:39:21.852678   20972 round_trippers.go:443] GET <a href="https://xx.xx.xx.xx:6443/healthz?timeout=32s" target="_blank" rel="external">https://xx.xx.xx.xx:6443/healthz?timeout=32s</a>  in 30000 milliseconds</p>
+</blockquote>
+<p>可见是外网IP端口无法访问引起的。即使把防火墙关了，虚拟机网络中添加6443端口的入站规则也无济于事。最后的解决方案是，<strong>将<code>init-defaults.yaml</code>配置文件中的云服务器外网IP改为云服务器专用IP（私网IP）就解决了</strong>。</p>
+<h3 id="节点状态检查">节点状态检查</h3><p>如果要查询所有节点的状态，可以执行命令</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">kubectl get nodes</span><br><span class="line"></span><br><span class="line">NAME       STATUS   ROLES    AGE     VERSION</span><br><span class="line">master01   Ready    master   <span class="number">7</span>d17h   v1.<span class="number">18.6</span></span><br></pre></td></tr></table></figure>
+<p>如果节点<code>STATUS</code>为<code>Ready</code>，说明节点状态正常。</p>
+<p>如果要查看主节点的详细信息，可以执行命令</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl describe node master</span><br></pre></td></tr></table></figure>
+<p>如果节点<code>STATUS</code>为<code>NotReady</code>，一样可以执行上面的命令去查看详细信息，我遇到的情况是</p>
+<blockquote>
+<p>runtime network not ready: NetworkReady=false reason:NetworkPluginNotReady message:docker: network plugin is not ready: cni config uninitialized</p>
+</blockquote>
+<p>这里给出解决方案，使用weave网络插件来部署。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sysctl net.bridge.bridge-nf-call-iptables=<span class="number">1</span></span><br><span class="line">kubectl apply <span class="operator">-f</span> <span class="string">"https://cloud.weave.works/k8s/net?k8s-version=<span class="variable">$(kubectl version | base64 | tr -d '\n')</span>"</span></span><br></pre></td></tr></table></figure>
+<p>等待部署完成后，然后重新检查一下节点的状态（节点可能反应没有这么快，要稍微等会儿）</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl get nodes</span><br></pre></td></tr></table></figure>
+<h3 id="安装Kubernetes-dashboard">安装Kubernetes-dashboard</h3><p>kubernetes-dashboard是官方为K8S开发的可视化Web管理界面，本质上还是通过API的方式获取K8S的状态。</p>
+<p>我们先下载配置文件</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wget https://raw.githuusercontent.com/kubernetes/dashboard/v2.<span class="number">0.3</span>/aio/deploy/recommend.yaml</span><br></pre></td></tr></table></figure>
+<p>修改配置文件，添加<code>NodePort</code>方式来安装Kubernetes-dashboard服务。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">vim recommend.yaml</span><br><span class="line"></span><br><span class="line">kind: Service</span><br><span class="line">apiVersion: v1</span><br><span class="line">metadata:</span><br><span class="line">  labels:</span><br><span class="line">    k8s-app: kubernetes-dashboard</span><br><span class="line">  name: kubernetes-dashboard</span><br><span class="line">  namespace: kubernetes-dashboard</span><br><span class="line">spec:</span><br><span class="line">  <span class="comment"># 添加NodePort</span></span><br><span class="line">  <span class="built_in">type</span>: NodePort</span><br><span class="line">  ports:</span><br><span class="line">    - port: <span class="number">443</span></span><br><span class="line">      targetPort: <span class="number">8443</span></span><br><span class="line">      <span class="comment"># 指定nodePort端口</span></span><br><span class="line">      nodePort: <span class="number">30000</span></span><br><span class="line">  selector:</span><br><span class="line">    k8s-app: kubernetes-dashboard</span><br></pre></td></tr></table></figure>
+<p>根据配置文件安装kubernetes-dashboard</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl create <span class="operator">-f</span> recommend.yaml</span><br></pre></td></tr></table></figure>
+<p>查看所有Service和Pod</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">kubectl get svc --all-namespaces</span><br><span class="line">kubectl get pod --all-namespaces</span><br></pre></td></tr></table></figure>
+<p>查看指定namespace为kubernetes-dashboard的Service和Pod</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">kubectl get svc -n kubernetes-dashboard</span><br><span class="line">kubectl get pod -n kubernetes-dashboard</span><br></pre></td></tr></table></figure>
+<p>因为kubernetes-dashboard引入了RBAC权限管理，所以我们要创建一个用户，给该用户附以相应的角色，才能正常访问kubernetes-dashboard。</p>
+<p>这里我们创建一个<code>k8s-dashboard-admin-user.yaml</code>的配置文件</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">vim k8s-dashboard-admin-user.yaml</span><br><span class="line"></span><br><span class="line"><span class="comment"># 配置文件内容</span></span><br><span class="line">apiVersion: v1</span><br><span class="line">kind: ServiceAccount</span><br><span class="line">metadata:</span><br><span class="line">  name: admin-user</span><br><span class="line">  namespace: kube-system</span><br><span class="line">---</span><br><span class="line">apiVersion: rbac.authorization.k8s.io/v1</span><br><span class="line">kind: ClusterRoleBinding</span><br><span class="line">metadata:</span><br><span class="line">  name: admin-user</span><br><span class="line">roleRef:</span><br><span class="line">  apiGroup: rbac.authorization.k8s.io</span><br><span class="line">  kind: ClusterRole</span><br><span class="line">  name: cluster-admin</span><br><span class="line">subjects:</span><br><span class="line">- kind: ServiceAccount</span><br><span class="line">  name: admin-user</span><br><span class="line">  namespace: kube-system</span><br></pre></td></tr></table></figure>
+<p>该配置文件创建了一个名为<code>admin-user</code>的用户，并为该用户附以<code>cluster-admin</code>集群管理员的角色。配置文件中的<code>namespace: kube-system</code>也可以改为<code>namespace: kubernetes-dashboard</code>。这俩我都验证过，没问题。</p>
+<p>最后，用户登录时需要进行token验证，可以通过以下命令获取token凭证</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl -n kube-system describe secret $(kubectl -n kube-system get secret | grep kubernetes-dashboard | awk ‘&#123;<span class="built_in">print</span> <span class="variable">$1</span>&#125;’)</span><br></pre></td></tr></table></figure>
+<p>注意，上面的命令中的<code>-n kube-system</code>是根据<code>k8s-dashboard-admin-user.yaml</code>配置文件中的<code>namespace: kube-system</code>来的。如果<code>namespace</code>改为<code>kubernetes-dashboard</code>，命令也要对应的修改。</p>
+<p>如果想要修改kubernetes-dashboard的配置，可以先修改recommend.yaml文件后，再执行命令</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl deploy <span class="operator">-f</span> recommended.yaml</span><br></pre></td></tr></table></figure>
+<p>如果想要删除kubernetes-dashboard的配置，可以执行命令</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl delete <span class="operator">-f</span> recommend.yaml</span><br></pre></td></tr></table></figure>
+<p>有时候配置文件不小心删了的情况下，想要删除对应的service和pod，却发现pod虽然执行了删除但是会重启，说明有些依赖没有全部删除，这种情况下可以执行以下命令</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 获取某个命名空间（这里为kube-system）下所有关于kubernetes-dashboard的配置</span></span><br><span class="line">kubectl get secret,sa,role,rolebinding,services,deployments --namespace=kube-system | grep dashboard</span><br><span class="line"><span class="comment"># 逐个删除依赖</span></span><br><span class="line">kubectl delete deployment kubernetes-dashboard --namespace=kube-system </span><br><span class="line">kubectl delete service kubernetes-dashboard  --namespace=kube-system </span><br><span class="line">kubectl delete role kubernetes-dashboard-minimal --namespace=kube-system </span><br><span class="line">kubectl delete rolebinding kubernetes-dashboard-minimal --namespace=kube-system</span><br><span class="line">kubectl delete sa kubernetes-dashboard --namespace=kube-system </span><br><span class="line">kubectl delete secret kubernetes-dashboard-certs --namespace=kube-system</span><br><span class="line">kubectl delete secret kubernetes-dashboard-key-holder --namespace=kube-system</span><br></pre></td></tr></table></figure>
+
+  </section>
+</article>
+
+  <div class="sharing grid">
+  <section class="profile grid-item grid">
+    <img class="avatar" src="/images/chili.png" alt="avatar" />
+    <div class="grid-item">
+      <p class="title"> chilihotpot </p>
+      <p class="subtitle"> You Are The JavaScript In My HTML </p>
+    <div>
+  </section>
+
+  <section class="share-btns">
+    <!-- <p> share it if you like it~ </p> -->
+    <a
+  class="twitter-share-button"
+  data-size="large"
+  data-via="DrakeLeung"
+  href="https://twitter.com/intent/tweet?text= id="什么是K8S">什么是K8S<"
+>
+  Tweet
+</a>
+
+<script>
+  window.twttr = (function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0],
+    t = window.twttr || {};
+  if (d.getElementById(id)) return t;
+  js = d.createElement(s);
+  js.id = id;
+  js.src = "https://platform.twitter.com/widgets.js";
+  js.async = true;
+  fjs.parentNode.insertBefore(js, fjs);
+
+  t._e = [];
+  t.ready = function(f) {
+    t._e.push(f);
+  };
+
+  return t;
+}(document, "script", "twitter-wjs"));
+</script>
+
+  </section>
+</div>
+
+
+  
+</main><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+</body>
+</html>
