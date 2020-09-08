@@ -42,14 +42,14 @@
 
   <section class="article-entry">
     <p>K8S运行本地Docker镜像，并指定服务器端口号，需要使用<code>kubectl run</code>命令</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl run your-pod-name --image=your-local-docker-image-name --image-pull-policy=Never --port=<span class="number">80</span> --hostport=<span class="number">8080</span></span><br></pre></td></tr></table></figure>
+<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl run your-pod-name --image=your-local-docker-image-name --image-pull-policy=Never --port=<span class="number">80</span> --hostport=<span class="number">8080</span></span><br></pre></td></tr></table></figure></p>
 <p>这里的<code>--hostport</code>参数就是对外暴露的端口号，<code>--port</code>是对Docker内部的端口号，<code>kubectl run</code>命令后面跟着的是指定的pod名称，<code>--image-pull-policy</code>参数设为<code>Never</code>后，从本地获取镜像。</p>
 <p>如果只有Master节点的情况下，想要用K8S去运行镜像会报错，</p>
 <blockquote>
-<p>Warning  FailedScheduling  <unknown>  default-scheduler  0/1 nodes are available: 1 node(s) had taint {node-role.kubernetes.io/master: }, that the pod didn’t tolerate.</unknown></p>
+<p>Warning  FailedScheduling  &lt;unknown&gt;  default-scheduler  0/1 nodes are available: 1 node(s) had taint {node-role.kubernetes.io/master: }, that the pod didn't tolerate.</p>
 </blockquote>
 <p>解决办法是</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl taint nodes your-master-node-name node-role.kubernetes.io/master-</span><br></pre></td></tr></table></figure>
+<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">kubectl taint nodes your-master-node-name node-role.kubernetes.io/master-</span><br></pre></td></tr></table></figure></p>
 
   </section>
 </article>

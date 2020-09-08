@@ -42,11 +42,14 @@
 
   <section class="article-entry">
     <p>仍然是在补习网络基础。</p>
-<h3 id="TLS">TLS</h3><p>TLS是SSL协议的升级。SSL全称Secure Sockets Layer，TLS全名Transport Layer Security。它们俩都是互联网通信安全的基础。不使用SSL/TLS的HTTP通信就是不加密的通信，而HTTPS通信就是建立在SSL/TLS的基础之上。</p>
+<h3>TLS</h3>
+<p>TLS是SSL协议的升级。SSL全称Secure Sockets Layer，TLS全名Transport Layer Security。它们俩都是互联网通信安全的基础。不使用SSL/TLS的HTTP通信就是不加密的通信，而HTTPS通信就是建立在SSL/TLS的基础之上。</p>
 <p>目前的主流浏览器都实现了TLS 1.2的支持，TLS 1.0通常被标示为SSL 3.1，TLS 1.1为SSL 3.2，TLS 1.2为SSL 3.3。</p>
 <p>像谷歌、火狐浏览器现在都已经支持到TLS 1.3了，带来的好处就是1-RTT 甚至 0-RTT 的连接。GoProxy-VPS目前已经支持TLS 1.3了。</p>
-<h3 id="SNI">SNI</h3><p>SNI全称Server Name Indication，即服务器名称指示，它是一个扩展的TLS协议。默认情况下，客户端和服务端建立好连接后，服务端会把默认的SSL证书发给客户端做SSL校验。以前一台服务器只能提供一个证书，但是随着服务器性能的增强，一台服务器支持部署多个SSL证书服务站点，比如CDN。服务端需要客户端事先告知准备访问的网站域名，然后服务端才能发送正确的SSL证书和客户端来进行握手。SNI就是派这个用处的。</p>
-<h3 id="QUIC">QUIC</h3><p>QUIC全称Quick UDP Internet Connection，即快速UDP互联网连接。我们知道http以及https的基础是TCP协议，UDP和TCP的区别在于UDP连接更快，但是不可靠，QUIC建立在UDP的基础之上，它减少了TCP的三次握手以及TLS握手的时间，并支持多路并发传输，支持冗余纠错等等优点，被称为新一代的互联网传输协议。</p>
+<h3>SNI</h3>
+<p>SNI全称Server Name Indication，即服务器名称指示，它是一个扩展的TLS协议。默认情况下，客户端和服务端建立好连接后，服务端会把默认的SSL证书发给客户端做SSL校验。以前一台服务器只能提供一个证书，但是随着服务器性能的增强，一台服务器支持部署多个SSL证书服务站点，比如CDN。服务端需要客户端事先告知准备访问的网站域名，然后服务端才能发送正确的SSL证书和客户端来进行握手。SNI就是派这个用处的。</p>
+<h3>QUIC</h3>
+<p>QUIC全称Quick UDP Internet Connection，即快速UDP互联网连接。我们知道http以及https的基础是TCP协议，UDP和TCP的区别在于UDP连接更快，但是不可靠，QUIC建立在UDP的基础之上，它减少了TCP的三次握手以及TLS握手的时间，并支持多路并发传输，支持冗余纠错等等优点，被称为新一代的互联网传输协议。</p>
 
   </section>
 </article>
@@ -67,7 +70,7 @@
   data-size="large"
   data-via="DrakeLeung"
   href="https://twitter.com/intent/tweet?text=仍然是在补习网络基础。</p>
-<h3 "
+<h3>"
 >
   Tweet
 </a>

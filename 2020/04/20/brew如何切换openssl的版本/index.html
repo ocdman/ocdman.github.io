@@ -46,10 +46,11 @@
 <p>dyld: Library not loaded: /usr/local/opt/openssl/lib/libcrypto.1.0.0.dylib</p>
 </blockquote>
 <p>参考了<a href="https://www.cnblogs.com/efan/p/12324510.html" target="_blank" rel="external">这篇文章</a>后，原来是MySQL启动的时候需要用到OpenSSL，而我的OpenSSL版本又比较新，是使用brew安装的1.1.1.d版本。在<code>/usr/local/opt/</code>目录下有<code>openssl@1.0</code>和<code>openssl@1.1</code>两个版本，brew默认使用的是1.1这个版本，但MySQL依赖1.0，所以报错。</p>
-<h3 id="解决办法">解决办法</h3><p>使用<code>brew switch</code>命令，如果想切到1.0版本的话，执行命令</p>
-<figure class="highlight armasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">brew </span><span class="keyword">switch </span>openssl 版本号</span><br></pre></td></tr></table></figure>
+<h3>解决办法</h3>
+<p>使用<code>brew switch</code>命令，如果想切到1.0版本的话，执行命令</p>
+<p><figure class="highlight armasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">brew </span><span class="keyword">switch </span>openssl 版本号</span><br></pre></td></tr></table></figure></p>
 <p>如果想切换回1.1版本，执行命令</p>
-<figure class="highlight armasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">brew </span><span class="keyword">switch </span>openssl<span class="comment">@1.1 版本号</span></span><br></pre></td></tr></table></figure>
+<p><figure class="highlight armasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">brew </span><span class="keyword">switch </span>openssl<span class="comment">@1.1 版本号</span></span><br></pre></td></tr></table></figure></p>
 
   </section>
 </article>
