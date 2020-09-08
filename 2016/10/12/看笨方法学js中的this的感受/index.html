@@ -41,57 +41,13 @@
   </section>
 
   <section class="article-entry">
-    <p>无意间看到一篇谈js中this对象的文章，该文章的作者，就是我博客使用的hexo主题的作者lyyourc，而这篇文章的地址是http://lyyourc.com/2015/06/09/JavaScript-For-Kids-This/，拿出来和大家分享，这篇文章写得是真好，比起我自己的那篇谈this的理解的文章，差距不是一点半点。也让我看到了我之前的理解的不对的地方，以此作为谨记。</p>
+    <p>无意间看到一篇谈js中this对象的文章，该文章的作者，就是我博客使用的hexo主题的作者lyyourc，而这篇文章的地址是<a href="http://lyyourc.com/2015/06/09/JavaScript-For-Kids-This/，拿出来和大家分享，这篇文章写得是真好，比起我自己的那篇谈this的理解的文章，差距不是一点半点。也让我看到了我之前的理解的不对的地方，以此作为谨记。" target="_blank" rel="external">http://lyyourc.com/2015/06/09/JavaScript-For-Kids-This/，拿出来和大家分享，这篇文章写得是真好，比起我自己的那篇谈this的理解的文章，差距不是一点半点。也让我看到了我之前的理解的不对的地方，以此作为谨记。</a></p>
 <p>我是因为先看的js高级程序，所以对this的理解只是建立在那本书的基础之上，但那本书对this的使用以及一些陷阱都没有深入的提及，所以难免理解上会有一些偏差。后来又看了js语言精粹，才知道原来this的结果取决于4种不同模式的绑定。再加上今天看得这篇《笨方法学习javascript中的关键字this》之后，让我对this的理解总算是大彻大悟了。</p>
-<p>一、默认绑定
-所谓的默认绑定，指的就是函数直接执行，函数名后面直接加一对括号，例如
-function F(){
-return this.ex;
-}
-ex = true;
-F(); //true
-函数F()执行了之后，结果就是true，默认情况下如果函数后面直接加一对括号调用函数的话，该函数的变量对象指向全局变量，所以this指向了全局变量。这是js中的默认行为，也称为默认绑定。</p>
-<p>二、隐式绑定
-隐式绑定，我们通过一个例子就能说明。
-var obj = {
-f: F,
-ex: false
-};
-obj.f(); //false
-当调用一个对象中定义的方法时，该函数中的this会自动指向该对象。而且会根据就近原则查找。如果obj对象中没有ex属性的话，obj.f()也能执行，但是因为这个属性的存在，this指向obj对象，查找this.ex的时候，根据就近原则，找到了obj.ex，所以返回false。
-但是不要以为所有的对象调用其自身的函数，该函数中出现的this都会指向对象本身。举例说明。
-setTimeout(obj.f, 1000); //true
-为啥明明使用了对象也调用了方法，可为啥结果偏偏是全局环境中定义的值呢？原因很简单，我们把setTimeout函数，刨析其内部结构。
-function setTimeout(fn, clock){
-//...
-fn();
-}
-通过分析了setTimeout内部的结构，相信不难理解为啥隐式调用的结果会指向全局环境了吧。上面代码里fn()方法的调用，和我们之前说的第一条this的取值规则完全吻合。而且我们所说的setTimeout中传入的隐式调用其实并没有真正的调用，只是传了一个引用值过去，真正的调用是在setTimeout内部进行。
-那有什么办法可以使调用setTimeout函数，this不指向全局变量呢？</p>
-<p>三、显式绑定
-使用函数的apply或者call方法可以改变变量对象的指向，举例说明。
-F(); //true
-F.apply(obj); //false
-obj.f(); //false
-obj.f.apply(window); //true
-通过以上的对比我们可以发现，函数中的this，肯定不是再函数定义时就绑定好的，而是在函数指向时才进行绑定的。那么怎么才能在setTimeout函数里，调用对象的函数，使得其this对象不再指向全局对象呢？
-首先我们得创建一个捆绑函数
-function wrapper(){
-return obj.f();
-}
-setTimeout(wrapper, 1000); //false
-wrapper(window); //false</p>
-<p>es5为此单独创建了一个函数bind。其原理和wrapper是一样的。
-var f = F.bind(obj);
-f(); //false
-setTimeout(f, 1000) //false</p>
-<p>四、new关键字
-当函数被调用时，前面出现关键字new，说明函数中的this将指向该函数类型的对象。例如
-function G(){
-this.value = 'hello';
-}
-var g = new G();
-console.log(g.value); //hello</p>
+<p>一、默认绑定<br>所谓的默认绑定，指的就是函数直接执行，函数名后面直接加一对括号，例如<br>function F(){<br>  return this.ex;<br>}<br>ex = true;<br>F(); //true<br>函数F()执行了之后，结果就是true，默认情况下如果函数后面直接加一对括号调用函数的话，该函数的变量对象指向全局变量，所以this指向了全局变量。这是js中的默认行为，也称为默认绑定。</p>
+<p>二、隐式绑定<br>隐式绑定，我们通过一个例子就能说明。<br>var obj = {<br>  f: F,<br>  ex: false<br>};<br>obj.f(); //false<br>当调用一个对象中定义的方法时，该函数中的this会自动指向该对象。而且会根据就近原则查找。如果obj对象中没有ex属性的话，obj.f()也能执行，但是因为这个属性的存在，this指向obj对象，查找this.ex的时候，根据就近原则，找到了obj.ex，所以返回false。<br>但是不要以为所有的对象调用其自身的函数，该函数中出现的this都会指向对象本身。举例说明。<br>setTimeout(obj.f, 1000); //true<br>为啥明明使用了对象也调用了方法，可为啥结果偏偏是全局环境中定义的值呢？原因很简单，我们把setTimeout函数，刨析其内部结构。<br>function setTimeout(fn, clock){<br>  //…<br>  fn();<br>}<br>通过分析了setTimeout内部的结构，相信不难理解为啥隐式调用的结果会指向全局环境了吧。上面代码里fn()方法的调用，和我们之前说的第一条this的取值规则完全吻合。而且我们所说的setTimeout中传入的隐式调用其实并没有真正的调用，只是传了一个引用值过去，真正的调用是在setTimeout内部进行。<br>那有什么办法可以使调用setTimeout函数，this不指向全局变量呢？</p>
+<p>三、显式绑定<br>使用函数的apply或者call方法可以改变变量对象的指向，举例说明。<br>F(); //true<br>F.apply(obj); //false<br>obj.f(); //false<br>obj.f.apply(window); //true<br>通过以上的对比我们可以发现，函数中的this，肯定不是再函数定义时就绑定好的，而是在函数指向时才进行绑定的。那么怎么才能在setTimeout函数里，调用对象的函数，使得其this对象不再指向全局对象呢？<br>首先我们得创建一个捆绑函数<br>function wrapper(){<br>  return obj.f();<br>}<br>setTimeout(wrapper, 1000); //false<br>wrapper(window); //false</p>
+<p>es5为此单独创建了一个函数bind。其原理和wrapper是一样的。<br>var f = F.bind(obj);<br>f(); //false<br>setTimeout(f, 1000) //false</p>
+<p>四、new关键字<br>当函数被调用时，前面出现关键字new，说明函数中的this将指向该函数类型的对象。例如<br>function G(){<br>  this.value = ‘hello’;<br>}<br>var g = new G();<br>console.log(g.value); //hello</p>
 <p>以上就是笨方法学js中的this关键字一文中，我得到的一些心得和体会，虽然用得例子都是那篇文章中类似的，但是每一个都是极具代表性的。希望通过这篇文章，从此不再对js中函数里的this指向了哪个变量对象而发愁了。</p>
 
   </section>

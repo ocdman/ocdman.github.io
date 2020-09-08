@@ -42,15 +42,15 @@
 
   <section class="article-entry">
     <p>Mac上启动MongoDB服务命令很简单，如果是安装MongoDB后第一次启动MongoDB的话，运行命令</p>
-<p><figure class="highlight applescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo mongod <span class="comment">--dbpath=/data/db</span></span><br></pre></td></tr></table></figure></p>
+<figure class="highlight applescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo mongod <span class="comment">--dbpath=/data/db</span></span><br></pre></td></tr></table></figure>
 <p><code>--dbpath</code>用来指定数据库的存放目录，由自己决定。如果已经执行过上面的命令，下次再执行只需要运行</p>
-<p><figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="title">sudo</span> mongod</span><br></pre></td></tr></table></figure></p>
+<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="title">sudo</span> mongod</span><br></pre></td></tr></table></figure>
 <p>即可，无需再指定新的目录。</p>
 <p>上面的命令只能以前台方式启动MongoDB的进程，一旦会话结束，进程也就随之关闭。不过MongoDB还提供了后台进程启动方式，方法是加上<code>--fork</code>参数，并且要注意的是，当使用<code>--fork</code>参数时必须指定另一个参数<code>--logpath</code>，命令如下</p>
-<p><figure class="highlight autoit"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo mongod --fork --logpath=/<span class="built_in">log</span>/mongodb.<span class="built_in">log</span></span><br></pre></td></tr></table></figure></p>
+<figure class="highlight autoit"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo mongod --fork --logpath=/<span class="built_in">log</span>/mongodb.<span class="built_in">log</span></span><br></pre></td></tr></table></figure>
 <p><code>--logpath</code>也就是MongoDB日志的存放路径，同上面的数据库路径一样，由自己决定。</p>
 <p>最后执行命令</p>
-<p><figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mongo</span><br></pre></td></tr></table></figure></p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mongo</span><br></pre></td></tr></table></figure>
 <p>就能正常操作MongoDB了。</p>
 
   </section>
