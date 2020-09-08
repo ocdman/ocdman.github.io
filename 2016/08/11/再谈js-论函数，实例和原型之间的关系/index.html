@@ -41,7 +41,14 @@
   </section>
 
   <section class="article-entry">
-    <p>再次翻阅js高级编程这本书，又是一种新的体会。这次的新的理解是函数，对于函数我们知道，函数的定义<br>function F(){}，这是一个空的构造函数。我们还可以用另一种写法来写， var F = new Function()。这种写法更容易帮助我们理解函数是对象的这个概念。我们可以使用instanceof关键字来测试下，F instanceof Object以及Function instanceof Object,结果都是true。可见，函数都是Object类型的实例。而F其实只是指向该实例的一个指针。如果我们把F付给E，把F置为null，<br>var E = F，F = null，E依然保持着对F所指向实例的引用，虽然F已经断开了关系，但E仍然可以访问。（注意：F instanceof Function的结果为true，证明了自定义类型F是Function类型的实例）。<br>所有函数都有一个prototype原型属性，通过类似于F.prototype来访问。该属性默认指向一个Object类型的实例。其实我们可以把原型看成是一个变量，F.prototype可以是一个变量f。所以原型的默认形式可以写成，<br>var f = new Object()，所有的原型在刚开始时都只有一个属性constructor。该属性是用来描述原型所在的函数。即f.constructor = F。也就是说，constructor属性又指回了函数本身。通过这种方式添加的constructor属性，不会覆盖Object实例中的constructor属性，而是直接在F.prototype对象上添加了constructor属性。<br>而说到原型，就不得不提到它和实例之间的关系。原型的存在就是为了实现实例对象的继承。每一个实例对象，都有一个内部指针指向原型，这样才能拿得到原型中定义的属性以及方法。而我们通过修改F.prototype来指向不同对象，去实现新的继承。（注意：F.prototype其实是一个指针，指向原型对象实例。）其实我们也可以把原型看成是一个实例化的对象，该对象被所有以当前函数类型实例化的对象所引用，通过一个内部的指针来访问。而constructor就是原型的一个属性之一。所以所有对象都可以访问constructor属性。<br>最后来说说实例，每一个实例通过内部指针指向F.prototype，来实现对原型的继承。还有我们会发现，许多Object类型的属性和方法，都出现在了实例中。那是因为F.prototype是Object类型的实例，所以拥有Object类型对象实例所有的属性和方法，而那些基本的属性和方法保存在Object.prototype这个属性中。<br>综上，js所有的继承都是通过这种链式结构访问的。实例通过内部指针访问原型，而原型可以指向别的实例，而最终这个别的实例内部指向Object实例。通过这种方式，方法和属性就可以以不同的方式得到继承。</p>
+    <p>再次翻阅js高级编程这本书，又是一种新的体会。这次的新的理解是函数，对于函数我们知道，函数的定义
+function F(){}，这是一个空的构造函数。我们还可以用另一种写法来写， var F = new Function()。这种写法更容易帮助我们理解函数是对象的这个概念。我们可以使用instanceof关键字来测试下，F instanceof Object以及Function instanceof Object,结果都是true。可见，函数都是Object类型的实例。而F其实只是指向该实例的一个指针。如果我们把F付给E，把F置为null，
+var E = F，F = null，E依然保持着对F所指向实例的引用，虽然F已经断开了关系，但E仍然可以访问。（注意：F instanceof Function的结果为true，证明了自定义类型F是Function类型的实例）。
+所有函数都有一个prototype原型属性，通过类似于F.prototype来访问。该属性默认指向一个Object类型的实例。其实我们可以把原型看成是一个变量，F.prototype可以是一个变量f。所以原型的默认形式可以写成，
+var f = new Object()，所有的原型在刚开始时都只有一个属性constructor。该属性是用来描述原型所在的函数。即f.constructor = F。也就是说，constructor属性又指回了函数本身。通过这种方式添加的constructor属性，不会覆盖Object实例中的constructor属性，而是直接在F.prototype对象上添加了constructor属性。
+而说到原型，就不得不提到它和实例之间的关系。原型的存在就是为了实现实例对象的继承。每一个实例对象，都有一个内部指针指向原型，这样才能拿得到原型中定义的属性以及方法。而我们通过修改F.prototype来指向不同对象，去实现新的继承。（注意：F.prototype其实是一个指针，指向原型对象实例。）其实我们也可以把原型看成是一个实例化的对象，该对象被所有以当前函数类型实例化的对象所引用，通过一个内部的指针来访问。而constructor就是原型的一个属性之一。所以所有对象都可以访问constructor属性。
+最后来说说实例，每一个实例通过内部指针指向F.prototype，来实现对原型的继承。还有我们会发现，许多Object类型的属性和方法，都出现在了实例中。那是因为F.prototype是Object类型的实例，所以拥有Object类型对象实例所有的属性和方法，而那些基本的属性和方法保存在Object.prototype这个属性中。
+综上，js所有的继承都是通过这种链式结构访问的。实例通过内部指针访问原型，而原型可以指向别的实例，而最终这个别的实例内部指向Object实例。通过这种方式，方法和属性就可以以不同的方式得到继承。</p>
 
   </section>
 </article>

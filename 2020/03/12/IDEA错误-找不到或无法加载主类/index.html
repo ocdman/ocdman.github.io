@@ -42,17 +42,20 @@
 
   <section class="article-entry">
     <p>最近使用到了Intellij IDEA这款工具来编写Java，在使用过程中遇到了各种各样的问题。</p>
-<h3 id="Maven使用代理">Maven使用代理</h3><p>首先是Maven，每次用Maven去下载jar包的时候，都会下载个没完没了。公司移动的网络我就不吐槽了，关键是我想让Maven走代理，但是尝试了几种方法后，貌似都无果。</p>
+<h3>Maven使用代理</h3>
+<p>首先是Maven，每次用Maven去下载jar包的时候，都会下载个没完没了。公司移动的网络我就不吐槽了，关键是我想让Maven走代理，但是尝试了几种方法后，貌似都无果。</p>
 <p>以下是我从网络上搜索到的Maven配置socks5代理的两种方法</p>
 <p>打开File -&gt; Settings，搜索Maven，找到Importing选项，在VM Options for importer后面加上</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">-DproxySet=<span class="literal">true</span> -DproxyHost=localhost -DproxyPort=<span class="number">1080</span></span><br></pre></td></tr></table></figure>
+<p><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">-DproxySet=<span class="literal">true</span> -DproxyHost=localhost -DproxyPort=<span class="number">1080</span></span><br></pre></td></tr></table></figure></p>
 <p>或者直接命令行输入</p>
-<figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> M<span class="built_in">AVEN_OPTS</span>=<span class="string">"-DsocksProxyHost=127.0.0.1 -DsocksProxyPort=1080"</span></span><br></pre></td></tr></table></figure>
+<p><figure class="highlight objectivec"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> M<span class="built_in">AVEN_OPTS</span>=<span class="string">"-DsocksProxyHost=127.0.0.1 -DsocksProxyPort=1080"</span></span><br></pre></td></tr></table></figure></p>
 <p>第二种方法添加Maven的配置文件settings.xml（默认没有这个文件），位于目录<code>~/.m2/settings.xml</code>下。</p>
-<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="title">proxies</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="title">proxy</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="title">id</span>&gt;</span>ss<span class="tag">&lt;/<span class="title">id</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="title">active</span>&gt;</span>true<span class="tag">&lt;/<span class="title">active</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="title">protocol</span>&gt;</span>socks5<span class="tag">&lt;/<span class="title">protocol</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="title">username</span>&gt;</span><span class="tag">&lt;/<span class="title">username</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="title">password</span>&gt;</span><span class="tag">&lt;/<span class="title">password</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="title">host</span>&gt;</span>127.0.0.1<span class="tag">&lt;/<span class="title">host</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="title">port</span>&gt;</span>1080<span class="tag">&lt;/<span class="title">port</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="title">nonProxyHosts</span>&gt;</span>127.0.0.1<span class="tag">&lt;/<span class="title">nonProxyHosts</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="title">proxy</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="title">proxies</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<h3 id="创建空项目">创建空项目</h3><p>然后就是创建一个空项目，将其运行起来，需要添加一些配置。</p>
+<p><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="title">proxies</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="title">proxy</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="title">id</span>&gt;</span>ss<span class="tag">&lt;/<span class="title">id</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="title">active</span>&gt;</span>true<span class="tag">&lt;/<span class="title">active</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="title">protocol</span>&gt;</span>socks5<span class="tag">&lt;/<span class="title">protocol</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="title">username</span>&gt;</span><span class="tag">&lt;/<span class="title">username</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="title">password</span>&gt;</span><span class="tag">&lt;/<span class="title">password</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="title">host</span>&gt;</span>127.0.0.1<span class="tag">&lt;/<span class="title">host</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="title">port</span>&gt;</span>1080<span class="tag">&lt;/<span class="title">port</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="title">nonProxyHosts</span>&gt;</span>127.0.0.1<span class="tag">&lt;/<span class="title">nonProxyHosts</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="title">proxy</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="title">proxies</span>&gt;</span></span><br></pre></td></tr></table></figure></p>
+<h3>创建空项目</h3>
+<p>然后就是创建一个空项目，将其运行起来，需要添加一些配置。</p>
 <ul>
-<li><p>设置Project SDK，以及正确的Project language level，File -&gt; Project Structure -&gt; Project -&gt; Project SDK。注意，如果Project language level选择不正确的话，就会导致IDEA报错</p>
+<li>
+<p>设置Project SDK，以及正确的Project language level，File -&gt; Project Structure -&gt; Project -&gt; Project SDK。注意，如果Project language level选择不正确的话，就会导致IDEA报错</p>
 <blockquote>
 <p>Error:java：无效的源发行版：X</p>
 </blockquote>
@@ -62,14 +65,16 @@
 <li>一定要设置项目编译器的输出路径，File -&gt; Project Structure -&gt; Project -&gt; Project compiler output。</li>
 <li>一定要设置源文件路径，File -&gt; Project Structure -&gt; Modules -&gt; Sources。找到你的源文件目录，Mark as Sources。</li>
 </ul>
-<h3 id="找不到或无法加载主类">找不到或无法加载主类</h3><p>最后就是今天要聊的，明明程序都能编译通过，为什么在运行的时候报错</p>
+<h3>找不到或无法加载主类</h3>
+<p>最后就是今天要聊的，明明程序都能编译通过，为什么在运行的时候报错</p>
 <blockquote>
 <p>找不到或无法加载主类。</p>
 </blockquote>
 <p>经过一番搜索后找到了解决方法，打开File -&gt; Project Structure -&gt; Modules -&gt; Paths。</p>
 <p>看看是不是选择了<strong>Use module compile output path</strong>，然后路径是不是写得有问题。选择<strong>Inherit project compile output path</strong>试试看。</p>
 <p>之所以出现找不到或无法加载主类，但是能编译通过的原因，是因为编<strong>译器的输出路径有问题，无法生成对应的.class文件</strong>。然后程序在运行的时候要去读取.class主类文件，因为找不到，所以报错。</p>
-<h3 id="总结">总结</h3><p>IDEA作为一款高效的Java开发工具，一定有其优秀的地方。但是作为一名Coder，光会使用IDE是不够的，还得去了解其背后的Java命令行的使用方式。</p>
+<h3>总结</h3>
+<p>IDEA作为一款高效的Java开发工具，一定有其优秀的地方。但是作为一名Coder，光会使用IDE是不够的，还得去了解其背后的Java命令行的使用方式。</p>
 
   </section>
 </article>
