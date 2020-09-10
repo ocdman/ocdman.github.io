@@ -42,16 +42,16 @@
 
   <section class="article-entry">
     <p>最近使用了Git作为某个项目的版本管理，因为要开启多人合作开发，所以不得不面临一些错误提交的出现。这个时候就需要使用git的撤销命令。</p>
-<p><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git <span class="operator"><span class="keyword">reset</span> <span class="comment">--hard &lt;版本号&gt;</span></span></span><br></pre></td></tr></table></figure></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git <span class="operator"><span class="keyword">reset</span> <span class="comment">--hard &lt;版本号&gt;</span></span></span><br></pre></td></tr></table></figure>
 <p>或者</p>
-<p><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git <span class="operator"><span class="keyword">reset</span> <span class="comment">--soft &lt;版本号&gt;</span></span></span><br></pre></td></tr></table></figure></p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git <span class="operator"><span class="keyword">reset</span> <span class="comment">--soft &lt;版本号&gt;</span></span></span><br></pre></td></tr></table></figure>
 <p><code>hard</code>和<code>soft</code>的区别在于<code>hard</code>会抛弃当前工作区的修改，而<code>soft</code>会保留当前工作区的修改。要回退到哪个版本，可以通过</p>
-<p><figure class="highlight applescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git <span class="command">log</span></span><br></pre></td></tr></table></figure></p>
+<figure class="highlight applescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git <span class="command">log</span></span><br></pre></td></tr></table></figure>
 <p>来查看具体要回退到的版本号。</p>
 <p>最后如果直接输入命令</p>
-<p><figure class="highlight avrasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git <span class="keyword">push</span></span><br></pre></td></tr></table></figure></p>
+<figure class="highlight avrasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git <span class="keyword">push</span></span><br></pre></td></tr></table></figure>
 <p>的话，会提示本地的版本落后于服务器的版本，但是只要指定<code>force</code>参数，就可以忽略更新的问题</p>
-<p><figure class="highlight applescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git push <span class="comment">--force</span></span><br></pre></td></tr></table></figure></p>
+<figure class="highlight applescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git push <span class="comment">--force</span></span><br></pre></td></tr></table></figure>
 
   </section>
 </article>

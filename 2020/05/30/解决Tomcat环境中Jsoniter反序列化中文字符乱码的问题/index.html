@@ -43,12 +43,9 @@
   <section class="article-entry">
     <p>最近项目中使用到了Jsoniter（全称JSON-Iterator），据说序列化对象以及反序列化Json字符串的速度超快。</p>
 <p>但是我发现当在Tomcat环境中，使用Jsoniter反序列化前端发送的Json中文字符串时，结果会出现乱码。主要原因是因为后台默认字符串的格式不是UTF-8类型，具体格式因操作系统而异。</p>
-<h5>ajax中设置contentType: &quot;charset=UTF-8&quot;</h5>
-<p>我最先尝试的就是这种方法，假设前端指定上传的字符串编码格式为UTF-8，那么后端接受的字符串编码也应该为UTF-8。然后，以我的电脑为例，后端的字符串编码格式仍然是GBK。</p>
-<h5>POST方法中设置request.setCharacterEncoding(&quot;UTF-8&quot;)</h5>
-<p>因为我使用的是POST方法接受请求，网上还有种说法，设置request请求的字符编码为UTF-8。然后，我尝试了也没有用。</p>
-<h3>设置JVM的启动参数-Dfile.encoding=utf-8</h3>
-<p>这是我尝试过的方案中唯一可行的。因为JVM的编码格式取决于操作系统的默认编码格式，而我的操作系统环境是中文，默认编码格式为GBK。Tomcat所使用的VM，默认编码格式也是GBK。所以，当前后端两种编码格式不一致的情况下时，就会出现乱码的情况。</p>
+<h5 id="ajax中设置contentType:_“charset=UTF-8”">ajax中设置contentType: “charset=UTF-8”</h5><p>我最先尝试的就是这种方法，假设前端指定上传的字符串编码格式为UTF-8，那么后端接受的字符串编码也应该为UTF-8。然后，以我的电脑为例，后端的字符串编码格式仍然是GBK。</p>
+<h5 id="POST方法中设置request-setCharacterEncoding(“UTF-8”)">POST方法中设置request.setCharacterEncoding(“UTF-8”)</h5><p>因为我使用的是POST方法接受请求，网上还有种说法，设置request请求的字符编码为UTF-8。然后，我尝试了也没有用。</p>
+<h3 id="设置JVM的启动参数-Dfile-encoding=utf-8">设置JVM的启动参数-Dfile.encoding=utf-8</h3><p>这是我尝试过的方案中唯一可行的。因为JVM的编码格式取决于操作系统的默认编码格式，而我的操作系统环境是中文，默认编码格式为GBK。Tomcat所使用的VM，默认编码格式也是GBK。所以，当前后端两种编码格式不一致的情况下时，就会出现乱码的情况。</p>
 <p>虽然，这么做Jsoniter序列化的问题解决了，但是控制台输出的文字却又变成了乱码。</p>
 
   </section>
