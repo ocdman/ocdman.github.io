@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><meta charset="utf-8">
+  <title>SQL Server最大连接数的问题 | chilihotpot</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <link rel="shortcut icon" href="/chili.ico">
+  <link rel="stylesheet" href="/css/app.css" type="text/css">
+  <!-- <link rel='stylesheet' href='http://fonts.useso.com/css?family=Source+Code+Pro'> --><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+</head>
+
+<body>
+  <!-- hexo-inject:begin --><!-- hexo-inject:end --><nav class="app-nav">
+  
+    
+      <a href="/.">home</a>
+    
+  
+    
+      <a href="/archives">archive</a>
+    
+  
+    
+      <a href="/tags">tag</a>
+    
+  
+    
+      <a href="/categories">category</a>
+    
+  
+</nav>
+
+  <main class="post">
+  <article>
+  <h1 class="article-title">
+    <a href="/2020/09/28/SQL-Server最大连接数的问题/">SQL Server最大连接数的问题</a>
+  </h1>
+
+  <section class="article-meta">
+    <p class="article-date">September 28 2020</p>
+  </section>
+
+  <section class="article-entry">
+    <p>最近遇到一个很奇怪的问题，多个Tomcat服务同时启动的时候数据库会Down。同时，如果用SQL Server客户端连接的时候会报错</p>
+<blockquote>
+<p>provider 共享内存提供程序 error 0 管道的另一端上无任何进程</p>
+</blockquote>
+<p>但是，重启SQL Server服务之后，客户端又能重新连接到数据库。于是我尝试只启动一个Tomcat服务，没想到数据库还是照样Down。</p>
+<p>网上有很多种解决方案，这里直接说我的解决方案。</p>
+<p><strong>直接将SQL Server的最大连接数修改为0，即没有连接限制</strong>。之所以每次Tomcat启动都会出问题，原因是原来的数据库最大连接数只有20。</p>
+<p>对于这个问题我个人的理解是，Tomcat启动的时候，如果有对数据库的连接，且连接数超过了数据库的最大连接数限制，会直接导致数据库崩溃。这也是我短暂的运维职业生涯中的一个印象比较深刻的点。</p>
+
+  </section>
+</article>
+
+  <div class="sharing grid">
+  <section class="profile grid-item grid">
+    <img class="avatar" src="/images/chili.png" alt="avatar" />
+    <div class="grid-item">
+      <p class="title"> chilihotpot </p>
+      <p class="subtitle"> You Are The JavaScript In My HTML </p>
+    <div>
+  </section>
+
+  <section class="share-btns">
+    <!-- <p> share it if you like it~ </p> -->
+    <a
+  class="twitter-share-button"
+  data-size="large"
+  data-via="DrakeLeung"
+  href="https://twitter.com/intent/tweet?text=最近遇到一个很奇怪的问题，多个Tomca"
+>
+  Tweet
+</a>
+
+<script>
+  window.twttr = (function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0],
+    t = window.twttr || {};
+  if (d.getElementById(id)) return t;
+  js = d.createElement(s);
+  js.id = id;
+  js.src = "https://platform.twitter.com/widgets.js";
+  js.async = true;
+  fjs.parentNode.insertBefore(js, fjs);
+
+  t._e = [];
+  t.ready = function(f) {
+    t._e.push(f);
+  };
+
+  return t;
+}(document, "script", "twitter-wjs"));
+</script>
+
+  </section>
+</div>
+
+
+  
+</main><!-- hexo-inject:begin --><!-- hexo-inject:end -->
+
+</body>
+</html>
