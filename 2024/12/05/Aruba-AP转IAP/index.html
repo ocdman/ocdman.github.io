@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="本文以Aruba AP-345为例，记录了AP转IAP的过程，实现了AP+软AC的无线漫游方案。 前期准备 Aruba AP（默认为Aruba Campus AP，俗称瘦AP） Aruba WIFI AP调试线（不同型号AP使用的console线也不尽相同，需要根据实际AP型号来进行选择） 刷IAP支持的固件版本 一台安装了TFTP服务端的电脑 一台支持POE功能的交换机 SecureCRT或者其">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Aruba AP转IAP">
+<meta property="og:url" content="http://example.com/2024/12/05/Aruba-AP%E8%BD%ACIAP/index.html">
+<meta property="og:site_name" content="Let it Be!">
+<meta property="og:description" content="本文以Aruba AP-345为例，记录了AP转IAP的过程，实现了AP+软AC的无线漫游方案。 前期准备 Aruba AP（默认为Aruba Campus AP，俗称瘦AP） Aruba WIFI AP调试线（不同型号AP使用的console线也不尽相同，需要根据实际AP型号来进行选择） 刷IAP支持的固件版本 一台安装了TFTP服务端的电脑 一台支持POE功能的交换机 SecureCRT或者其">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2024-12-05T06:09:20.000Z">
+<meta property="article:modified_time" content="2024-12-06T06:23:29.284Z">
+<meta property="article:author" content="John Gong">
+<meta name="twitter:card" content="summary">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>Aruba AP转IAP</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="http://github.com/ocdman">Projects</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2024/12/05/Aruba-AP%E8%BD%ACIAP/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2024/12/05/Aruba-AP%E8%BD%ACIAP/&text=Aruba AP转IAP"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2024/12/05/Aruba-AP%E8%BD%ACIAP/&title=Aruba AP转IAP"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2024/12/05/Aruba-AP%E8%BD%ACIAP/&is_video=false&description=Aruba AP转IAP"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Aruba AP转IAP&body=Check out this article: http://example.com/2024/12/05/Aruba-AP%E8%BD%ACIAP/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2024/12/05/Aruba-AP%E8%BD%ACIAP/&title=Aruba AP转IAP"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2024/12/05/Aruba-AP%E8%BD%ACIAP/&title=Aruba AP转IAP"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2024/12/05/Aruba-AP%E8%BD%ACIAP/&title=Aruba AP转IAP"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2024/12/05/Aruba-AP%E8%BD%ACIAP/&title=Aruba AP转IAP"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2024/12/05/Aruba-AP%E8%BD%ACIAP/&name=Aruba AP转IAP&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2024/12/05/Aruba-AP%E8%BD%ACIAP/&t=Aruba AP转IAP"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%89%8D%E6%9C%9F%E5%87%86%E5%A4%87"><span class="toc-number">1.</span> <span class="toc-text">前期准备</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%AD%A3%E7%AF%87"><span class="toc-number">2.</span> <span class="toc-text">正篇</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BB%93%E5%B0%BE"><span class="toc-number">3.</span> <span class="toc-text">结尾</span></a></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        Aruba AP转IAP
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">John Gong</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2024-12-05T06:09:20.000Z" class="dt-published" itemprop="datePublished">2024-12-05</time>
+        
+      
+    </div>
+
+
+      
+
+      
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <p>本文以Aruba AP-345为例，记录了AP转IAP的过程，实现了AP+软AC的无线漫游方案。</p>
+<h3 id="前期准备"><a href="#前期准备" class="headerlink" title="前期准备"></a>前期准备</h3><ol>
+<li>Aruba AP（默认为Aruba Campus AP，俗称瘦AP）</li>
+<li>Aruba WIFI AP调试线（不同型号AP使用的console线也不尽相同，需要根据实际AP型号来进行选择）</li>
+<li>刷IAP支持的固件版本</li>
+<li>一台安装了TFTP服务端的电脑</li>
+<li>一台支持POE功能的交换机</li>
+<li>SecureCRT或者其它支持串口调试的软件</li>
+</ol>
+<h3 id="正篇"><a href="#正篇" class="headerlink" title="正篇"></a>正篇</h3><ol>
+<li><p>下载适用当前AP的ArubaInstant固件版本</p>
+</li>
+<li><p>在电脑端启动TFTP服务端软件，并将下载好的Instant AP固件放到TFTP服务目录下</p>
+</li>
+<li><p>使用Aruba AP调试线，一头连接AP的console口，另一头连接电脑（一般情况下调试线的FTDI芯片免安装驱动）</p>
+</li>
+<li><p>电脑打开SecureCRT软件，新建一个串口连接，端口选择相应的COM口，其它参数通常为9600-N-8-1</p>
+</li>
+<li><p>给AP供电，SecureCRT软件上会有AP启动的相关信息</p>
+</li>
+<li><p>注意观察屏幕，当看到<em>Hit &lt;Enter&gt; to stop autoboot: 3</em>提示后，及时按下回车键，进入AP引导设置</p>
+</li>
+<li><p>看到以下提示符表示进入命令行模式</p>
+<blockquote>
+<p>apboot&gt;</p>
+</blockquote>
+</li>
+<li><p>往AP闪存里写入Aurba Country Code（简称CCODE）</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">proginv system ccode &lt;YOUR_CCODE&gt;</span><br></pre></td></tr></table></figure>
+
+<p>其中，CCODE的格式如下</p>
+<p><code>CCODE-&lt;Regulatory Domain&gt;-&lt;SHA1(&lt;Regulatory Domain&gt;-&lt;Serial Number&gt;)&gt;</code></p>
+<ul>
+<li><p><em>&lt;Regulatory Domain&gt;<em>建议填写</em>RW</em>，即Rest of the World，代表除美国、日本、以色列以外的不受限制的区域</p>
+</li>
+<li><p>*&lt;SHA1&gt;*代表采用SHA1哈希算法生成的哈希值</p>
+</li>
+<li><p>*&lt;Serial Number&gt;*代表AP的序列号</p>
+</li>
+</ul>
+<p>也可以使用<a target="_blank" rel="noopener" href="https://iecho.cc/2022/05/28/Aruba-Country-Code-Generator/">CCODE生成器</a>来生成CCODE</p>
+</li>
+<li><p>解锁AP闪存</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">invent -w</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>设置AP动态获取IP地址</p>
+</li>
+</ol>
+   <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">dhcp</span><br></pre></td></tr></table></figure>
+
+<p>   或者设置静态IP地址</p>
+   <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">setenv ipaddr &lt;ipaddr&gt;</span><br><span class="line">setenv netmask &lt;netmask&gt;</span><br></pre></td></tr></table></figure>
+
+<ol start="11">
+<li><p>设置TFTP服务器的IP地址</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">setenv serverip &lt;TFTP_serverip&gt;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>确保AP和TFTP服务器之间可以互通</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ping &lt;TFTP_serverip&gt;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>确保ArubaInstant固件处于TFTP目录下，更新AP闪存分区0</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">upgrade os 0 ArubaInstant_xxx_x.x.x.x_xxx</span><br></pre></td></tr></table></figure>
+
+<p>默认情况下分区0为引导分区，而分区1为恢复分区</p>
+</li>
+<li><p>更新AP闪存分区1</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">upgrade os 1 ArubaInstant_xxx_x.x.x.x_xxx</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>恢复出厂设置并清空配置文件</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">factory_reset</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>保存修改并写入AP</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">saveenv</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>重启AP</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">reboot</span><br></pre></td></tr></table></figure></li>
+</ol>
+<h3 id="结尾"><a href="#结尾" class="headerlink" title="结尾"></a>结尾</h3><p>按照以上步骤能够一步步走下来的话，即AP转IAP成功。剩下的就是通过Aruba网页后台进行软AC+AP的配置了，这里就不在详述。</p>
+<p>本文参考</p>
+<p>[Aruba AP-to-IAP conversion]: <a target="_blank" rel="noopener" href="https://forums.serverbuilds.net/t/aruba-ap-to-iap-conversion/8888/14">https://forums.serverbuilds.net/t/aruba-ap-to-iap-conversion/8888/14</a>	“Aruba AP-to-IAP conversion”<br>[Convert Aruba CAP to IAP]: <a target="_blank" rel="noopener" href="https://iecho.cc/2021/03/22/Convert-Aruba-CAP-to-IAP/">https://iecho.cc/2021/03/22/Convert-Aruba-CAP-to-IAP/</a>	“Convert Aruba CAP to IAP”</p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">Home</a></li>
+        
+          <li><a href="/about/">About</a></li>
+        
+          <li><a href="/archives/">Writing</a></li>
+        
+          <li><a target="_blank" rel="noopener" href="http://github.com/ocdman">Projects</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%89%8D%E6%9C%9F%E5%87%86%E5%A4%87"><span class="toc-number">1.</span> <span class="toc-text">前期准备</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%AD%A3%E7%AF%87"><span class="toc-number">2.</span> <span class="toc-text">正篇</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BB%93%E5%B0%BE"><span class="toc-number">3.</span> <span class="toc-text">结尾</span></a></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=http://example.com/2024/12/05/Aruba-AP%E8%BD%ACIAP/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=http://example.com/2024/12/05/Aruba-AP%E8%BD%ACIAP/&text=Aruba AP转IAP"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=http://example.com/2024/12/05/Aruba-AP%E8%BD%ACIAP/&title=Aruba AP转IAP"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=http://example.com/2024/12/05/Aruba-AP%E8%BD%ACIAP/&is_video=false&description=Aruba AP转IAP"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Aruba AP转IAP&body=Check out this article: http://example.com/2024/12/05/Aruba-AP%E8%BD%ACIAP/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=http://example.com/2024/12/05/Aruba-AP%E8%BD%ACIAP/&title=Aruba AP转IAP"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=http://example.com/2024/12/05/Aruba-AP%E8%BD%ACIAP/&title=Aruba AP转IAP"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=http://example.com/2024/12/05/Aruba-AP%E8%BD%ACIAP/&title=Aruba AP转IAP"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=http://example.com/2024/12/05/Aruba-AP%E8%BD%ACIAP/&title=Aruba AP转IAP"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=http://example.com/2024/12/05/Aruba-AP%E8%BD%ACIAP/&name=Aruba AP转IAP&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=http://example.com/2024/12/05/Aruba-AP%E8%BD%ACIAP/&t=Aruba AP转IAP"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2024
+    John Gong
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="http://github.com/ocdman">Projects</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>
